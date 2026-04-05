@@ -112,7 +112,6 @@
             color: var(--trailing-active);
         }
         
-        /* Signal History Log Style */
         .signal-history {
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid var(--gold-dim);
@@ -124,15 +123,6 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-        }
-        .signal-history span {
-            font-weight: 800;
-        }
-        .signal-history .buy-log {
-            color: var(--accent);
-        }
-        .signal-history .sell-log {
-            color: var(--orange);
         }
         
         .rsi-panel { margin-top: 16px; margin-bottom: 12px; padding: 10px 14px; border: 1px solid var(--gold-dim); border-radius: 12px; background: rgba(0, 0, 0, 0.4); }
@@ -260,12 +250,10 @@
                     <span>🏦 NOS</span>
                     <span id="factor3-status">⏳</span>
                 </div>
-                <!-- CARD DIVERGENSI - tampil untuk XAUUSD, tersembunyi untuk BTCUSD -->
                 <div class="factor-card" id="factor4-card">
                     <span>🔄 DIV</span>
                     <span id="factor4-status">⏳</span>
                 </div>
-                <!-- CARD VOLUME - tampil untuk BTCUSD, tersembunyi untuk XAUUSD -->
                 <div class="factor-card" id="factor-volume-card" style="display: none !important;">
                     <span>📊 VOL</span>
                     <span id="factor-volume-status">⏳</span>
@@ -329,7 +317,6 @@
                     <div class="clock-module-new" id="clock-display">00:00:00</div>
                     <div id="news-status" class="news-status" style="display: none;">📰 NO NEWS</div>
                     <div id="trailing-status" class="trailing-status" style="display: none;">🔒 TRAILING OFF</div>
-                    <!-- SIGNAL HISTORY LOG - OPSI 3 (di footer) -->
                     <div id="signal-history" class="signal-history">📜 SIGNAL: ⏳ No signal yet</div>
                 </div>
             </div>
@@ -350,10 +337,38 @@
     let mtfBiasCache = { m5: "NEUTRAL", m15: "NEUTRAL", h1: "NEUTRAL" };
     let lastArrowDirection = "neutral";
     
-    // ==================== SIGNAL HISTORY LOG ====================
+    // Signal History
     let lastBuyTime = null;
     let lastSellTime = null;
     
+    // Connection Management Variables
+    let reconnectDelay = 1000;
+    let lastWSMessageTime = Date.now();
+    let isUsingFallback = false;
+    let restFallbackInterval = null;
+    let periodicUpdateInterval = null;
+    let heartbeatInterval = null;
+    let stuckCheckInterval = null;
+    let reconnectTimer = null;
+    let isManualDisconnect = false;
+    let periodicInterval = null;
+    let signalTimer = null;
+    
+    // Real-Time Volume Variables
+    let volumeFetcherInterval = null;
+    let lastVolumeRatio = 0;
+    
+    // Engine State
+    let engine = {
+        swingHigh: 0, swingLow: 0, f618: 0, deep: 0, tp: 0, sl: 0,
+        bias: "NEUTRAL", sweepDetected: false, bosConfirmed: false,
+        adx: 25, sma10: 0, plusDI: 25, minusDI: 25,
+        lastSwingHigh: 0, lastSwingLow: 0,
+        lastSweepTime: 0, lastBosTime: 0, lastTPHitTime: 0,
+        liquiditySide: null, fvgEntryActive: false
+    };
+    
+    // ==================== SIGNAL HISTORY LOG ====================
     function updateSignalHistoryLog(decision, currentPrice) {
         const historyElem = document.getElementById('signal-history');
         if (!historyElem) return;
@@ -368,7 +383,6 @@
             console.log(`📝 Signal History: SELL recorded at ${new Date(now).toLocaleTimeString()}`);
         }
         
-        // Format tampilan history
         let buyText = "";
         let sellText = "";
         
@@ -405,7 +419,6 @@
         }
     }
     
-    // Update history setiap detik (untuk timer)
     function startHistoryUpdater() {
         setInterval(() => {
             if (lastBuyTime || lastSellTime) {
@@ -414,92 +427,75 @@
         }, 1000);
     }
     
-    // Connection Management Variables
-    let reconnectDelay = 1000;
-    let lastWSMessageTime = Date.now();
-    let isUsingFallback = false;
-    let restFallbackInterval = null;
-    let periodicUpdateInterval = null;
-    let heartbeatInterval = null;
-    let stuckCheckInterval = null;
-    let reconnectTimer = null;
-    let isManualDisconnect = false;
-    let periodicInterval = null;
-    let signalTimer = null;
-    
-    // Real-Time Volume Monitor Variables
-    let volumeMonitorInterval = null;
-    let lastVolumeRatio = 0;
-    
-    // Engine State
-    let engine = {
-        swingHigh: 0, swingLow: 0, f618: 0, deep: 0, tp: 0, sl: 0,
-        bias: "NEUTRAL", sweepDetected: false, bosConfirmed: false,
-        adx: 25, sma10: 0, plusDI: 25, minusDI: 25,
-        lastSwingHigh: 0, lastSwingLow: 0,
-        lastSweepTime: 0, lastBosTime: 0, lastTPHitTime: 0,
-        liquiditySide: null, fvgEntryActive: false
-    };
-    
     // ==================== FUNGSI SWAP CARD TAMPILAN ====================
     function swapCardDisplay() {
         const divCard = document.getElementById('factor4-card');
         const volCard = document.getElementById('factor-volume-card');
-        
-        console.log("🔄 Swap card display for pair:", currentPair);
         
         if (currentPair === "BTCUSDT") {
             if (divCard) divCard.style.display = "none";
             if (volCard) {
                 volCard.style.display = "inline-flex";
                 volCard.style.removeProperty('display');
-                console.log("✅ Volume card VISIBLE for BTCUSD");
             }
         } else {
             if (divCard) {
                 divCard.style.display = "inline-flex";
                 divCard.style.removeProperty('display');
-                console.log("✅ Divergence card VISIBLE for XAUUSD");
             }
             if (volCard) volCard.style.display = "none";
         }
     }
     
-    // ==================== REAL-TIME VOLUME MONITOR ====================
-    function startRealTimeVolumeMonitor() {
-        if (volumeMonitorInterval) clearInterval(volumeMonitorInterval);
+    // ==================== REAL-TIME VOLUME FETCHER ====================
+    async function fetchLatestVolume() {
+        if (currentPair !== "BTCUSDT") return;
+        if (!candleData.length) return;
         
-        volumeMonitorInterval = setInterval(() => {
-            if (currentPair === "BTCUSDT" && candleData.length >= 21) {
+        try {
+            const url = `https://fapi.binance.com/fapi/v1/klines?symbol=${currentPair}&interval=${currentTF}&limit=2`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            
+            if (Array.isArray(data) && data.length >= 1) {
+                const latestCandle = data[data.length - 1];
+                const latestVolume = parseFloat(latestCandle[5]);
+                const latestClose = parseFloat(latestCandle[4]);
+                const latestHigh = parseFloat(latestCandle[2]);
+                const latestLow = parseFloat(latestCandle[3]);
+                
+                if (candleData.length > 0) {
+                    const lastCandle = candleData[candleData.length - 1];
+                    if (lastCandle.v !== latestVolume) {
+                        lastCandle.v = latestVolume;
+                    }
+                    lastCandle.c = latestClose;
+                    lastCandle.h = Math.max(lastCandle.h, latestHigh);
+                    lastCandle.l = Math.min(lastCandle.l, latestLow);
+                }
+                
                 const last20Volumes = candleData.slice(-21, -1).map(c => c.v || 0);
                 const avgVolume = last20Volumes.reduce((a, b) => a + b, 0) / 20;
-                const currentVolume = candleData[candleData.length - 1]?.v || 0;
-                const newVolumeRatio = currentVolume / avgVolume;
+                const newVolumeRatio = latestVolume / avgVolume;
                 
                 if (Math.abs(newVolumeRatio - lastVolumeRatio) > 0.01) {
                     lastVolumeRatio = newVolumeRatio;
                     wysetrade.volumeRatio = newVolumeRatio;
                     updateVolumeDisplay();
                     updateFinalDecision();
-                    console.log(`📊 Real-time Volume Update: ${newVolumeRatio.toFixed(2)}x | Valid: ${newVolumeRatio > 1.5 ? 'YES' : 'NO'}`);
                 }
             }
-        }, 2000);
+        } catch(e) {
+            // Silent fail, keep existing volume
+        }
+    }
+    
+    function startVolumeFetcher() {
+        if (volumeFetcherInterval) clearInterval(volumeFetcherInterval);
+        volumeFetcherInterval = setInterval(fetchLatestVolume, 3000);
     }
     
     // ==================== OPTIMASI 1: ECONOMIC CALENDAR FILTER ====================
-    const HIGH_IMPACT_NEWS = [
-        { title: "NFP", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 2 },
-        { title: "FOMC", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 3 },
-        { title: "CPI", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 2 },
-        { title: "GDP", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 2 },
-        { title: "Unemployment", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 1.5 },
-        { title: "OPEC", symbols: ["XAUUSDT"], impactHours: 2 },
-        { title: "PPI", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 1.5 },
-        { title: "Retail Sales", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 1.5 },
-        { title: "PMI", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 1 }
-    ];
-    
     let upcomingNews = [];
     let isNewsBlackout = false;
     let newsBlackoutReason = "";
@@ -526,7 +522,6 @@
                 generateStaticNews();
             }
         } catch(e) {
-            console.warn("News API error, using static data:", e);
             generateStaticNews();
         }
         checkNewsBlackout();
@@ -593,17 +588,22 @@
     function isBTCVolumeValid() {
         if (currentPair !== "BTCUSDT") return true;
         if (!candleData.length || candleData.length < 21) return false;
-        
         const volumeRatio = lastVolumeRatio > 0 ? lastVolumeRatio : wysetrade.volumeRatio;
         return volumeRatio > 1.5;
     }
     
-    // ==================== OPTIMASI 3: TRAILING STOP ====================
+    // ==================== TRAILING STOP ====================
     let trailingActive = false;
     let trailingStopPrice = 0;
     let maxProfitPercent = 0;
     let entryPriceForTrailing = 0;
     let tradeDirectionForTrailing = null;
+    let isInTrade = false;
+    let lastEntryPrice = 0;
+    let lastTradeDirection = null;
+    let lastEntryTime = 0;
+    let lastResetTime = 0;
+    const RESET_COOLDOWN = 2000;
     const TRAILING_ACTIVATION_PROFIT = 27;
     const TRAILING_DISTANCE_PERCENT = 15;
     
@@ -624,15 +624,7 @@
                 tradeDirectionForTrailing = lastTradeDirection;
                 maxProfitPercent = currentProfitPercent;
                 trailingStopPrice = currentPrice - (Math.abs(engine.tp - lastEntryPrice) * (TRAILING_DISTANCE_PERCENT / 100));
-                
-                console.log(`🔒 TRAILING STOP ACTIVATED at ${currentProfitPercent.toFixed(1)}% profit`);
                 updateTrailingStatusDisplay(true);
-                
-                const decisionElem = document.getElementById('decision-status');
-                if (decisionElem) {
-                    decisionElem.innerHTML = `🔒 TRAILING ACTIVE @ ${currentProfitPercent.toFixed(0)}%`;
-                    setTimeout(() => updateFinalDecision(), 2000);
-                }
                 return true;
             }
         } else if (!isLongTrade && engine.tp > 0) {
@@ -646,15 +638,7 @@
                 tradeDirectionForTrailing = lastTradeDirection;
                 maxProfitPercent = currentProfitPercent;
                 trailingStopPrice = currentPrice + (Math.abs(engine.tp - lastEntryPrice) * (TRAILING_DISTANCE_PERCENT / 100));
-                
-                console.log(`🔒 TRAILING STOP ACTIVATED at ${currentProfitPercent.toFixed(1)}% profit`);
                 updateTrailingStatusDisplay(true);
-                
-                const decisionElem = document.getElementById('decision-status');
-                if (decisionElem) {
-                    decisionElem.innerHTML = `🔒 TRAILING ACTIVE @ ${currentProfitPercent.toFixed(0)}%`;
-                    setTimeout(() => updateFinalDecision(), 2000);
-                }
                 return true;
             }
         }
@@ -678,13 +662,11 @@
                 newTrailingStop = currentPrice - (targetDistance * (TRAILING_DISTANCE_PERCENT / 100));
                 if (newTrailingStop > trailingStopPrice) {
                     trailingStopPrice = newTrailingStop;
-                    console.log(`📈 Trailing stop moved to ${trailingStopPrice.toFixed(2)}`);
                     updateTrailingStatusDisplay(true, currentProfitPercent);
                 }
             }
             
             if (currentPrice <= trailingStopPrice) {
-                console.log(`🔴 TRAILING STOP HIT! Profit: ${currentProfitPercent.toFixed(1)}%`);
                 fullStructureReset(`TRAILING STOP HIT (${currentProfitPercent.toFixed(0)}% profit)`);
                 return true;
             }
@@ -698,18 +680,15 @@
                 newTrailingStop = currentPrice + (targetDistance * (TRAILING_DISTANCE_PERCENT / 100));
                 if (newTrailingStop < trailingStopPrice) {
                     trailingStopPrice = newTrailingStop;
-                    console.log(`📉 Trailing stop moved to ${trailingStopPrice.toFixed(2)}`);
                     updateTrailingStatusDisplay(true, currentProfitPercent);
                 }
             }
             
             if (currentPrice >= trailingStopPrice) {
-                console.log(`🔴 TRAILING STOP HIT! Profit: ${currentProfitPercent.toFixed(1)}%`);
                 fullStructureReset(`TRAILING STOP HIT (${currentProfitPercent.toFixed(0)}% profit)`);
                 return true;
             }
         }
-        
         return false;
     }
     
@@ -724,7 +703,6 @@
             } else {
                 trailingElem.innerHTML = `🔒 TRAILING ACTIVE`;
             }
-            trailingElem.style.background = "rgba(255, 170, 68, 0.2)";
         } else {
             trailingElem.style.display = "none";
         }
@@ -740,13 +718,6 @@
     }
     
     // ==================== AUTO RESET SYSTEM ====================
-    let lastEntryPrice = 0;
-    let lastTradeDirection = null;
-    let lastEntryTime = 0;
-    let isInTrade = false;
-    let lastResetTime = 0;
-    const RESET_COOLDOWN = 2000;
-    
     function flashReset() {
         const wrapper = document.querySelector('.app-wrapper');
         if (wrapper) {
@@ -757,15 +728,10 @@
     
     function fullStructureReset(reason) {
         const now = Date.now();
-        if (now - lastResetTime < RESET_COOLDOWN) {
-            console.log("Reset cooldown active, skipping");
-            return;
-        }
+        if (now - lastResetTime < RESET_COOLDOWN) return;
         lastResetTime = now;
         
-        console.log(`🔄 FULL STRUCTURE RESET TRIGGERED: ${reason}`);
         flashReset();
-        
         resetTrailingStop();
         
         engine.sweepDetected = false;
@@ -779,9 +745,7 @@
         engine.lastSwingHigh = engine.swingHigh;
         engine.lastSwingLow = engine.swingLow;
         
-        if (candleData.length >= 30) {
-            calculateSMCLevels();
-        }
+        if (candleData.length >= 30) calculateSMCLevels();
         
         isInTrade = false;
         lastEntryPrice = 0;
@@ -791,24 +755,9 @@
         const decisionElem = document.getElementById('decision-status');
         if (decisionElem) {
             decisionElem.innerHTML = `🔄 RESET: ${reason}`;
-            decisionElem.style.color = "var(--gold)";
-            decisionElem.style.background = "rgba(255, 204, 0, 0.2)";
             setTimeout(() => {
-                if (decisionElem.innerHTML.includes("RESET")) {
-                    updateFinalDecision();
-                }
+                if (decisionElem.innerHTML.includes("RESET")) updateFinalDecision();
             }, 1500);
-        }
-        
-        const swingHighElem = document.getElementById('swing-high-value');
-        const swingLowElem = document.getElementById('swing-low-value');
-        if (swingHighElem) {
-            swingHighElem.classList.add('fvg-highlight');
-            setTimeout(() => swingHighElem.classList.remove('fvg-highlight'), 1000);
-        }
-        if (swingLowElem) {
-            swingLowElem.classList.add('fvg-highlight');
-            setTimeout(() => swingLowElem.classList.remove('fvg-highlight'), 1000);
         }
     }
     
@@ -818,25 +767,12 @@
         const isLongTrade = lastTradeDirection === "BUY";
         let isHit = false;
         
-        if (isLongTrade && currentPrice <= engine.sl) {
-            isHit = true;
-            console.log(`🔴 STOP LOSS HIT! Price: ${currentPrice}, SL: ${engine.sl}`);
-        } else if (!isLongTrade && currentPrice >= engine.sl) {
-            isHit = true;
-            console.log(`🔴 STOP LOSS HIT! Price: ${currentPrice}, SL: ${engine.sl}`);
-        }
+        if (isLongTrade && currentPrice <= engine.sl) isHit = true;
+        else if (!isLongTrade && currentPrice >= engine.sl) isHit = true;
         
         if (isHit) {
             resetTrailingStop();
-            const decisionElem = document.getElementById('decision-status');
-            if (decisionElem) {
-                decisionElem.innerHTML = "🔴 STOP LOSS HIT! RESETTING...";
-                decisionElem.style.color = "var(--danger)";
-                decisionElem.style.background = "rgba(255, 71, 87, 0.3)";
-                setTimeout(() => fullStructureReset("STOP LOSS HIT"), 500);
-            } else {
-                fullStructureReset("STOP LOSS HIT");
-            }
+            setTimeout(() => fullStructureReset("STOP LOSS HIT"), 500);
             return true;
         }
         return false;
@@ -848,28 +784,11 @@
         const isLongTrade = lastTradeDirection === "BUY";
         let isHit = false;
         
-        if (isLongTrade && currentPrice >= engine.tp) {
-            isHit = true;
-            console.log(`🟢 TAKE PROFIT HIT! Price: ${currentPrice}, TP: ${engine.tp}`);
-        } else if (!isLongTrade && currentPrice <= engine.tp) {
-            isHit = true;
-            console.log(`🟢 TAKE PROFIT HIT! Price: ${currentPrice}, TP: ${engine.tp}`);
-        }
+        if (isLongTrade && currentPrice >= engine.tp) isHit = true;
+        else if (!isLongTrade && currentPrice <= engine.tp) isHit = true;
         
-        if (isHit) {
-            engine.lastTPHitTime = Date.now();
-            
-            if (!trailingActive) {
-                const decisionElem = document.getElementById('decision-status');
-                if (decisionElem) {
-                    decisionElem.innerHTML = "🟢 TAKE PROFIT HIT! RESETTING...";
-                    decisionElem.style.color = "var(--accent)";
-                    decisionElem.style.background = "rgba(0, 255, 170, 0.3)";
-                    setTimeout(() => fullStructureReset("TAKE PROFIT HIT"), 500);
-                } else {
-                    fullStructureReset("TAKE PROFIT HIT");
-                }
-            }
+        if (isHit && !trailingActive) {
+            setTimeout(() => fullStructureReset("TAKE PROFIT HIT"), 500);
             return true;
         }
         return false;
@@ -886,7 +805,6 @@
             if (engine.swingHigh !== engine.lastSwingHigh) {
                 breakthrough = true;
                 breakthroughType = "SWING HIGH BROKEN";
-                console.log(`📈 ${breakthroughType}! Old: ${engine.lastSwingHigh}, New: ${engine.swingHigh}`);
             }
         }
         
@@ -894,66 +812,12 @@
             if (engine.swingLow !== engine.lastSwingLow) {
                 breakthrough = true;
                 breakthroughType = "SWING LOW BROKEN";
-                console.log(`📉 ${breakthroughType}! Old: ${engine.lastSwingLow}, New: ${engine.swingLow}`);
             }
         }
         
         if (breakthrough) {
             resetTrailingStop();
-            const decisionElem = document.getElementById('decision-status');
-            if (decisionElem) {
-                decisionElem.innerHTML = `🔄 ${breakthroughType}! RESETTING...`;
-                decisionElem.style.color = "var(--orange)";
-                decisionElem.style.background = "rgba(255, 136, 77, 0.2)";
-                setTimeout(() => fullStructureReset(breakthroughType), 300);
-            } else {
-                fullStructureReset(breakthroughType);
-            }
-            return true;
-        }
-        return false;
-    }
-    
-    function checkMajorStructureChange(currentPrice) {
-        if (!candleData.length || candleData.length < 30) return false;
-        
-        const now = Date.now();
-        let majorChange = false;
-        let changeReason = "";
-        
-        const oldBias = engine.bias;
-        const lastCandleClose = candleData[candleData.length - 1]?.c || currentPrice;
-        const midPoint = (engine.swingHigh + engine.swingLow) / 2;
-        const newBias = lastCandleClose > midPoint ? "BULLISH" : "BEARISH";
-        
-        if (oldBias !== newBias && oldBias !== "NEUTRAL" && newBias !== "NEUTRAL" && !oldBias.includes("BOS")) {
-            majorChange = true;
-            changeReason = `BIAS CHANGE: ${oldBias} → ${newBias}`;
-            console.log(`🔄 ${changeReason}`);
-        }
-        
-        const oldRange = engine.lastSwingHigh - engine.lastSwingLow;
-        const newRange = engine.swingHigh - engine.swingLow;
-        if (oldRange > 0 && newRange > 0) {
-            const rangeChangePercent = Math.abs((newRange - oldRange) / oldRange) * 100;
-            if (rangeChangePercent > 30) {
-                majorChange = true;
-                changeReason = `RANGE CHANGE: ${rangeChangePercent.toFixed(1)}%`;
-                console.log(`🔄 ${changeReason}`);
-            }
-        }
-        
-        if (majorChange && (now - lastResetTime) > RESET_COOLDOWN) {
-            resetTrailingStop();
-            const decisionElem = document.getElementById('decision-status');
-            if (decisionElem) {
-                decisionElem.innerHTML = `🔄 ${changeReason}`;
-                decisionElem.style.color = "var(--gold)";
-                decisionElem.style.background = "rgba(255, 204, 0, 0.2)";
-                setTimeout(() => fullStructureReset(changeReason), 300);
-            } else {
-                fullStructureReset(changeReason);
-            }
+            setTimeout(() => fullStructureReset(breakthroughType), 300);
             return true;
         }
         return false;
@@ -961,22 +825,13 @@
     
     function trackTradeEntry(decision, currentPrice) {
         if ((decision.includes("BUY NOW!") || decision.includes("SELL NOW!")) && !isInTrade) {
-            if (isNewsBlocked()) {
-                console.log("News blackout active, trade blocked");
-                return;
-            }
-            
-            if (currentPair === "BTCUSDT" && !isBTCVolumeValid()) {
-                console.log("BTCUSD volume insufficient, trade blocked");
-                return;
-            }
+            if (isNewsBlocked()) return;
+            if (currentPair === "BTCUSDT" && !isBTCVolumeValid()) return;
             
             isInTrade = true;
             lastEntryPrice = currentPrice;
             lastTradeDirection = decision.includes("BUY NOW!") ? "BUY" : "SELL";
             lastEntryTime = Date.now();
-            console.log(`📊 TRADE ENTRY: ${lastTradeDirection} at ${lastEntryPrice}`);
-            
             resetTrailingStop();
             
             localStorage.setItem('lastTradeEntry', JSON.stringify({
@@ -987,16 +842,7 @@
                 tp: engine.tp
             }));
             
-            // Update signal history log
             updateSignalHistoryLog(decision, currentPrice);
-        } else if (!decision.includes("BUY NOW!") && !decision.includes("SELL NOW!") && isInTrade && !trailingActive) {
-            const timeInTrade = Date.now() - lastEntryTime;
-            if (timeInTrade > 300000) {
-                console.log("⚠️ Trade timeout, resetting position");
-                isInTrade = false;
-                localStorage.removeItem('lastTradeEntry');
-                resetTrailingStop();
-            }
         }
     }
     
@@ -1005,20 +851,15 @@
         if (savedTrade) {
             try {
                 const trade = JSON.parse(savedTrade);
-                const timeElapsed = Date.now() - trade.time;
-                if (timeElapsed < 3600000) {
+                if (Date.now() - trade.time < 3600000) {
                     isInTrade = true;
                     lastEntryPrice = trade.price;
                     lastTradeDirection = trade.direction;
                     lastEntryTime = trade.time;
-                    console.log(`🔄 Loaded active trade: ${lastTradeDirection} at ${lastEntryPrice}`);
                 } else {
                     localStorage.removeItem('lastTradeEntry');
-                    resetTrailingStop();
                 }
-            } catch(e) {
-                console.warn("Failed to load saved trade:", e);
-            }
+            } catch(e) {}
         }
     }
     
@@ -1279,31 +1120,18 @@
     function updateWSStatus(status, message) {
         const dot = document.getElementById('ws-status-dot');
         const text = document.getElementById('ws-status-text');
-        const sysStatus = document.getElementById('sys-status');
         if (!dot || !text) return;
         if (status === 'live') {
             dot.className = 'ws-status-dot live';
             text.innerText = message || 'LIVE';
-            if (sysStatus) sysStatus.style.color = 'var(--accent)';
             reconnectDelay = 1000;
             isUsingFallback = false;
-        } else if (status === 'fallback') {
-            dot.className = 'ws-status-dot fallback';
-            text.innerText = message || 'FALLBACK';
-            if (sysStatus) sysStatus.style.color = 'var(--blue)';
-            isUsingFallback = true;
-        } else if (status === 'reconnect') {
-            dot.className = 'ws-status-dot reconnect';
-            text.innerText = message || 'RECONNECT';
-            if (sysStatus) sysStatus.style.color = 'var(--orange)';
         } else if (status === 'connecting') {
             dot.className = 'ws-status-dot connecting';
             text.innerText = message || 'CONNECTING';
-            if (sysStatus) sysStatus.style.color = 'var(--gold)';
-        } else if (status === 'offline') {
-            dot.className = 'ws-status-dot offline';
-            text.innerText = message || 'OFFLINE';
-            if (sysStatus) sysStatus.style.color = 'var(--danger)';
+        } else if (status === 'reconnect') {
+            dot.className = 'ws-status-dot reconnect';
+            text.innerText = message || 'RECONNECT';
         } else {
             dot.className = 'ws-status-dot reconnect';
             text.innerText = message || 'RECONNECT';
@@ -1372,18 +1200,13 @@
     
     function analyzeVolumeConfirmation() {
         if (!candleData.length || candleData.length < 21) return false;
-        
         const last20Volumes = candleData.slice(-21, -1).map(c => c.v || 0);
         const avgVolume = last20Volumes.reduce((a, b) => a + b, 0) / 20;
         const currentVolume = candleData[candleData.length - 1]?.v || 0;
         const volumeRatio = currentVolume / avgVolume;
-        
         lastVolumeRatio = volumeRatio;
         wysetrade.volumeRatio = volumeRatio;
-        
-        const isValid = volumeRatio > 1.2;
-        wysetrade.isValidVolume = isValid;
-        return isValid;
+        return volumeRatio > 1.2;
     }
     
     // ==================== UPDATE FUNCTIONS UNTUK CARD ====================
@@ -1460,7 +1283,6 @@
                     const timeSinceLastWS = Date.now() - lastWSMessageTime;
                     if (timeSinceLastWS > 3000 || isUsingFallback) {
                         if (!isUsingFallback && timeSinceLastWS > 3000) {
-                            console.log("⚠️ WebSocket timeout, switching to REST fallback mode");
                             updateWSStatus('fallback', 'FALLBACK');
                             isUsingFallback = true;
                         }
@@ -1474,14 +1296,13 @@
                         updateUI(newPrice);
                         lastWSMessageTime = Date.now();
                     } else if (isUsingFallback && timeSinceLastWS < 2000) {
-                        console.log("✅ WebSocket recovered, back to LIVE mode");
                         updateWSStatus('live', 'LIVE');
                         isUsingFallback = false;
                     }
                     return newPrice;
                 }
             }
-        } catch (err) { console.warn("REST fallback error:", err); }
+        } catch (err) { }
         return null;
     }
     
@@ -1500,7 +1321,6 @@
         stuckCheckInterval = setInterval(() => {
             const timeSinceLastMsg = Date.now() - lastWSMessageTime;
             if (wsConnection && wsConnection.readyState === WebSocket.OPEN && timeSinceLastMsg > 10000 && !isUsingFallback && !isReloading) {
-                console.log("⚠️ Stuck connection detected, switching to fallback");
                 updateWSStatus('fallback', 'STUCK');
                 isUsingFallback = true;
                 fetchPriceFromREST();
@@ -1519,7 +1339,7 @@
         if (periodicInterval) { clearInterval(periodicInterval); periodicInterval = null; }
         if (signalTimer) { clearTimeout(signalTimer); signalTimer = null; }
         if (newsCheckInterval) { clearInterval(newsCheckInterval); newsCheckInterval = null; }
-        if (volumeMonitorInterval) { clearInterval(volumeMonitorInterval); volumeMonitorInterval = null; }
+        if (volumeFetcherInterval) { clearInterval(volumeFetcherInterval); volumeFetcherInterval = null; }
     }
     
     function cleanupWebSocket() {
@@ -1533,7 +1353,7 @@
                 if (wsConnection.readyState === WebSocket.OPEN || wsConnection.readyState === WebSocket.CONNECTING) {
                     wsConnection.close();
                 }
-            } catch(e) { console.warn("WS cleanup error:", e); }
+            } catch(e) { }
             wsConnection = null;
         }
         setTimeout(() => { isManualDisconnect = false; }, 100);
@@ -1602,15 +1422,6 @@
         let structureChanged = false;
         if (currentPrice > engine.swingHigh && currentPrice > engine.lastSwingHigh) structureChanged = true;
         if (currentPrice < engine.swingLow && currentPrice < engine.lastSwingLow) structureChanged = true;
-        if (engine.tp !== 0) {
-            const isBullish = engine.bias === "BULLISH_BOS" || engine.bias === "BULLISH";
-            if ((isBullish && currentPrice >= engine.tp) || (!isBullish && currentPrice <= engine.tp)) {
-                if (now - engine.lastTPHitTime > 5000) {
-                    structureChanged = true;
-                    engine.lastTPHitTime = now;
-                }
-            }
-        }
         if (structureChanged && (now - lastStructureUpdateTime) > 3000) {
             lastStructureUpdateTime = now;
             forceRecalculateStructure();
@@ -1655,7 +1466,7 @@
                     else if (tf === '15m') mtfBiasCache.m15 = bias;
                     else if (tf === '1h') mtfBiasCache.h1 = bias;
                 }
-            } catch(e) { console.warn(`MTF ${tf} error:`, e); }
+            } catch(e) { }
         }));
         updateMTFDisplay();
         updateFactor2();
@@ -1736,7 +1547,7 @@
             cachedADX = Math.min(100, Math.max(0, isNaN(dx) ? 25 : dx));
             lastADXCalc = now;
             return cachedADX;
-        } catch (error) { console.error("ADX Error:", error); return 25; }
+        } catch (error) { return 25; }
     }
     
     function calculatesma10() {
@@ -2097,7 +1908,6 @@
         const wsUrl = `wss://fstream.binance.com/ws/${currentPair.toLowerCase()}@aggTrade`;
         wsConnection = new WebSocket(wsUrl);
         wsConnection.onopen = () => {
-            console.log("WebSocket connected (aggTrade)");
             reconnectDelay = 1000;
             lastWSMessageTime = Date.now();
             if (isUsingFallback) isUsingFallback = false;
@@ -2128,10 +1938,9 @@
                         updateUI(tradePrice);
                     }
                 }
-            } catch(e) { console.warn("WS message error:", e); }
+            } catch(e) { }
         };
         wsConnection.onclose = () => {
-            console.log("WebSocket closed");
             if (!isReloading && !isManualDisconnect) {
                 updateWSStatus('reconnect', 'RECONNECT');
                 if (reconnectTimer) clearTimeout(reconnectTimer);
@@ -2143,7 +1952,7 @@
                 }, reconnectDelay);
             }
         };
-        wsConnection.onerror = (error) => { console.warn("WebSocket error:", error); if (!isReloading) updateWSStatus('reconnect', 'ERROR'); };
+        wsConnection.onerror = (error) => { if (!isReloading) updateWSStatus('reconnect', 'ERROR'); };
     }
     
     // ==================== DATA FETCHING ====================
@@ -2202,6 +2011,41 @@
         updatesma10UI(currentPrice);
     }
     
+    function checkMajorStructureChange(currentPrice) {
+        if (!candleData.length || candleData.length < 30) return false;
+        
+        const now = Date.now();
+        let majorChange = false;
+        let changeReason = "";
+        
+        const oldBias = engine.bias;
+        const lastCandleClose = candleData[candleData.length - 1]?.c || currentPrice;
+        const midPoint = (engine.swingHigh + engine.swingLow) / 2;
+        const newBias = lastCandleClose > midPoint ? "BULLISH" : "BEARISH";
+        
+        if (oldBias !== newBias && oldBias !== "NEUTRAL" && newBias !== "NEUTRAL" && !oldBias.includes("BOS")) {
+            majorChange = true;
+            changeReason = `BIAS CHANGE: ${oldBias} → ${newBias}`;
+        }
+        
+        const oldRange = engine.lastSwingHigh - engine.lastSwingLow;
+        const newRange = engine.swingHigh - engine.swingLow;
+        if (oldRange > 0 && newRange > 0) {
+            const rangeChangePercent = Math.abs((newRange - oldRange) / oldRange) * 100;
+            if (rangeChangePercent > 30) {
+                majorChange = true;
+                changeReason = `RANGE CHANGE: ${rangeChangePercent.toFixed(1)}%`;
+            }
+        }
+        
+        if (majorChange && (now - lastResetTime) > RESET_COOLDOWN) {
+            resetTrailingStop();
+            setTimeout(() => fullStructureReset(changeReason), 300);
+            return true;
+        }
+        return false;
+    }
+    
     function updateClock() {
         const now = new Date();
         const clockElem = document.getElementById('clock-display');
@@ -2248,7 +2092,7 @@
         startStuckChecker();
         startPeriodicUpdates();
         startRestFallback();
-        startRealTimeVolumeMonitor();
+        startVolumeFetcher();
         
         if (newsCheckInterval) clearInterval(newsCheckInterval);
         newsCheckInterval = setInterval(fetchEconomicCalendar, 600000);
@@ -2259,8 +2103,6 @@
         await mtfPromise;
         await newsPromise;
         loadSavedTrade();
-        
-        // Start history updater for real-time timer
         startHistoryUpdater();
     }
     
