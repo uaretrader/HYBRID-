@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SMC APEX v17.1 HYBRID+</title>
+    <title>SMC APEX v18.0 | OPTIMIZED EDITION</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono:wght@400;800&display=swap');
         
@@ -15,6 +15,7 @@
             --silver-bright: #e0e0e0; --silver-medium: #c0c0c0; --silver-dark: #a9a9a9; 
             --gold-dim: rgba(255, 204, 0, 0.12); --card-bg: #050505;
             --highlight-bull: #00cc88; --highlight-bear: #ff8866; --highlight-neutral: #aaaaaa;
+            --news-ban: #ff3366; --trailing-active: #ffaa44;
         }
         
         body { 
@@ -65,9 +66,7 @@
         .factor-card.warning { border-color: var(--orange); }
         
         /* Sembunyikan card MTF yang atas */
-        #factor2-card {
-            display: none !important;
-        }
+        #factor2-card { display: none !important; }
         
         .sma10-status {
             background: rgba(0,0,0,0.6);
@@ -93,6 +92,26 @@
         #decision-status { font-weight: 900; transition: all 0.3s ease; }
         .direction-arrow { font-size: 1.2rem; font-weight: 800; min-width: 45px; text-align: right; }
         
+        .news-status {
+            background: rgba(255, 51, 102, 0.15);
+            border: 1px solid var(--news-ban);
+            border-radius: 16px;
+            padding: 2px 10px;
+            font-size: 0.55rem;
+            font-family: 'JetBrains Mono';
+            color: var(--news-ban);
+        }
+        
+        .trailing-status {
+            background: rgba(255, 170, 68, 0.15);
+            border: 1px solid var(--trailing-active);
+            border-radius: 16px;
+            padding: 2px 10px;
+            font-size: 0.55rem;
+            font-family: 'JetBrains Mono';
+            color: var(--trailing-active);
+        }
+        
         .rsi-panel { margin-top: 16px; margin-bottom: 12px; padding: 10px 14px; border: 1px solid var(--gold-dim); border-radius: 12px; background: rgba(0, 0, 0, 0.4); }
         .rsi-meta { display: flex; justify-content: space-between; margin-bottom: 6px; }
         .rsi-tag { font-size: 0.55rem; font-weight: 900; color: var(--silver-dark); font-family: 'JetBrains Mono'; }
@@ -107,18 +126,18 @@
         .data-item { background: var(--bg); padding: 10px 4px; border-right: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: background 0.2s; }
         .data-item:last-child { border-right: none; }
         .data-label { font-size: 0.45rem; color: var(--silver-medium); text-transform: uppercase; margin-bottom: 5px; display: block; font-weight: 700; letter-spacing: 0.8px; }
-        .data-val { font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #fff; font-weight: 800; }
-        .data-item-swing-left { text-align: left; padding-left: 14px; }
-        .data-item-swing-center { text-align: center; }
-        .data-item-entry-center { text-align: center; }
-        .data-item-tp-right { text-align: right; padding-right: 14px; }
-        .data-item-pips-center { text-align: center; }
-        .entry-gold { color: var(--gold) !important; }
-        .tp-blue { color: var(--blue) !important; }
-        .sl-red { color: var(--danger) !important; }
-        .pips-cyan { color: var(--blue) !important; }
-        .swing-high-text { color: var(--accent); }
-        .swing-low-text { color: var(--orange); }
+        .data-val { font-family: 'JetBrains Mono'; font-size: 0.95rem; color: #fff; font-weight: 800; }
+.data-item-swing-left { text-align: left; padding-left: 14px; }
+.data-item-swing-center { text-align: center; }
+.data-item-entry-center { text-align: center; }
+.data-item-tp-right { text-align: right; padding-right: 14px; }
+.data-item-pips-center { text-align: center; }
+.entry-gold { color: var(--gold) !important; font-size: 0.7rem !important; }
+.tp-blue { color: var(--blue) !important; font-size: 0.75rem !important; font-weight: 900 !important; }
+.sl-red { color: var(--danger) !important; font-size: 0.75rem !important; font-weight: 900 !important; }
+.pips-cyan { color: var(--blue) !important; font-size: 0.75rem !important; }
+.swing-high-text { color: var(--accent); font-size: 0.7rem !important; }
+.swing-low-text { color: var(--orange); font-size: 0.7rem !important; }
         .fvg-highlight { animation: fvgPulse 0.8s ease 2; text-shadow: 0 0 8px var(--accent); }
         @keyframes fvgPulse { 0% { text-shadow: 0 0 0 var(--accent); } 100% { text-shadow: 0 0 12px var(--accent); } }
         
@@ -131,7 +150,7 @@
         
         .terminal-box { padding: 0 16px 14px 16px; width: 100%; }
         .card { background: var(--card-bg); border: 1px solid #151515; border-radius: 12px; padding: 12px; }
-        .footer-info { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+        .footer-info { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
         .session-module-new, .date-module-new, .clock-module-new {
             font-weight: 800; background: #080808; padding: 4px 12px; border-radius: 16px;
             font-size: 0.55rem; font-family: 'JetBrains Mono'; border: 1px solid #1f1f1f;
@@ -157,7 +176,6 @@
         #live-price { font-family: 'JetBrains Mono'; font-size: 2.5rem; font-weight: 800; letter-spacing: -2px; color: #fff; line-height: 1; cursor: pointer; margin-top: 4px; transition: opacity 0.2s; }
         .price-decimal { color: var(--accent); opacity: 0.7; font-size: 2.2rem; }
         
-        /* Reset animation */
         .reset-flash {
             animation: resetFlash 0.5s ease;
         }
@@ -183,8 +201,8 @@
     <div class="terminal-container">
         <header class="header">
             <div class="brand-container">
-                <div class="brand">SMC_APEX v17.1 HYBRID+</div>
-                <div class="meta-label-sub">URTRADER TERMINAL | ELEVEN</div>
+                <div class="brand">SMC_APEX v18.0 OPTIMIZED</div>
+                <div class="meta-label-sub">URTRADER TERMINAL | HIERARCHY</div>
             </div>
             <div id="sys-status">
                 <span class="ws-status-dot" id="ws-status-dot"></span>
@@ -208,8 +226,7 @@
             <div class="hero-meta-row">
                 <div class="sma10-status" id="sma10-status">
                     <span>📊 MA</span>
-                    <span class="sma10-value"
-                    id="sma10-value">--</span>
+                    <span class="sma10-value" id="sma10-value">--</span>
                 </div>
                 <div class="factor-card" id="factor1-card">
                     <span>🏗️ STRUCT</span>
@@ -219,9 +236,15 @@
                     <span>🏦 NOS</span>
                     <span id="factor3-status">⏳</span>
                 </div>
+                <!-- CARD DIVERGENSI - tampil untuk XAUUSD, tersembunyi untuk BTCUSD -->
                 <div class="factor-card" id="factor4-card">
                     <span>🔄 DIV</span>
                     <span id="factor4-status">⏳</span>
+                </div>
+                <!-- CARD VOLUME - tampil untuk BTCUSD, tersembunyi untuk XAUUSD -->
+                <div class="factor-card" id="factor-volume-card" style="display: none !important;">
+                    <span>📊 VOL</span>
+                    <span id="factor-volume-status">⏳</span>
                 </div>
                 <div class="decision-panel">
                     <div class="decision-text">
@@ -246,7 +269,7 @@
             <div class="data-item data-item-swing-left" id="swing-hl-container" onclick="copySwingHL()">
                 <span class="data-label">📈 SWING H/L</span>
                 <div class="data-val">
-                    <span class="swing-high-text" id="swing-high-value">--</span> / 
+                    <span class="swing-high-text" id="swing-high-value">--</span>
                     <span class="swing-low-text" id="swing-low-value">--</span>
                 </div>
             </div>
@@ -280,6 +303,8 @@
                     <div class="session-module-new"><span id="session-tag">ASIA</span></div>
                     <div class="date-module-new" id="date-display">--/--/--</div>
                     <div class="clock-module-new" id="clock-display">00:00:00</div>
+                    <div id="news-status" class="news-status" style="display: none;">📰 NO NEWS</div>
+                    <div id="trailing-status" class="trailing-status" style="display: none;">🔒 TRAILING OFF</div>
                 </div>
             </div>
         </section>
@@ -312,6 +337,10 @@
     let periodicInterval = null;
     let signalTimer = null;
     
+    // Real-Time Volume Monitor Variables
+    let volumeMonitorInterval = null;
+    let lastVolumeRatio = 0;
+    
     // Engine State
     let engine = {
         swingHigh: 0, swingLow: 0, f618: 0, deep: 0, tp: 0, sl: 0,
@@ -322,8 +351,305 @@
         liquiditySide: null, fvgEntryActive: false
     };
     
+    // ==================== FUNGSI SWAP CARD TAMPILAN ====================
+    function swapCardDisplay() {
+        const divCard = document.getElementById('factor4-card');
+        const volCard = document.getElementById('factor-volume-card');
+        
+        console.log("🔄 Swap card display for pair:", currentPair);
+        
+        if (currentPair === "BTCUSDT") {
+            if (divCard) divCard.style.display = "none";
+            if (volCard) {
+                volCard.style.display = "inline-flex";
+                volCard.style.removeProperty('display');
+                console.log("✅ Volume card VISIBLE for BTCUSD");
+            }
+        } else {
+            if (divCard) {
+                divCard.style.display = "inline-flex";
+                divCard.style.removeProperty('display');
+                console.log("✅ Divergence card VISIBLE for XAUUSD");
+            }
+            if (volCard) volCard.style.display = "none";
+        }
+    }
+    
+    // ==================== REAL-TIME VOLUME MONITOR ====================
+    function startRealTimeVolumeMonitor() {
+        if (volumeMonitorInterval) clearInterval(volumeMonitorInterval);
+        
+        volumeMonitorInterval = setInterval(() => {
+            if (currentPair === "BTCUSDT" && candleData.length >= 21) {
+                const last20Volumes = candleData.slice(-21, -1).map(c => c.v || 0);
+                const avgVolume = last20Volumes.reduce((a, b) => a + b, 0) / 20;
+                const currentVolume = candleData[candleData.length - 1]?.v || 0;
+                const newVolumeRatio = currentVolume / avgVolume;
+                
+                if (Math.abs(newVolumeRatio - lastVolumeRatio) > 0.01) {
+                    lastVolumeRatio = newVolumeRatio;
+                    wysetrade.volumeRatio = newVolumeRatio;
+                    updateVolumeDisplay();
+                    updateFinalDecision();
+                    console.log(`📊 Real-time Volume Update: ${newVolumeRatio.toFixed(2)}x | Valid: ${newVolumeRatio > 1.5 ? 'YES' : 'NO'}`);
+                }
+            }
+        }, 2000);
+    }
+    
+    // ==================== OPTIMASI 1: ECONOMIC CALENDAR FILTER ====================
+    const HIGH_IMPACT_NEWS = [
+        { title: "NFP", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 2 },
+        { title: "FOMC", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 3 },
+        { title: "CPI", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 2 },
+        { title: "GDP", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 2 },
+        { title: "Unemployment", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 1.5 },
+        { title: "OPEC", symbols: ["XAUUSDT"], impactHours: 2 },
+        { title: "PPI", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 1.5 },
+        { title: "Retail Sales", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 1.5 },
+        { title: "PMI", symbols: ["XAUUSDT", "BTCUSDT"], impactHours: 1 }
+    ];
+    
+    let upcomingNews = [];
+    let isNewsBlackout = false;
+    let newsBlackoutReason = "";
+    let newsCheckInterval = null;
+    
+    async function fetchEconomicCalendar() {
+        try {
+            const response = await fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json');
+            if (response.ok) {
+                const data = await response.json();
+                upcomingNews = data.filter(event => {
+                    const impact = event.impact || "";
+                    const relevant = impact.toLowerCase().includes("high") || impact.toLowerCase().includes("medium");
+                    const pairRelevant = event.currency === "USD" || 
+                                        (currentPair === "XAUUSDT" && event.currency === "USD") ||
+                                        (currentPair === "BTCUSDT" && (event.currency === "USD" || event.currency === "BTC"));
+                    return relevant && pairRelevant;
+                }).map(event => ({
+                    title: event.title || event.country,
+                    time: new Date(event.date).getTime(),
+                    impactHours: event.impact === "High" ? 2 : 1
+                }));
+            } else {
+                generateStaticNews();
+            }
+        } catch(e) {
+            console.warn("News API error, using static data:", e);
+            generateStaticNews();
+        }
+        checkNewsBlackout();
+    }
+    
+    function generateStaticNews() {
+        const now = Date.now();
+        upcomingNews = [];
+        const days = [1, 3, 5];
+        days.forEach(day => {
+            const baseDate = new Date();
+            baseDate.setDate(baseDate.getDate() + ((day - baseDate.getDay() + 7) % 7));
+            baseDate.setHours(13, 30, 0, 0);
+            if (baseDate.getTime() > now) {
+                upcomingNews.push({
+                    title: "High Impact News",
+                    time: baseDate.getTime(),
+                    impactHours: 2
+                });
+            }
+        });
+    }
+    
+    function checkNewsBlackout() {
+        const now = Date.now();
+        let isBlackout = false;
+        let reason = "";
+        
+        for (const news of upcomingNews) {
+            const newsTime = news.time;
+            const impactHours = news.impactHours || 2;
+            const startBlackout = newsTime - (30 * 60 * 1000);
+            const endBlackout = newsTime + (30 * 60 * 1000);
+            
+            if (now >= startBlackout && now <= endBlackout) {
+                isBlackout = true;
+                reason = `⛔ ${news.title.toUpperCase()} (${Math.ceil((endBlackout - now) / 60000)}m left)`;
+                break;
+            }
+        }
+        
+        isNewsBlackout = isBlackout;
+        newsBlackoutReason = reason;
+        
+        const newsStatusElem = document.getElementById('news-status');
+        if (newsStatusElem) {
+            if (isNewsBlackout) {
+                newsStatusElem.style.display = "inline-flex";
+                newsStatusElem.innerHTML = `📰 ${reason}`;
+                newsStatusElem.style.background = "rgba(255, 51, 102, 0.2)";
+            } else {
+                newsStatusElem.style.display = "none";
+            }
+        }
+        
+        if (lastPrice > 0) updateFinalDecision();
+    }
+    
+    function isNewsBlocked() {
+        return isNewsBlackout;
+    }
+    
+    // ==================== BTCUSD VOLUME VALIDATION (GATEKEEPER) ====================
+    function isBTCVolumeValid() {
+        if (currentPair !== "BTCUSDT") return true;
+        if (!candleData.length || candleData.length < 21) return false;
+        
+        const volumeRatio = lastVolumeRatio > 0 ? lastVolumeRatio : wysetrade.volumeRatio;
+        return volumeRatio > 1.5;
+    }
+    
+    // ==================== OPTIMASI 3: TRAILING STOP ====================
+    let trailingActive = false;
+    let trailingStopPrice = 0;
+    let maxProfitPercent = 0;
+    let entryPriceForTrailing = 0;
+    let tradeDirectionForTrailing = null;
+    const TRAILING_ACTIVATION_PROFIT = 27;
+    const TRAILING_DISTANCE_PERCENT = 15;
+    
+    function checkAndActivateTrailingStop(currentPrice) {
+        if (!isInTrade || trailingActive) return false;
+        
+        const isLongTrade = lastTradeDirection === "BUY";
+        let currentProfitPercent = 0;
+        
+        if (isLongTrade && engine.tp > 0) {
+            const targetDistance = Math.abs(engine.tp - lastEntryPrice);
+            const currentDistance = currentPrice - lastEntryPrice;
+            currentProfitPercent = (currentDistance / targetDistance) * 100;
+            
+            if (currentProfitPercent >= TRAILING_ACTIVATION_PROFIT) {
+                trailingActive = true;
+                entryPriceForTrailing = lastEntryPrice;
+                tradeDirectionForTrailing = lastTradeDirection;
+                maxProfitPercent = currentProfitPercent;
+                trailingStopPrice = currentPrice - (Math.abs(engine.tp - lastEntryPrice) * (TRAILING_DISTANCE_PERCENT / 100));
+                
+                console.log(`🔒 TRAILING STOP ACTIVATED at ${currentProfitPercent.toFixed(1)}% profit`);
+                updateTrailingStatusDisplay(true);
+                
+                const decisionElem = document.getElementById('decision-status');
+                if (decisionElem) {
+                    decisionElem.innerHTML = `🔒 TRAILING ACTIVE @ ${currentProfitPercent.toFixed(0)}%`;
+                    setTimeout(() => updateFinalDecision(), 2000);
+                }
+                return true;
+            }
+        } else if (!isLongTrade && engine.tp > 0) {
+            const targetDistance = Math.abs(engine.tp - lastEntryPrice);
+            const currentDistance = lastEntryPrice - currentPrice;
+            currentProfitPercent = (currentDistance / targetDistance) * 100;
+            
+            if (currentProfitPercent >= TRAILING_ACTIVATION_PROFIT) {
+                trailingActive = true;
+                entryPriceForTrailing = lastEntryPrice;
+                tradeDirectionForTrailing = lastTradeDirection;
+                maxProfitPercent = currentProfitPercent;
+                trailingStopPrice = currentPrice + (Math.abs(engine.tp - lastEntryPrice) * (TRAILING_DISTANCE_PERCENT / 100));
+                
+                console.log(`🔒 TRAILING STOP ACTIVATED at ${currentProfitPercent.toFixed(1)}% profit`);
+                updateTrailingStatusDisplay(true);
+                
+                const decisionElem = document.getElementById('decision-status');
+                if (decisionElem) {
+                    decisionElem.innerHTML = `🔒 TRAILING ACTIVE @ ${currentProfitPercent.toFixed(0)}%`;
+                    setTimeout(() => updateFinalDecision(), 2000);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    function updateTrailingStop(currentPrice) {
+        if (!trailingActive || !isInTrade) return false;
+        
+        const isLongTrade = tradeDirectionForTrailing === "BUY";
+        let currentProfitPercent = 0;
+        let newTrailingStop = trailingStopPrice;
+        
+        if (isLongTrade && engine.tp > 0) {
+            const targetDistance = Math.abs(engine.tp - entryPriceForTrailing);
+            const currentDistance = currentPrice - entryPriceForTrailing;
+            currentProfitPercent = (currentDistance / targetDistance) * 100;
+            
+            if (currentProfitPercent > maxProfitPercent) {
+                maxProfitPercent = currentProfitPercent;
+                newTrailingStop = currentPrice - (targetDistance * (TRAILING_DISTANCE_PERCENT / 100));
+                if (newTrailingStop > trailingStopPrice) {
+                    trailingStopPrice = newTrailingStop;
+                    console.log(`📈 Trailing stop moved to ${trailingStopPrice.toFixed(2)}`);
+                    updateTrailingStatusDisplay(true, currentProfitPercent);
+                }
+            }
+            
+            if (currentPrice <= trailingStopPrice) {
+                console.log(`🔴 TRAILING STOP HIT! Profit: ${currentProfitPercent.toFixed(1)}%`);
+                fullStructureReset(`TRAILING STOP HIT (${currentProfitPercent.toFixed(0)}% profit)`);
+                return true;
+            }
+        } else if (!isLongTrade && engine.tp > 0) {
+            const targetDistance = Math.abs(engine.tp - entryPriceForTrailing);
+            const currentDistance = entryPriceForTrailing - currentPrice;
+            currentProfitPercent = (currentDistance / targetDistance) * 100;
+            
+            if (currentProfitPercent > maxProfitPercent) {
+                maxProfitPercent = currentProfitPercent;
+                newTrailingStop = currentPrice + (targetDistance * (TRAILING_DISTANCE_PERCENT / 100));
+                if (newTrailingStop < trailingStopPrice) {
+                    trailingStopPrice = newTrailingStop;
+                    console.log(`📉 Trailing stop moved to ${trailingStopPrice.toFixed(2)}`);
+                    updateTrailingStatusDisplay(true, currentProfitPercent);
+                }
+            }
+            
+            if (currentPrice >= trailingStopPrice) {
+                console.log(`🔴 TRAILING STOP HIT! Profit: ${currentProfitPercent.toFixed(1)}%`);
+                fullStructureReset(`TRAILING STOP HIT (${currentProfitPercent.toFixed(0)}% profit)`);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    function updateTrailingStatusDisplay(active, profitPercent = null) {
+        const trailingElem = document.getElementById('trailing-status');
+        if (!trailingElem) return;
+        
+        if (active && trailingActive) {
+            trailingElem.style.display = "inline-flex";
+            if (profitPercent) {
+                trailingElem.innerHTML = `🔒 TRAILING @ ${profitPercent.toFixed(0)}%`;
+            } else {
+                trailingElem.innerHTML = `🔒 TRAILING ACTIVE`;
+            }
+            trailingElem.style.background = "rgba(255, 170, 68, 0.2)";
+        } else {
+            trailingElem.style.display = "none";
+        }
+    }
+    
+    function resetTrailingStop() {
+        trailingActive = false;
+        trailingStopPrice = 0;
+        maxProfitPercent = 0;
+        entryPriceForTrailing = 0;
+        tradeDirectionForTrailing = null;
+        updateTrailingStatusDisplay(false);
+    }
+    
     // ==================== AUTO RESET SYSTEM ====================
-    // Track posisi entry untuk deteksi SL/TP hit
     let lastEntryPrice = 0;
     let lastTradeDirection = null;
     let lastEntryTime = 0;
@@ -331,7 +657,6 @@
     let lastResetTime = 0;
     const RESET_COOLDOWN = 2000;
     
-    // Flash effect untuk reset
     function flashReset() {
         const wrapper = document.querySelector('.app-wrapper');
         if (wrapper) {
@@ -340,7 +665,6 @@
         }
     }
     
-    // Full structure reset
     function fullStructureReset(reason) {
         const now = Date.now();
         if (now - lastResetTime < RESET_COOLDOWN) {
@@ -352,7 +676,8 @@
         console.log(`🔄 FULL STRUCTURE RESET TRIGGERED: ${reason}`);
         flashReset();
         
-        // Reset semua state engine
+        resetTrailingStop();
+        
         engine.sweepDetected = false;
         engine.bosConfirmed = false;
         engine.liquiditySide = null;
@@ -361,22 +686,18 @@
         engine.lastSweepTime = 0;
         engine.lastBosTime = 0;
         
-        // Reset swing points
         engine.lastSwingHigh = engine.swingHigh;
         engine.lastSwingLow = engine.swingLow;
         
-        // Recalculate semua level
         if (candleData.length >= 30) {
             calculateSMCLevels();
         }
         
-        // Reset trade tracking
         isInTrade = false;
         lastEntryPrice = 0;
         lastTradeDirection = null;
         localStorage.removeItem('lastTradeEntry');
         
-        // Update UI dengan animasi
         const decisionElem = document.getElementById('decision-status');
         if (decisionElem) {
             decisionElem.innerHTML = `🔄 RESET: ${reason}`;
@@ -389,7 +710,6 @@
             }, 1500);
         }
         
-        // Highlight reset pada swing H/L
         const swingHighElem = document.getElementById('swing-high-value');
         const swingLowElem = document.getElementById('swing-low-value');
         if (swingHighElem) {
@@ -402,7 +722,6 @@
         }
     }
     
-    // Cek apakah SL terkena
     function checkStopLossHit(currentPrice) {
         if (!isInTrade || engine.sl === 0) return false;
         
@@ -418,6 +737,7 @@
         }
         
         if (isHit) {
+            resetTrailingStop();
             const decisionElem = document.getElementById('decision-status');
             if (decisionElem) {
                 decisionElem.innerHTML = "🔴 STOP LOSS HIT! RESETTING...";
@@ -432,7 +752,6 @@
         return false;
     }
     
-    // Cek apakah TP terkena
     function checkTakeProfitHit(currentPrice) {
         if (!isInTrade || engine.tp === 0) return false;
         
@@ -449,21 +768,23 @@
         
         if (isHit) {
             engine.lastTPHitTime = Date.now();
-            const decisionElem = document.getElementById('decision-status');
-            if (decisionElem) {
-                decisionElem.innerHTML = "🟢 TAKE PROFIT HIT! RESETTING...";
-                decisionElem.style.color = "var(--accent)";
-                decisionElem.style.background = "rgba(0, 255, 170, 0.3)";
-                setTimeout(() => fullStructureReset("TAKE PROFIT HIT"), 500);
-            } else {
-                fullStructureReset("TAKE PROFIT HIT");
+            
+            if (!trailingActive) {
+                const decisionElem = document.getElementById('decision-status');
+                if (decisionElem) {
+                    decisionElem.innerHTML = "🟢 TAKE PROFIT HIT! RESETTING...";
+                    decisionElem.style.color = "var(--accent)";
+                    decisionElem.style.background = "rgba(0, 255, 170, 0.3)";
+                    setTimeout(() => fullStructureReset("TAKE PROFIT HIT"), 500);
+                } else {
+                    fullStructureReset("TAKE PROFIT HIT");
+                }
             }
             return true;
         }
         return false;
     }
     
-    // Cek swing breakthrough
     function checkSwingBreakthrough(currentPrice) {
         if (!engine.swingHigh || !engine.swingLow) return false;
         
@@ -488,6 +809,7 @@
         }
         
         if (breakthrough) {
+            resetTrailingStop();
             const decisionElem = document.getElementById('decision-status');
             if (decisionElem) {
                 decisionElem.innerHTML = `🔄 ${breakthroughType}! RESETTING...`;
@@ -502,7 +824,6 @@
         return false;
     }
     
-    // Cek major structure change
     function checkMajorStructureChange(currentPrice) {
         if (!candleData.length || candleData.length < 30) return false;
         
@@ -510,19 +831,17 @@
         let majorChange = false;
         let changeReason = "";
         
-        // Deteksi perubahan bias
         const oldBias = engine.bias;
         const lastCandleClose = candleData[candleData.length - 1]?.c || currentPrice;
         const midPoint = (engine.swingHigh + engine.swingLow) / 2;
         const newBias = lastCandleClose > midPoint ? "BULLISH" : "BEARISH";
         
-        if (oldBias !== newBias && oldBias !== "NEUTRAL" && newBias !== "NEUTRAL" && oldBias.includes("BOS") === false) {
+        if (oldBias !== newBias && oldBias !== "NEUTRAL" && newBias !== "NEUTRAL" && !oldBias.includes("BOS")) {
             majorChange = true;
             changeReason = `BIAS CHANGE: ${oldBias} → ${newBias}`;
             console.log(`🔄 ${changeReason}`);
         }
         
-        // Deteksi perubahan range signifikan
         const oldRange = engine.lastSwingHigh - engine.lastSwingLow;
         const newRange = engine.swingHigh - engine.swingLow;
         if (oldRange > 0 && newRange > 0) {
@@ -535,6 +854,7 @@
         }
         
         if (majorChange && (now - lastResetTime) > RESET_COOLDOWN) {
+            resetTrailingStop();
             const decisionElem = document.getElementById('decision-status');
             if (decisionElem) {
                 decisionElem.innerHTML = `🔄 ${changeReason}`;
@@ -549,14 +869,25 @@
         return false;
     }
     
-    // Track trade entry
     function trackTradeEntry(decision, currentPrice) {
         if ((decision.includes("BUY NOW!") || decision.includes("SELL NOW!")) && !isInTrade) {
+            if (isNewsBlocked()) {
+                console.log("News blackout active, trade blocked");
+                return;
+            }
+            
+            if (currentPair === "BTCUSDT" && !isBTCVolumeValid()) {
+                console.log("BTCUSD volume insufficient, trade blocked");
+                return;
+            }
+            
             isInTrade = true;
             lastEntryPrice = currentPrice;
             lastTradeDirection = decision.includes("BUY NOW!") ? "BUY" : "SELL";
             lastEntryTime = Date.now();
             console.log(`📊 TRADE ENTRY: ${lastTradeDirection} at ${lastEntryPrice}`);
+            
+            resetTrailingStop();
             
             localStorage.setItem('lastTradeEntry', JSON.stringify({
                 price: lastEntryPrice,
@@ -565,17 +896,17 @@
                 sl: engine.sl,
                 tp: engine.tp
             }));
-        } else if (!decision.includes("BUY NOW!") && !decision.includes("SELL NOW!") && isInTrade) {
+        } else if (!decision.includes("BUY NOW!") && !decision.includes("SELL NOW!") && isInTrade && !trailingActive) {
             const timeInTrade = Date.now() - lastEntryTime;
             if (timeInTrade > 300000) {
                 console.log("⚠️ Trade timeout, resetting position");
                 isInTrade = false;
                 localStorage.removeItem('lastTradeEntry');
+                resetTrailingStop();
             }
         }
     }
     
-    // Load saved trade
     function loadSavedTrade() {
         const savedTrade = localStorage.getItem('lastTradeEntry');
         if (savedTrade) {
@@ -590,6 +921,7 @@
                     console.log(`🔄 Loaded active trade: ${lastTradeDirection} at ${lastEntryPrice}`);
                 } else {
                     localStorage.removeItem('lastTradeEntry');
+                    resetTrailingStop();
                 }
             } catch(e) {
                 console.warn("Failed to load saved trade:", e);
@@ -946,17 +1278,82 @@
     function updateFactor6() { const isValid = detectCandlestickPattern(); factorStatus.f6 = isValid; return isValid; }
     
     function analyzeVolumeConfirmation() {
-        if (!candleData.length || candleData.length < 20) return false;
-        const last20Volumes = candleData.slice(-20).map(c => c.v || 0);
+        if (!candleData.length || candleData.length < 21) return false;
+        
+        const last20Volumes = candleData.slice(-21, -1).map(c => c.v || 0);
         const avgVolume = last20Volumes.reduce((a, b) => a + b, 0) / 20;
         const currentVolume = candleData[candleData.length - 1]?.v || 0;
-        wysetrade.volumeRatio = currentVolume / avgVolume;
-        const isValid = wysetrade.volumeRatio > 1.2;
+        const volumeRatio = currentVolume / avgVolume;
+        
+        lastVolumeRatio = volumeRatio;
+        wysetrade.volumeRatio = volumeRatio;
+        
+        const isValid = volumeRatio > 1.2;
         wysetrade.isValidVolume = isValid;
         return isValid;
     }
     
-    function updateFactor7() { const isValid = analyzeVolumeConfirmation(); factorStatus.f7 = isValid; return isValid; }
+    // ==================== UPDATE FUNCTIONS UNTUK CARD ====================
+    function updateDivergenceDisplay() {
+        if (currentPair !== "XAUUSDT") return;
+        
+        const rsiArr = computeRSIArray();
+        const divergence = detectDivergence(rsiArr);
+        const isValid = (divergence.type === "BULLISH" && divergence.strength > 30) || (divergence.type === "BEARISH" && divergence.strength > 30);
+        factorStatus.f4 = isValid;
+        
+        const card = document.getElementById('factor4-card');
+        const status = document.getElementById('factor4-status');
+        if (card && status) {
+            if (isValid) {
+                card.classList.add('active');
+                status.innerHTML = divergence.type === "BULLISH" ? "▲ BULL DIV" : "▼ BEAR DIV";
+                status.style.color = divergence.type === "BULLISH" ? "var(--accent)" : "var(--orange)";
+            } else {
+                card.classList.remove('active');
+                status.innerHTML = divergence.type === "NONE" ? "NONE" : `${divergence.type.slice(0,4)} ${Math.round(divergence.strength)}%`;
+                status.style.color = "var(--silver-dark)";
+            }
+        }
+        
+        const rsi = rsiArr.length ? rsiArr[rsiArr.length - 1] : 50;
+        const rsiVal = document.getElementById('rsi-val');
+        const rsiBar = document.getElementById('rsi-bar');
+        if (rsiVal) rsiVal.innerText = rsi.toFixed(1);
+        if (rsiBar) { rsiBar.style.width = rsi + "%"; rsiBar.style.background = rsi > 70 ? "var(--danger)" : (rsi < 30 ? "var(--accent)" : "var(--silver-medium)"); }
+    }
+    
+    function updateVolumeDisplay() {
+        if (currentPair !== "BTCUSDT") return;
+        
+        const volumeRatio = lastVolumeRatio > 0 ? lastVolumeRatio : wysetrade.volumeRatio;
+        const isValid = volumeRatio > 1.5;
+        factorStatus.f7 = isValid;
+        
+        const card = document.getElementById('factor-volume-card');
+        const status = document.getElementById('factor-volume-status');
+        
+        if (card && status) {
+            card.style.display = "inline-flex";
+            card.style.removeProperty('display');
+            
+            if (isValid) {
+                card.classList.add('active');
+                status.innerHTML = `${volumeRatio.toFixed(2)}x ✅`;
+                status.style.color = "var(--accent)";
+            } else {
+                card.classList.remove('active');
+                status.innerHTML = `${volumeRatio.toFixed(2)}x`;
+                status.style.color = "var(--orange)";
+            }
+        }
+        
+        const rsi = computeRSI(lastPrice);
+        const rsiVal = document.getElementById('rsi-val');
+        const rsiBar = document.getElementById('rsi-bar');
+        if (rsiVal) rsiVal.innerText = rsi.toFixed(1);
+        if (rsiBar) { rsiBar.style.width = rsi + "%"; rsiBar.style.background = rsi > 70 ? "var(--danger)" : (rsi < 30 ? "var(--accent)" : "var(--silver-medium)"); }
+    }
     
     // ==================== REST FALLBACK ====================
     async function fetchPriceFromREST() {
@@ -1028,6 +1425,8 @@
         if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
         if (periodicInterval) { clearInterval(periodicInterval); periodicInterval = null; }
         if (signalTimer) { clearTimeout(signalTimer); signalTimer = null; }
+        if (newsCheckInterval) { clearInterval(newsCheckInterval); newsCheckInterval = null; }
+        if (volumeMonitorInterval) { clearInterval(volumeMonitorInterval); volumeMonitorInterval = null; }
     }
     
     function cleanupWebSocket() {
@@ -1288,7 +1687,7 @@
         return isValid;
     }
     
-    // ==================== FAKTOR 4: DIVERGENCE ====================
+    // ==================== HELPER FUNCTIONS ====================
     function computeRSIArray(period = 14) {
         if (!candleData.length || candleData.length <= period) return [];
         let closes = candleData.map(c => c.c);
@@ -1353,25 +1752,6 @@
         if (avgLoss === 0) return 100;
         const rs = avgGain / avgLoss;
         return Math.min(100, Math.max(0, 100 - (100 / (1 + rs))));
-    }
-    
-    function updateFactor4(price) {
-        const rsiArr = computeRSIArray();
-        const rsi = rsiArr.length ? rsiArr[rsiArr.length - 1] : 50;
-        const divergence = detectDivergence(rsiArr);
-        const isValid = (divergence.type === "BULLISH" && divergence.strength > 30) || (divergence.type === "BEARISH" && divergence.strength > 30);
-        factorStatus.f4 = isValid;
-        const card = document.getElementById('factor4-card');
-        const status = document.getElementById('factor4-status');
-        if (card && status) {
-            if (isValid) { card.classList.add('active'); status.innerHTML = divergence.type === "BULLISH" ? "▲ BULL DIV" : "▼ BEAR DIV"; status.style.color = divergence.type === "BULLISH" ? "var(--accent)" : "var(--orange)"; }
-            else { card.classList.remove('active'); status.innerHTML = divergence.type === "NONE" ? "NONE" : `${divergence.type.slice(0,4)} ${Math.round(divergence.strength)}%`; status.style.color = "var(--silver-dark)"; }
-        }
-        const rsiVal = document.getElementById('rsi-val');
-        const rsiBar = document.getElementById('rsi-bar');
-        if (rsiVal) rsiVal.innerText = rsi.toFixed(1);
-        if (rsiBar) { rsiBar.style.width = rsi + "%"; rsiBar.style.background = rsi > 70 ? "var(--danger)" : (rsi < 30 ? "var(--accent)" : "var(--silver-medium)"); }
-        return isValid;
     }
     
     // ==================== DIRECTION ARROW ====================
@@ -1462,6 +1842,15 @@
         if (!decisionElem) return;
         const currentPrice = lastPrice;
         const now = Date.now();
+        
+        if (isNewsBlocked()) {
+            decisionElem.innerHTML = `⛔ ${newsBlackoutReason}`;
+            decisionElem.style.color = "var(--news-ban)";
+            decisionElem.style.background = "rgba(255, 51, 102, 0.2)";
+            decisionElem.classList.remove('signal-active');
+            return;
+        }
+        
         if (now < lastSignalExpiry && lastSignalDecision) {
             const remainingSeconds = Math.ceil((lastSignalExpiry - now) / 1000);
             const minutes = Math.floor(remainingSeconds / 60);
@@ -1476,23 +1865,35 @@
             return;
         }
         decisionElem.classList.remove('signal-active');
+        
         updateFactor1(currentPrice);
         updateFactor2();
         updateFactor3(currentPrice);
-        updateFactor4(currentPrice);
+        
+        if (currentPair === "XAUUSDT") {
+            updateDivergenceDisplay();
+        } else {
+            updateVolumeDisplay();
+        }
+        
         updateFactor5();
         updateFactor6();
-        updateFactor7();
         updateDirectionArrow(currentPrice);
+        
         let score = 0;
         let activeFactors = [];
+        
         if (factorStatus.f1) { score += 3; activeFactors.push("STRUCT"); }
         if (factorStatus.f2) { score += 2; activeFactors.push("MTF"); }
         if (factorStatus.f3) { score += 2; activeFactors.push("INST"); }
-        if (factorStatus.f4) { score += 1; activeFactors.push("DIV"); }
+        if (currentPair === "XAUUSDT" && factorStatus.f4) { score += 1; activeFactors.push("DIV"); }
         if (factorStatus.f5) { score += 1; activeFactors.push("SR"); }
         if (factorStatus.f6) { score += 1; activeFactors.push("CANDLE"); }
-        if (factorStatus.f7) { score += 1; activeFactors.push("VOL"); }
+        if (currentPair === "BTCUSDT" && factorStatus.f7) { score += 1; activeFactors.push("VOL"); }
+        
+        const maxScore = 10;
+        const scoreText = `[${score}/${maxScore}]`;
+        
         const dominantMTF = getDominantMTFBias();
         const isMTFBullish = dominantMTF === "BULLISH";
         const isMTFBearish = dominantMTF === "BEARISH";
@@ -1516,8 +1917,18 @@
         const isScoreValid = score >= minScore;
         const isValidPosition = isPriceInZone || hasSignificantMove;
         const throttleCheck = isThrottled(currentPair, currentTF);
+        
+        const isBTCVolumeOk = isBTCVolumeValid();
+        if (currentPair === "BTCUSDT" && !isBTCVolumeOk && !isInTrade) {
+            const volumeRatio = lastVolumeRatio > 0 ? lastVolumeRatio : wysetrade.volumeRatio;
+            decisionElem.innerHTML = `⏳ LOW VOLUME (${volumeRatio.toFixed(1)}x < 1.5x) ${scoreText}`;
+            decisionElem.style.color = "var(--orange)";
+            decisionElem.style.background = "rgba(255, 136, 77, 0.15)";
+            return;
+        }
+        
         let decision = "", decisionColor = "", decisionBg = "", shouldSignal = false;
-        let scoreText = `[${score}/11]`;
+        
         if (throttleCheck.throttled && !lastSignalDecision) {
             const remaining = throttleCheck.remaining;
             const secRemain = remaining % 60;
@@ -1558,6 +1969,7 @@
             decision = `⏸ NO SETUP ${scoreText}`;
             decisionColor = "var(--silver-dark)"; decisionBg = "rgba(170, 170, 170, 0.05)";
         }
+        
         if (shouldSignal) {
             lastSignalExpiry = now + (THROTTLE_MINUTES * 60 * 1000);
             lastSignalDecision = decision;
@@ -1570,6 +1982,7 @@
             trackTradeEntry(decision, currentPrice);
             return;
         }
+        
         decisionElem.innerHTML = decision;
         decisionElem.style.color = decisionColor;
         decisionElem.style.background = decisionBg;
@@ -1669,10 +2082,12 @@
             else if (currentPrice < lastPrice && lastPrice !== 0) priceElem.style.color = "var(--danger)";
             setTimeout(() => priceElem.style.color = "#fff", 100);
         }
-        // Cek SL/TP hit terlebih dahulu
+        
+        if (trailingActive && isInTrade) updateTrailingStop(currentPrice);
         checkStopLossHit(currentPrice);
         checkTakeProfitHit(currentPrice);
         checkSwingBreakthrough(currentPrice);
+        if (isInTrade && !trailingActive) checkAndActivateTrailingStop(currentPrice);
         if (now - lastResetTime > RESET_COOLDOWN) checkMajorStructureChange(currentPrice);
         calculateSMCLevels();
         updateDirectionArrow(currentPrice);
@@ -1703,6 +2118,7 @@
         if (dateElem) dateElem.innerText = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()}`;
         const hour = now.getHours();
         if (sessionElem) sessionElem.innerText = hour >= 7 && hour < 14 ? "ASIA" : (hour >= 14 && hour < 20 ? "LONDON" : "NY");
+        checkNewsBlackout();
     }
     
     function startPeriodicUpdates() { if (periodicUpdateInterval) clearInterval(periodicUpdateInterval); periodicUpdateInterval = setInterval(periodicUpdate, 2000); }
@@ -1711,36 +2127,65 @@
     async function fullReload() {
         if (isReloading) return;
         isReloading = true;
+        
         stopAllIntervals();
         cleanupWebSocket();
+        
+        swapCardDisplay();
+        
         document.querySelectorAll('[data-pair]').forEach(btn => btn.classList.toggle('active', btn.dataset.pair === currentPair));
         document.querySelectorAll('[data-tf]').forEach(btn => btn.classList.toggle('active', btn.dataset.tf === currentTF));
         document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.add('disabled'));
+        
         updateWSStatus('connecting', 'LOADING');
         document.getElementById('live-price').innerHTML = '<span style="font-size: 1.2rem; color: var(--silver-dark);">LOADING...</span>';
         document.getElementById('decision-status').innerHTML = "🔄 SYNCING...";
+        
         engine.sweepDetected = false; engine.bosConfirmed = false; engine.liquiditySide = null; engine.fvgEntryActive = false;
         recentPrices = []; lastSignalExpiry = 0; lastSignalDecision = "";
+        resetTrailingStop();
+        
         const klinesPromise = fetchKlines();
         const mtfPromise = fetchMTFData();
+        const newsPromise = fetchEconomicCalendar();
+        
         await klinesPromise;
         initWebSocket();
         startHeartbeat();
         startStuckChecker();
         startPeriodicUpdates();
         startRestFallback();
+        startRealTimeVolumeMonitor();
+        
+        if (newsCheckInterval) clearInterval(newsCheckInterval);
+        newsCheckInterval = setInterval(fetchEconomicCalendar, 600000);
+        
         document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('disabled'));
         isReloading = false;
+        
         await mtfPromise;
+        await newsPromise;
         loadSavedTrade();
     }
     
     // ==================== EVENT HANDLERS ====================
     document.querySelectorAll('[data-pair]').forEach(btn => {
-        btn.onclick = () => { if (currentPair === btn.dataset.pair || isReloading) return; currentPair = btn.dataset.pair; localStorage.setItem('lastPair', currentPair); fullReload(); };
+        btn.onclick = () => { 
+            if (currentPair === btn.dataset.pair || isReloading) return; 
+            currentPair = btn.dataset.pair; 
+            localStorage.setItem('lastPair', currentPair);
+            resetTrailingStop();
+            fullReload(); 
+        };
     });
+    
     document.querySelectorAll('[data-tf]').forEach(btn => {
-        btn.onclick = () => { if (currentTF === btn.dataset.tf || isReloading) return; currentTF = btn.dataset.tf; localStorage.setItem('lastTF', currentTF); fullReload(); };
+        btn.onclick = () => { 
+            if (currentTF === btn.dataset.tf || isReloading) return;
+            currentTF = btn.dataset.tf; 
+            localStorage.setItem('lastTF', currentTF);
+            fullReload(); 
+        };
     });
     
     window.smartCopy = function(id) {
