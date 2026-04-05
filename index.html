@@ -112,6 +112,29 @@
             color: var(--trailing-active);
         }
         
+        /* Signal History Log Style */
+        .signal-history {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--gold-dim);
+            border-radius: 16px;
+            padding: 4px 12px;
+            font-size: 0.55rem;
+            font-family: 'JetBrains Mono';
+            color: var(--silver-bright);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .signal-history span {
+            font-weight: 800;
+        }
+        .signal-history .buy-log {
+            color: var(--accent);
+        }
+        .signal-history .sell-log {
+            color: var(--orange);
+        }
+        
         .rsi-panel { margin-top: 16px; margin-bottom: 12px; padding: 10px 14px; border: 1px solid var(--gold-dim); border-radius: 12px; background: rgba(0, 0, 0, 0.4); }
         .rsi-meta { display: flex; justify-content: space-between; margin-bottom: 6px; }
         .rsi-tag { font-size: 0.55rem; font-weight: 900; color: var(--silver-dark); font-family: 'JetBrains Mono'; }
@@ -127,17 +150,17 @@
         .data-item:last-child { border-right: none; }
         .data-label { font-size: 0.45rem; color: var(--silver-medium); text-transform: uppercase; margin-bottom: 5px; display: block; font-weight: 700; letter-spacing: 0.8px; }
         .data-val { font-family: 'JetBrains Mono'; font-size: 0.95rem; color: #fff; font-weight: 800; }
-.data-item-swing-left { text-align: left; padding-left: 14px; }
-.data-item-swing-center { text-align: center; }
-.data-item-entry-center { text-align: center; }
-.data-item-tp-right { text-align: right; padding-right: 14px; }
-.data-item-pips-center { text-align: center; }
-.entry-gold { color: var(--gold) !important; font-size: 0.7rem !important; }
-.tp-blue { color: var(--blue) !important; font-size: 0.75rem !important; font-weight: 900 !important; }
-.sl-red { color: var(--danger) !important; font-size: 0.75rem !important; font-weight: 900 !important; }
-.pips-cyan { color: var(--blue) !important; font-size: 0.75rem !important; }
-.swing-high-text { color: var(--accent); font-size: 0.7rem !important; }
-.swing-low-text { color: var(--orange); font-size: 0.7rem !important; }
+        .data-item-swing-left { text-align: left; padding-left: 14px; }
+        .data-item-swing-center { text-align: center; }
+        .data-item-entry-center { text-align: center; }
+        .data-item-tp-right { text-align: right; padding-right: 14px; }
+        .data-item-pips-center { text-align: center; }
+        .entry-gold { color: var(--gold) !important; font-size: 0.7rem !important; }
+        .tp-blue { color: var(--blue) !important; font-size: 0.75rem !important; font-weight: 900 !important; }
+        .sl-red { color: var(--danger) !important; font-size: 0.75rem !important; font-weight: 900 !important; }
+        .pips-cyan { color: var(--blue) !important; font-size: 0.75rem !important; }
+        .swing-high-text { color: var(--accent); font-size: 0.7rem !important; }
+        .swing-low-text { color: var(--orange); font-size: 0.7rem !important; }
         .fvg-highlight { animation: fvgPulse 0.8s ease 2; text-shadow: 0 0 8px var(--accent); }
         @keyframes fvgPulse { 0% { text-shadow: 0 0 0 var(--accent); } 100% { text-shadow: 0 0 12px var(--accent); } }
         
@@ -193,6 +216,7 @@
             .data-grid { grid-template-columns: repeat(5, 1fr); font-size: 0.6rem; }
             .data-label { font-size: 0.4rem; }
             .data-val { font-size: 0.55rem; }
+            .signal-history { font-size: 0.45rem; padding: 2px 8px; }
         }
     </style>
 </head>
@@ -305,6 +329,8 @@
                     <div class="clock-module-new" id="clock-display">00:00:00</div>
                     <div id="news-status" class="news-status" style="display: none;">📰 NO NEWS</div>
                     <div id="trailing-status" class="trailing-status" style="display: none;">🔒 TRAILING OFF</div>
+                    <!-- SIGNAL HISTORY LOG - OPSI 3 (di footer) -->
+                    <div id="signal-history" class="signal-history">📜 SIGNAL: ⏳ No signal yet</div>
                 </div>
             </div>
         </section>
@@ -323,6 +349,70 @@
     let lastSignalDecision = "";
     let mtfBiasCache = { m5: "NEUTRAL", m15: "NEUTRAL", h1: "NEUTRAL" };
     let lastArrowDirection = "neutral";
+    
+    // ==================== SIGNAL HISTORY LOG ====================
+    let lastBuyTime = null;
+    let lastSellTime = null;
+    
+    function updateSignalHistoryLog(decision, currentPrice) {
+        const historyElem = document.getElementById('signal-history');
+        if (!historyElem) return;
+        
+        const now = Date.now();
+        
+        if (decision.includes("BUY NOW!")) {
+            lastBuyTime = now;
+            console.log(`📝 Signal History: BUY recorded at ${new Date(now).toLocaleTimeString()}`);
+        } else if (decision.includes("SELL NOW!")) {
+            lastSellTime = now;
+            console.log(`📝 Signal History: SELL recorded at ${new Date(now).toLocaleTimeString()}`);
+        }
+        
+        // Format tampilan history
+        let buyText = "";
+        let sellText = "";
+        
+        if (lastBuyTime) {
+            const buyDiff = Math.floor((now - lastBuyTime) / 1000);
+            if (buyDiff < 60) {
+                buyText = `🟢 BUY ${buyDiff}s ago`;
+            } else if (buyDiff < 3600) {
+                buyText = `🟢 BUY ${Math.floor(buyDiff / 60)}m ago`;
+            } else {
+                buyText = `🟢 BUY ${Math.floor(buyDiff / 3600)}h ago`;
+            }
+        }
+        
+        if (lastSellTime) {
+            const sellDiff = Math.floor((now - lastSellTime) / 1000);
+            if (sellDiff < 60) {
+                sellText = `🔴 SELL ${sellDiff}s ago`;
+            } else if (sellDiff < 3600) {
+                sellText = `🔴 SELL ${Math.floor(sellDiff / 60)}m ago`;
+            } else {
+                sellText = `🔴 SELL ${Math.floor(sellDiff / 3600)}h ago`;
+            }
+        }
+        
+        if (buyText && sellText) {
+            historyElem.innerHTML = `📜 SIGNAL: ${buyText} | ${sellText}`;
+        } else if (buyText) {
+            historyElem.innerHTML = `📜 SIGNAL: ${buyText}`;
+        } else if (sellText) {
+            historyElem.innerHTML = `📜 SIGNAL: ${sellText}`;
+        } else {
+            historyElem.innerHTML = `📜 SIGNAL: ⏳ No signal yet`;
+        }
+    }
+    
+    // Update history setiap detik (untuk timer)
+    function startHistoryUpdater() {
+        setInterval(() => {
+            if (lastBuyTime || lastSellTime) {
+                updateSignalHistoryLog("", 0);
+            }
+        }, 1000);
+    }
     
     // Connection Management Variables
     let reconnectDelay = 1000;
@@ -896,6 +986,9 @@
                 sl: engine.sl,
                 tp: engine.tp
             }));
+            
+            // Update signal history log
+            updateSignalHistoryLog(decision, currentPrice);
         } else if (!decision.includes("BUY NOW!") && !decision.includes("SELL NOW!") && isInTrade && !trailingActive) {
             const timeInTrade = Date.now() - lastEntryTime;
             if (timeInTrade > 300000) {
@@ -2166,6 +2259,9 @@
         await mtfPromise;
         await newsPromise;
         loadSavedTrade();
+        
+        // Start history updater for real-time timer
+        startHistoryUpdater();
     }
     
     // ==================== EVENT HANDLERS ====================
