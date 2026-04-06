@@ -68,7 +68,7 @@
         /* Sembunyikan card MTF yang atas */
         #factor2-card { display: none !important; }
         
-        .sma10-status {
+        .sma20-status {
             background: rgba(0,0,0,0.6);
             padding: 4px 12px;
             border-radius: 20px;
@@ -77,9 +77,9 @@
             align-items: center;
             gap: 8px;
         }
-        .sma10-value { font-weight: 800; min-width: 65px; text-align: right; }
-        .sma10-status.bullish { border-color: var(--accent); color: var(--accent); background: rgba(0, 255, 170, 0.1); }
-        .sma10-status.bearish { border-color: var(--danger); color: var(--danger); background: rgba(255, 71, 87, 0.1); }
+        .sma20-value { font-weight: 800; min-width: 65px; text-align: right; }
+        .sma20-status.bullish { border-color: var(--accent); color: var(--accent); background: rgba(0, 255, 170, 0.1); }
+        .sma20-status.bearish { border-color: var(--danger); color: var(--danger); background: rgba(255, 71, 87, 0.1); }
         
         .decision-panel {
             background: rgba(0,0,0,0.6); padding: 8px 16px; border-radius: 24px;
@@ -238,9 +238,9 @@
 
         <main class="hero-display">
             <div class="hero-meta-row">
-                <div class="sma10-status" id="sma10-status">
+                <div class="sma20-status" id="sma20-status">
                     <span>📊 MA</span>
-                    <span class="sma10-value" id="sma10-value">--</span>
+                    <span class="sma20-value" id="sma20-value">--</span>
                 </div>
                 <div class="factor-card" id="factor1-card">
                     <span>🏗️ STRUCT</span>
@@ -337,10 +337,6 @@
     let mtfBiasCache = { m5: "NEUTRAL", m15: "NEUTRAL", h1: "NEUTRAL" };
     let lastArrowDirection = "neutral";
     
-    // Signal History
-    let lastBuyTime = null;
-    let lastSellTime = null;
-    
     // Connection Management Variables
     let reconnectDelay = 1000;
     let lastWSMessageTime = Date.now();
@@ -362,67 +358,94 @@
     let engine = {
         swingHigh: 0, swingLow: 0, f618: 0, deep: 0, tp: 0, sl: 0,
         bias: "NEUTRAL", sweepDetected: false, bosConfirmed: false,
-        adx: 25, sma10: 0, plusDI: 25, minusDI: 25,
+        adx: 25, sma20: 0, plusDI: 25, minusDI: 25,
         lastSwingHigh: 0, lastSwingLow: 0,
         lastSweepTime: 0, lastBosTime: 0, lastTPHitTime: 0,
         liquiditySide: null, fvgEntryActive: false
     };
     
-    // ==================== SIGNAL HISTORY LOG ====================
-    function updateSignalHistoryLog(decision, currentPrice) {
+    // ==================== SIGNAL HISTORY LOG (REAL-TIME) ====================
+    let signalHistory = []; // Array untuk menyimpan history signal
+    
+    function recordSignalToHistory(decision, currentPrice) {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        
+        let signalType = "";
+        let signalIcon = "";
+        
+        if (decision.includes("BUY NOW!")) {
+            signalType = "BUY";
+            signalIcon = "🟢";
+        } else if (decision.includes("SELL NOW!")) {
+            signalType = "SELL";
+            signalIcon = "🔴";
+        } else {
+            return; // Bukan sinyal trading, tidak dicatat
+        }
+        
+        // Cek duplikat dalam 3 detik terakhir
+        const lastSignal = signalHistory[0];
+        if (lastSignal && Date.now() - lastSignal.timestamp < 3000 && lastSignal.type === signalType) {
+            return; // Mencegah duplikat berlebihan
+        }
+        
+        const signalRecord = {
+            type: signalType,
+            icon: signalIcon,
+            price: currentPrice.toFixed(currentPair === "XAUUSDT" ? 2 : 1),
+            time: timeStr,
+            timestamp: Date.now(),
+            fullDecision: decision
+        };
+        
+        // Tambah di awal array (yang terbaru di depan)
+        signalHistory.unshift(signalRecord);
+        
+        // Batasi hanya 3 history terakhir
+        if (signalHistory.length > 3) {
+            signalHistory.pop();
+        }
+        
+        // Update tampilan
+        updateSignalHistoryDisplay();
+        
+        console.log(`📝 SIGNAL RECORDED: ${signalType} at ${timeStr} - ${signalRecord.price}`);
+    }
+    
+    function updateSignalHistoryDisplay() {
         const historyElem = document.getElementById('signal-history');
         if (!historyElem) return;
         
-        const now = Date.now();
-        
-        if (decision.includes("BUY NOW!")) {
-            lastBuyTime = now;
-            console.log(`📝 Signal History: BUY recorded at ${new Date(now).toLocaleTimeString()}`);
-        } else if (decision.includes("SELL NOW!")) {
-            lastSellTime = now;
-            console.log(`📝 Signal History: SELL recorded at ${new Date(now).toLocaleTimeString()}`);
-        }
-        
-        let buyText = "";
-        let sellText = "";
-        
-        if (lastBuyTime) {
-            const buyDiff = Math.floor((now - lastBuyTime) / 1000);
-            if (buyDiff < 60) {
-                buyText = `🟢 BUY ${buyDiff}s ago`;
-            } else if (buyDiff < 3600) {
-                buyText = `🟢 BUY ${Math.floor(buyDiff / 60)}m ago`;
-            } else {
-                buyText = `🟢 BUY ${Math.floor(buyDiff / 3600)}h ago`;
-            }
-        }
-        
-        if (lastSellTime) {
-            const sellDiff = Math.floor((now - lastSellTime) / 1000);
-            if (sellDiff < 60) {
-                sellText = `🔴 SELL ${sellDiff}s ago`;
-            } else if (sellDiff < 3600) {
-                sellText = `🔴 SELL ${Math.floor(sellDiff / 60)}m ago`;
-            } else {
-                sellText = `🔴 SELL ${Math.floor(sellDiff / 3600)}h ago`;
-            }
-        }
-        
-        if (buyText && sellText) {
-            historyElem.innerHTML = `📜 SIGNAL: ${buyText} | ${sellText}`;
-        } else if (buyText) {
-            historyElem.innerHTML = `📜 SIGNAL: ${buyText}`;
-        } else if (sellText) {
-            historyElem.innerHTML = `📜 SIGNAL: ${sellText}`;
-        } else {
+        if (signalHistory.length === 0) {
             historyElem.innerHTML = `📜 SIGNAL: ⏳ No signal yet`;
+            return;
         }
+        
+        // Format display untuk 3 sinyal terakhir
+        let displayHtml = `📜 SIGNAL: `;
+        
+        for (let i = 0; i < signalHistory.length; i++) {
+            const s = signalHistory[i];
+            if (i > 0) displayHtml += ` | `;
+            displayHtml += `${s.icon} ${s.type} ${s.price} (${s.time})`;
+        }
+        
+        historyElem.innerHTML = displayHtml;
+        
+        // Animasi flash saat ada sinyal baru
+        historyElem.style.transition = 'background 0.2s';
+        historyElem.style.background = 'rgba(0, 255, 170, 0.2)';
+        setTimeout(() => {
+            historyElem.style.background = '';
+        }, 300);
     }
     
     function startHistoryUpdater() {
+        // Update display setiap detik untuk refresh timestamp (opsional)
         setInterval(() => {
-            if (lastBuyTime || lastSellTime) {
-                updateSignalHistoryLog("", 0);
+            if (signalHistory.length > 0) {
+                updateSignalHistoryDisplay();
             }
         }, 1000);
     }
@@ -841,8 +864,6 @@
                 sl: engine.sl,
                 tp: engine.tp
             }));
-            
-            updateSignalHistoryLog(decision, currentPrice);
         }
     }
     
@@ -1460,8 +1481,8 @@
                 if (Array.isArray(data) && data.length > 0) {
                     const closes = data.map(d => parseFloat(d[4]));
                     const lastPriceMTF = closes[closes.length - 1];
-                    const sma10 = closes.slice(-10).reduce((a,b) => a+b, 0) / 10;
-                    const bias = lastPriceMTF > sma10 ? "BULLISH" : "BEARISH";
+                    const sma20 = closes.slice(-20).reduce((a,b) => a+b, 0) / 20;
+                    const bias = lastPriceMTF > sma20 ? "BULLISH" : "BEARISH";
                     if (tf === '5m') mtfBiasCache.m5 = bias;
                     else if (tf === '15m') mtfBiasCache.m15 = bias;
                     else if (tf === '1h') mtfBiasCache.h1 = bias;
@@ -1550,34 +1571,34 @@
         } catch (error) { return 25; }
     }
     
-    function calculatesma10() {
-        if (!candleData.length || candleData.length < 10) return 0;
-        const last10Closes = candleData.slice(-10).map(c => c.c);
+    function calculatesma20() {
+        if (!candleData.length || candleData.length < 20) return 0;
+        const last10Closes = candleData.slice(-20).map(c => c.c);
         const sum = last10Closes.reduce((a, b) => a + b, 0);
-        return sum / 10;
+        return sum / 20;
     }
     
-    function updatesma10UI(currentPrice) {
-        const smaValue = calculatesma10();
-        const smaElem = document.getElementById('sma10-value');
-        const smaStatus = document.getElementById('sma10-status');
+    function updatesma20UI(currentPrice) {
+        const smaValue = calculatesma20();
+        const smaElem = document.getElementById('sma20-value');
+        const smaStatus = document.getElementById('sma20-status');
         if (!smaElem || !smaStatus) return;
         if (smaValue !== null && !isNaN(smaValue) && smaValue > 0) {
-            engine.sma10 = smaValue;
+            engine.sma20 = smaValue;
             const prec = getPrecision();
             smaElem.innerText = smaValue.toFixed(prec);
-            if (currentPrice > smaValue) { smaStatus.className = "sma10-status bullish"; smaElem.style.color = "var(--accent)"; }
-            else { smaStatus.className = "sma10-status bearish"; smaElem.style.color = "var(--danger)"; }
-        } else { smaElem.innerText = "--"; smaStatus.className = "sma10-status"; }
+            if (currentPrice > smaValue) { smaStatus.className = "sma20-status bullish"; smaElem.style.color = "var(--accent)"; }
+            else { smaStatus.className = "sma20-status bearish"; smaElem.style.color = "var(--danger)"; }
+        } else { smaElem.innerText = "--"; smaStatus.className = "sma20-status"; }
     }
     
     function updateFactor3(price) {
         engine.adx = calculateADXWithTick(price);
-        engine.sma10 = calculatesma10();
+        engine.sma20 = calculatesma20();
         const isTrendStrong = engine.adx >= 20;
         const isPriceInZone = price >= Math.min(engine.f618, engine.deep) && price <= Math.max(engine.f618, engine.deep);
-        const isAboveSMA = price > engine.sma10;
-        const isBelowSMA = price < engine.sma10;
+        const isAboveSMA = price > engine.sma20;
+        const isBelowSMA = price < engine.sma20;
         const isBullishBias = engine.bias === "BULLISH" || engine.bias === "BULLISH_BOS";
         const isValid = isTrendStrong && isPriceInZone && ((isBullishBias && isAboveSMA) || (!isBullishBias && isBelowSMA));
         factorStatus.f3 = isValid;
@@ -1587,7 +1608,7 @@
             if (isValid) { card.classList.add('active'); status.innerHTML = `ADX:${Math.round(engine.adx)} ✅`; status.style.color = "var(--accent)"; }
             else { card.classList.remove('active'); status.innerHTML = `ADX:${Math.round(engine.adx)}`; status.style.color = "var(--silver-dark)"; }
         }
-        updatesma10UI(price);
+        updatesma20UI(price);
         return isValid;
     }
     
@@ -1667,12 +1688,12 @@
             return;
         }
         const atr = calculateATR(14);
-        const threshold = currentPair === "XAUUSDT" ? (atr * 0.10) : (atr * 0.08);
+        const threshold = currentPair === "XAUUSDT" ? (atr * 0.07) : (atr * 0.05);
         const priceAboveSwing = currentPrice > engine.swingHigh;
         const priceBelowSwing = currentPrice < engine.swingLow;
         let direction = "neutral";
-        if ((currentPrice > (engine.sma10 + threshold) || priceAboveSwing) && engine.plusDI > engine.minusDI) direction = "up";
-        else if ((currentPrice < (engine.sma10 - threshold) || priceBelowSwing) && engine.minusDI > engine.plusDI) direction = "down";
+        if ((currentPrice > (engine.sma20 + threshold) || priceAboveSwing) && engine.plusDI > engine.minusDI) direction = "up";
+        else if ((currentPrice < (engine.sma20 - threshold) || priceBelowSwing) && engine.minusDI > engine.plusDI) direction = "down";
         if (lastArrowDirection !== direction) {
             let arrow = "⬌", arrowColor = "var(--silver-dark)";
             if (direction === "up") { arrow = "▲"; arrowColor = "var(--accent)"; }
@@ -1884,19 +1905,20 @@
             decisionElem.classList.add('decision-animate');
             setTimeout(() => decisionElem.classList.remove('decision-animate'), 800);
             trackTradeEntry(decision, currentPrice);
+            recordSignalToHistory(decision, currentPrice);
             return;
         }
-        
         decisionElem.innerHTML = decision;
         decisionElem.style.color = decisionColor;
         decisionElem.style.background = decisionBg;
         trackTradeEntry(decision, currentPrice);
+        recordSignalToHistory(decision, currentPrice);
     }
     
     function periodicUpdate() {
         if (lastPrice > 0 && !isReloading && candleData.length > 0) {
             engine.adx = calculateADXWithTick(lastPrice);
-            engine.sma10 = calculatesma10();
+            engine.sma20 = calculatesma20();
             updateFinalDecision();
         }
     }
@@ -2008,7 +2030,7 @@
         const rsiBar = document.getElementById('rsi-bar');
         if (rsiVal) rsiVal.innerText = rsi.toFixed(1);
         if (rsiBar) { rsiBar.style.width = rsi + "%"; rsiBar.style.background = rsi > 70 ? "var(--danger)" : (rsi < 30 ? "var(--accent)" : "var(--silver-medium)"); }
-        updatesma10UI(currentPrice);
+        updatesma20UI(currentPrice);
     }
     
     function checkMajorStructureChange(currentPrice) {
