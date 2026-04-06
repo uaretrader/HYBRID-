@@ -1229,11 +1229,11 @@
         if (card && status) {
             if (isValid) {
                 card.classList.add('active');
-                status.innerHTML = divergence.type === "BULLISH" ? "▲ BULL DIV" : "▼ BEAR DIV";
+                status.innerHTML = divergence.type === "BULLISH" ? "▲" : "▼";
                 status.style.color = divergence.type === "BULLISH" ? "var(--accent)" : "var(--orange)";
             } else {
                 card.classList.remove('active');
-                status.innerHTML = divergence.type === "NONE" ? "NONE" : `${divergence.type.slice(0,4)} ${Math.round(divergence.strength)}%`;
+                status.innerHTML = divergence.type === "NONE" ? "⚪" : `${divergence.type.slice(0,4)} ${Math.round(divergence.strength)}%`;
                 status.style.color = "var(--silver-dark)";
             }
         }
