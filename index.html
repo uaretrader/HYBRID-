@@ -134,9 +134,11 @@
             font-size: 0.55rem;
             font-family: 'JetBrains Mono';
             color: var(--silver-bright);
-            display: inline-flex;
+            display: flex;
             align-items: center;
             gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
         }
         
         .rsi-panel { margin-top: 16px; margin-bottom: 12px; padding: 10px 14px; border: 1px solid var(--gold-dim); border-radius: 12px; background: rgba(0, 0, 0, 0.4); }
@@ -159,12 +161,12 @@
         .data-item-entry-center { text-align: center; }
         .data-item-tp-right { text-align: right; padding-right: 14px; }
         .data-item-pips-center { text-align: center; }
-        .entry-gold { color: var(--gold) !important; font-size: 0.7rem !important; }
-        .tp-blue { color: var(--blue) !important; font-size: 0.7rem !important; font-weight: 900 !important; }
-        .sl-red { color: var(--danger) !important; font-size: 0.7rem !important; font-weight: 900 !important; }
-        .pips-cyan { color: var(--blue) !important; font-size: 0.7rem !important; }
-        .swing-high-text { color: var(--accent); font-size: 0.7rem !important; }
-        .swing-low-text { color: var(--orange); font-size: 0.7rem !important; }
+        .entry-gold { color: var(--gold) !important; font-size: 0.65rem !important; }
+        .tp-blue { color: var(--blue) !important; font-size: 0.65rem !important; font-weight: 900 !important; }
+        .sl-red { color: var(--danger) !important; font-size: 0.65rem !important; font-weight: 900 !important; }
+        .pips-cyan { color: var(--blue) !important; font-size: 0.65rem !important; }
+        .swing-high-text { color: var(--accent); font-size: 0.65rem !important; }
+        .swing-low-text { color: var(--orange); font-size: 0.65rem !important; }
         .fvg-highlight { animation: fvgPulse 0.8s ease 2; text-shadow: 0 0 8px var(--accent); }
         @keyframes fvgPulse { 0% { text-shadow: 0 0 0 var(--accent); } 100% { text-shadow: 0 0 12px var(--accent); } }
         
@@ -218,9 +220,9 @@
             .direction-arrow { font-size: 1.2rem; min-width: 35px; }
             #live-price { font-size: 2rem; }
             .data-grid { grid-template-columns: repeat(5, 1fr); font-size: 0.6rem; }
-            .data-label { font-size: 0.4rem; }
+            .data-label { font-size: 0.45rem; }
             .data-val { font-size: 0.55rem; }
-            .signal-history { font-size: 0.45rem; padding: 2px 8px; }
+            .signal-history { font-size: 0.5rem; padding: 2px 8px; }
         }
     </style>
 </head>
@@ -295,6 +297,9 @@
             </div>
         </main>
 
+        <!-- SIGNAL HISTORY - DIPINDAHKAN KE SINI (di atas data-grid) -->
+        <div id="signal-history" class="signal-history">📜 SIGNAL: ⏳ No signal yet</div>
+
         <section class="data-grid">
             <div class="data-item data-item-swing-left" id="swing-hl-container" onclick="copySwingHL()">
                 <span class="data-label">📈 SWING H/L</span>
@@ -335,7 +340,6 @@
                     <div class="clock-module-new" id="clock-display">00:00:00</div>
                     <div id="news-status" class="news-status" style="display: none;">📰 NO NEWS</div>
                     <div id="trailing-status" class="trailing-status" style="display: none;">🔒 TRAILING OFF</div>
-                    <div id="signal-history" class="signal-history">📜 SIGNAL: ⏳ No signal yet</div>
                 </div>
             </div>
         </section>
@@ -387,10 +391,12 @@
     
     // ==================== SIGNAL HISTORY LOG (REAL-TIME) ====================
     let signalHistory = [];
+    const SIGNAL_EXPIRY_MS = 5 * 60 * 1000; // 5 menit
     
     function recordSignalToHistory(decision, currentPrice) {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const pairName = currentPair === "XAUUSDT" ? "XAUUSD" : "BTCUSD";
         
         let signalType = "";
         let signalIcon = "";
@@ -405,6 +411,7 @@
             return;
         }
         
+        // Cek duplikat dalam 3 detik terakhir
         const lastSignal = signalHistory[0];
         if (lastSignal && Date.now() - lastSignal.timestamp < 3000 && lastSignal.type === signalType) {
             return;
@@ -413,40 +420,67 @@
         const signalRecord = {
             type: signalType,
             icon: signalIcon,
+            pair: pairName,
             price: currentPrice.toFixed(currentPair === "XAUUSDT" ? 2 : 1),
             time: timeStr,
             timestamp: Date.now(),
+            expiryTime: Date.now() + SIGNAL_EXPIRY_MS,
             fullDecision: decision
         };
         
+        // Tambah di awal array (yang terbaru di depan)
         signalHistory.unshift(signalRecord);
-        if (signalHistory.length > 3) signalHistory.pop();
+        
+        // Update tampilan
         updateSignalHistoryDisplay();
-        console.log(`📝 SIGNAL RECORDED: ${signalType} at ${timeStr} - ${signalRecord.price}`);
+        
+        console.log(`📝 SIGNAL RECORDED: ${signalType} ${pairName} at ${timeStr} - ${signalRecord.price} (expires in 5 min)`);
+    }
+    
+    function cleanExpiredSignals() {
+        const now = Date.now();
+        let changed = false;
+        for (let i = signalHistory.length - 1; i >= 0; i--) {
+            if (signalHistory[i].expiryTime <= now) {
+                signalHistory.splice(i, 1);
+                changed = true;
+                console.log(`🗑️ Signal expired and removed`);
+            }
+        }
+        if (changed) {
+            updateSignalHistoryDisplay();
+        }
     }
     
     function updateSignalHistoryDisplay() {
         const historyElem = document.getElementById('signal-history');
         if (!historyElem) return;
+        
         if (signalHistory.length === 0) {
             historyElem.innerHTML = `📜 SIGNAL: ⏳ No signal yet`;
             return;
         }
+        
+        // Format display: 🟢 BUY XAUUSD 2627.50 14:30:25
         let displayHtml = `📜 SIGNAL: `;
         for (let i = 0; i < signalHistory.length; i++) {
             const s = signalHistory[i];
             if (i > 0) displayHtml += ` | `;
-            displayHtml += `${s.icon} ${s.type} ${s.price} (${s.time})`;
+            displayHtml += `${s.icon} ${s.type} ${s.pair} ${s.price} ${s.time}`;
         }
+        
         historyElem.innerHTML = displayHtml;
+        
+        // Animasi flash saat ada sinyal baru
         historyElem.style.transition = 'background 0.2s';
         historyElem.style.background = 'rgba(0, 255, 170, 0.2)';
         setTimeout(() => { historyElem.style.background = ''; }, 300);
     }
     
-    // PERBAIKAN 4: Signal History Display - Hapus kondisi if agar selalu update
     function startHistoryUpdater() {
+        // Update display setiap detik dan bersihkan sinyal expired
         setInterval(() => {
+            cleanExpiredSignals();
             updateSignalHistoryDisplay();
         }, 1000);
     }
@@ -1216,7 +1250,7 @@
     }
     
     // ==================== UPDATE FUNCTIONS UNTUK CARD ====================
-        function updateDivergenceDisplay() {
+    function updateDivergenceDisplay() {
         if (currentPair !== "XAUUSDT") return;
         
         const rsiArr = computeRSIArray();
@@ -1240,10 +1274,8 @@
                     status.innerHTML = `${arrow} ${Math.round(divergence.strength)}%`;
                 }
                 status.style.color = "var(--silver-dark)";
+            }
         }
-    }
-    
-        // RSI update via updateRSIDisplay() sudah ditangani di updateUIElements
     }
     
     function updateVolumeDisplay() {
@@ -1269,8 +1301,6 @@
                 status.style.color = "var(--orange)";
             }
         }
-        
-        // RSI update via updateRSIDisplay() sudah ditangani di updateUIElements
     }
     
     // ==================== REST FALLBACK ====================
