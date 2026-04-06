@@ -1216,36 +1216,34 @@
     }
     
     // ==================== UPDATE FUNCTIONS UNTUK CARD ====================
-    function updateDivergenceDisplay() {
-    if (currentPair !== "XAUUSDT") return;
-    
-    const rsiArr = computeRSIArray();
-    const divergence = detectDivergence(rsiArr);
-    const isValid = (divergence.type === "BULLISH" && divergence.strength > 30) || (divergence.type === "BEARISH" && divergence.strength > 30);
-    factorStatus.f4 = isValid;
-    
-    const card = document.getElementById('factor4-card');
-    const status = document.getElementById('factor4-status');
-    if (card && status) {
-        if (isValid) {
-            card.classList.add('active');
-            // Tampilkan panah saja (tanpa teks BULL DIV / BEAR DIV)
-            status.innerHTML = divergence.type === "BULLISH" ? "▲" : "▼";
-            status.style.color = divergence.type === "BULLISH" ? "var(--accent)" : "var(--orange)";
-        } else {
-            card.classList.remove('active');
-            // Tampilkan panah kecil + persentase (warna abu-abu)
-            if (divergence.type === "NONE") {
-                status.innerHTML = "⚪";
+        function updateDivergenceDisplay() {
+        if (currentPair !== "XAUUSDT") return;
+        
+        const rsiArr = computeRSIArray();
+        const divergence = detectDivergence(rsiArr);
+        const isValid = (divergence.type === "BULLISH" && divergence.strength > 30) || (divergence.type === "BEARISH" && divergence.strength > 30);
+        factorStatus.f4 = isValid;
+        
+        const card = document.getElementById('factor4-card');
+        const status = document.getElementById('factor4-status');
+        if (card && status) {
+            if (isValid) {
+                card.classList.add('active');
+                status.innerHTML = divergence.type === "BULLISH" ? "▲" : "▼";
+                status.style.color = divergence.type === "BULLISH" ? "var(--accent)" : "var(--orange)";
             } else {
-                const arrow = divergence.type === "BULLISH" ? "▲" : "▼";
-                status.innerHTML = `${arrow} ${Math.round(divergence.strength)}%`;
+                card.classList.remove('active');
+                if (divergence.type === "NONE") {
+                    status.innerHTML = "⚪";
+                } else {
+                    const arrow = divergence.type === "BULLISH" ? "▲" : "▼";
+                    status.innerHTML = `${arrow} ${Math.round(divergence.strength)}%`;
+                }
+                status.style.color = "var(--silver-dark)";
             }
-            status.style.color = "var(--silver-dark)";
         }
     }
-}
-        
+    
         // RSI update via updateRSIDisplay() sudah ditangani di updateUIElements
     }
     
