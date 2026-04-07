@@ -1880,7 +1880,7 @@
         const isBTCVolumeOk = isBTCVolumeValid();
         if (currentPair === "BTCUSDT" && !isBTCVolumeOk && !isInTrade) {
             const volumeRatio = lastVolumeRatio > 0 ? lastVolumeRatio : wysetrade.volumeRatio;
-            decisionElem.innerHTML = `⏳ LOW VOLUME (${volumeRatio.toFixed(1)}x < 1.5x) ${scoreText}`;
+            decisionElem.innerHTML = `⏳ LOW VOLUME (<1.5x) ${scoreText}`;
             decisionElem.style.color = "var(--orange)";
             decisionElem.style.background = "rgba(255, 136, 77, 0.15)";
             return;
