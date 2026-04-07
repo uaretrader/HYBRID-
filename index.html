@@ -80,23 +80,23 @@
         .nav-section { display: flex; gap: 8px; padding: 10px 16px; justify-content: space-between; flex-wrap: wrap; background: #050505; align-items: center; border-bottom: 1px solid var(--bloomberg-border); }
         .nav-group { display: flex; gap: 4px; flex-wrap: wrap; }
         .btn-tab { 
-    background: transparent; 
-    border: none;                           /* ← border dihilangkan */
-    color: var(--bloomberg-text-dim); 
-    padding: 5px 12px; 
-    border-radius: 0px; 
-    font-size: 0.65rem; 
-    font-weight: 500; 
-    cursor: pointer; 
-    font-family: 'JetBrains Mono'; 
-    transition: 0.2s; 
-}
-.btn-tab.active { 
-    color: var(--bloomberg-accent); 
-    background: rgba(0, 255, 136, 0.08); 
-    border: none;                           /* ← border aktif juga dihilangkan */
-}
-.btn-tab.disabled { opacity: 0.5; cursor: wait; pointer-events: none; }
+            background: transparent; 
+            border: none;
+            color: var(--bloomberg-text-dim); 
+            padding: 5px 12px; 
+            border-radius: 0px; 
+            font-size: 0.65rem; 
+            font-weight: 500; 
+            cursor: pointer; 
+            font-family: 'JetBrains Mono'; 
+            transition: 0.2s; 
+        }
+        .btn-tab.active { 
+            color: var(--bloomberg-accent); 
+            background: rgba(0, 255, 136, 0.08); 
+            border: none;
+        }
+        .btn-tab.disabled { opacity: 0.5; cursor: wait; pointer-events: none; }
         
         .hero-display { padding: 12px 20px 16px; display: flex; flex-direction: column; width: 100%; }
         .hero-meta-row { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; margin-bottom: 16px; font-family: 'JetBrains Mono'; font-weight: 500; font-size: 0.6rem; align-items: center; }
@@ -192,12 +192,24 @@
         .data-item-entry-center { text-align: center; }
         .data-item-tp-right { text-align: right; padding-right: 12px; }
         .data-item-pips-center { text-align: center; }
-        .entry-gold { color: var(--bloomberg-gold) !important; font-size: 0.7rem !important; }
-        .tp-blue { color: var(--bloomberg-blue) !important; font-size: 0.7rem !important; font-weight: 700 !important; }
-        .sl-red { color: var(--bloomberg-danger) !important; font-size: 0.7rem !important; font-weight: 700 !important; }
-        .pips-cyan { color: var(--bloomberg-blue) !important; font-size: 0.7rem !important; }
-        .swing-high-text { color: var(--bloomberg-accent); font-size: 0.7rem !important; }
-        .swing-low-text { color: var(--bloomberg-orange); font-size: 0.7rem !important; }
+        /* Default warna silver untuk semua value */
+        .swing-high-text, .swing-low-text, .sl-red, .entry-gold, .tp-blue, .pips-cyan {
+            color: #DCDCDC;
+            transition: color 0.2s ease;
+        }
+        /* Warna aktif saat tersentuh */
+        .swing-active .swing-high-text, .swing-active .swing-low-text {
+            color: var(--bloomberg-accent) !important;
+        }
+        .sl-active .sl-red {
+            color: var(--bloomberg-danger) !important;
+        }
+        .entry-active .entry-gold {
+            color: var(--bloomberg-gold) !important;
+        }
+        .tp-active .tp-blue {
+            color: var(--bloomberg-blue) !important;
+        }
         .fvg-highlight { animation: fvgPulse 0.8s ease 2; text-shadow: 0 0 8px var(--bloomberg-accent); }
         @keyframes fvgPulse { 0% { text-shadow: 0 0 0 var(--bloomberg-accent); } 100% { text-shadow: 0 0 12px var(--bloomberg-accent); } }
         
@@ -364,7 +376,7 @@
         <section class="data-grid">
             <div class="data-item data-item-swing-left" id="swing-hl-container" onclick="copySwingHL()">
                 <span class="data-label">SWING H/L</span>
-                <div class="data-val">
+                <div class="data-val" id="swing-value-container">
                     <span class="swing-high-text" id="swing-high-value">--</span>
                     <span class="swing-low-text" id="swing-low-value">--</span>
                 </div>
@@ -418,6 +430,125 @@
     let lastSignalDecision = "";
     let mtfBiasCache = { m5: "NEUTRAL", m15: "NEUTRAL", h1: "NEUTRAL" };
     let lastArrowDirection = "neutral";
+    
+    // Level touched status
+    let levelStatus = {
+        swingTouched: false,
+        swingDirection: null, // "HIGH" or "LOW"
+        slTouched: false,
+        entryTouched: false,
+        tpTouched: false
+    };
+    
+    function resetLevelStatus() {
+        levelStatus = {
+            swingTouched: false,
+            swingDirection: null,
+            slTouched: false,
+            entryTouched: false,
+            tpTouched: false
+        };
+        updateLevelColors();
+    }
+    
+    function updateLevelColors() {
+        const swingContainer = document.getElementById('swing-value-container');
+        const slContainer = document.getElementById('sl-zone');
+        const entryContainer = document.getElementById('entry-zone');
+        const tpContainer = document.getElementById('rTP');
+        
+        if (swingContainer) {
+            if (levelStatus.swingTouched) {
+                swingContainer.classList.add('swing-active');
+            } else {
+                swingContainer.classList.remove('swing-active');
+            }
+        }
+        
+        if (slContainer) {
+            if (levelStatus.slTouched) {
+                slContainer.classList.add('sl-active');
+            } else {
+                slContainer.classList.remove('sl-active');
+            }
+        }
+        
+        if (entryContainer) {
+            if (levelStatus.entryTouched) {
+                entryContainer.classList.add('entry-active');
+            } else {
+                entryContainer.classList.remove('entry-active');
+            }
+        }
+        
+        if (tpContainer) {
+            if (levelStatus.tpTouched) {
+                tpContainer.classList.add('tp-active');
+            } else {
+                tpContainer.classList.remove('tp-active');
+            }
+        }
+    }
+    
+    function checkLevelsTouched(currentPrice) {
+        // Swing H/L detection
+        if (engine.swingHigh > 0 && engine.swingLow > 0) {
+            const swingHighTouched = currentPrice >= engine.swingHigh;
+            const swingLowTouched = currentPrice <= engine.swingLow;
+            
+            if (swingHighTouched || swingLowTouched) {
+                if (!levelStatus.swingTouched) {
+                    levelStatus.swingTouched = true;
+                    if (swingHighTouched) levelStatus.swingDirection = "HIGH";
+                    else if (swingLowTouched) levelStatus.swingDirection = "LOW";
+                    updateLevelColors();
+                }
+            } else if (levelStatus.swingTouched) {
+                // Reset swing status jika harga bergerak menjauh (opsional)
+                // levelStatus.swingTouched = false;
+                // levelStatus.swingDirection = null;
+                // updateLevelColors();
+            }
+        }
+        
+        // SL detection
+        if (engine.sl > 0) {
+            const isLongTrade = lastTradeDirection === "BUY";
+            let slTouched = false;
+            if (isLongTrade && currentPrice <= engine.sl) slTouched = true;
+            else if (!isLongTrade && currentPrice >= engine.sl) slTouched = true;
+            
+            if (slTouched && !levelStatus.slTouched) {
+                levelStatus.slTouched = true;
+                updateLevelColors();
+            }
+        }
+        
+        // Entry Zone detection (antara f618 dan deep)
+        if (engine.f618 > 0 && engine.deep > 0) {
+            const entryLow = Math.min(engine.f618, engine.deep);
+            const entryHigh = Math.max(engine.f618, engine.deep);
+            const entryTouched = currentPrice >= entryLow && currentPrice <= entryHigh;
+            
+            if (entryTouched && !levelStatus.entryTouched) {
+                levelStatus.entryTouched = true;
+                updateLevelColors();
+            }
+        }
+        
+        // TP detection
+        if (engine.tp > 0) {
+            const isLongTrade = lastTradeDirection === "BUY";
+            let tpTouched = false;
+            if (isLongTrade && currentPrice >= engine.tp) tpTouched = true;
+            else if (!isLongTrade && currentPrice <= engine.tp) tpTouched = true;
+            
+            if (tpTouched && !levelStatus.tpTouched) {
+                levelStatus.tpTouched = true;
+                updateLevelColors();
+            }
+        }
+    }
     
     // Connection Management Variables
     let reconnectDelay = 1000;
@@ -590,6 +721,7 @@
         engine.lastSwingHigh = engine.swingHigh; engine.lastSwingLow = engine.swingLow;
         if (candleData.length >= 30) calculateSMCLevels();
         isInTrade = false; lastEntryPrice = 0; lastTradeDirection = null;
+        resetLevelStatus();
         localStorage.removeItem('lastTradeEntry');
         const decisionElem = document.getElementById('decision-status');
         if (decisionElem) {
@@ -1751,6 +1883,7 @@
         checkStopLossHit(currentPrice);
         checkTakeProfitHit(currentPrice);
         checkSwingBreakthrough(currentPrice);
+        checkLevelsTouched(currentPrice);
         if (now - lastResetTime > RESET_COOLDOWN) checkMajorStructureChange(currentPrice);
         calculateSMCLevels();
         updateDirectionArrow(currentPrice);
@@ -1824,6 +1957,7 @@
         
         engine.sweepDetected = false; engine.bosConfirmed = false; engine.liquiditySide = null; engine.fvgEntryActive = false;
         recentPrices = []; lastSignalExpiry = 0; lastSignalDecision = "";
+        resetLevelStatus();
         
         const klinesPromise = fetchKlines();
         const mtfPromise = fetchMTFData();
