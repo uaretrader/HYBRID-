@@ -9,7 +9,6 @@
         
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* BLOOMBERG STYLE VARIABLES */
         :root { 
             --bloomberg-bg: #000000;
             --bloomberg-panel: #0a0a0a;
@@ -24,7 +23,6 @@
             --bloomberg-orange: #ff884d;
             --gold-dim: rgba(255, 204, 0, 0.12);
             --news-ban: #ff3366;
-            --trailing-active: #ffaa44;
         }
         
         body { 
@@ -44,7 +42,6 @@
         .app-wrapper { display: flex; flex-direction: column; height: 100%; width: 100%; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
         .terminal-container { width: 100%; background: var(--bloomberg-bg); position: relative; z-index: 10; flex-shrink: 0; }
         
-        /* BLOOMBERG HEADER */
         .header { 
             padding: 8px 16px; 
             display: flex; 
@@ -104,8 +101,7 @@
         .hero-display { padding: 12px 20px 16px; display: flex; flex-direction: column; width: 100%; }
         .hero-meta-row { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; margin-bottom: 16px; font-family: 'JetBrains Mono'; font-weight: 500; font-size: 0.6rem; align-items: center; }
         
-        /* BLOOMBERG PANEL CARDS */
-        .factor-card, .sma20-status, .sma50-status, .decision-panel, .rsi-panel, .mtf-paragraph-card, .signal-history {
+        .factor-card, .sma20-status, .sma50-status, .decision-panel, .rsi-panel, .mtf-paragraph-card {
             background: var(--bloomberg-panel);
             border: 1px solid var(--bloomberg-border);
             border-radius: 0px;
@@ -115,7 +111,6 @@
         .factor-card.active { border-left: 3px solid var(--bloomberg-accent); background: rgba(0, 255, 136, 0.05); }
         .factor-card.warning { border-color: var(--bloomberg-orange); }
         
-        /* Sembunyikan card MTF yang atas */
         #factor2-card { display: none !important; }
         
         .sma20-status, .sma50-status {
@@ -159,31 +154,6 @@
             color: var(--news-ban);
         }
         
-        .trailing-status {
-            background: rgba(255, 170, 68, 0.15);
-            border: 1px solid var(--trailing-active);
-            border-radius: 0px;
-            padding: 2px 8px;
-            font-size: 0.5rem;
-            font-family: 'JetBrains Mono';
-            color: var(--trailing-active);
-        }
-        
-        .signal-history {
-            background: var(--bloomberg-panel);
-            border: 1px solid var(--bloomberg-border);
-            border-radius: 0px;
-            padding: 8px 12px;
-            font-size: 0.6rem;
-            font-family: 'JetBrains Mono';
-            color: var(--bloomberg-text);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-        
         .rsi-panel { margin-top: 12px; margin-bottom: 12px; padding: 8px 12px; border: 1px solid var(--bloomberg-border); border-radius: 0px; background: var(--bloomberg-panel); }
         .rsi-meta { display: flex; justify-content: space-between; margin-bottom: 6px; }
         .rsi-tag { font-size: 0.5rem; font-weight: 500; color: var(--bloomberg-text-dim); font-family: 'JetBrains Mono'; }
@@ -191,7 +161,6 @@
         .rsi-track { height: 2px; background: #2a2a2a; border-radius: 0px; overflow: hidden; }
         #rsi-bar { height: 100%; width: 0%; transition: width 0.1s linear, background 0.2s; background: var(--bloomberg-accent); }
         
-        /* BLOOMBERG DATA GRID */
         .data-grid {
             display: grid; 
             grid-template-columns: repeat(5, 1fr); 
@@ -232,7 +201,6 @@
         .fvg-highlight { animation: fvgPulse 0.8s ease 2; text-shadow: 0 0 8px var(--bloomberg-accent); }
         @keyframes fvgPulse { 0% { text-shadow: 0 0 0 var(--bloomberg-accent); } 100% { text-shadow: 0 0 12px var(--bloomberg-accent); } }
         
-        /* BLOOMBERG MTF */
         .mtf-paragraph-card { 
             background: var(--bloomberg-panel); 
             border-radius: 0px; 
@@ -251,7 +219,6 @@
         .terminal-box { padding: 0 16px 14px 16px; width: 100%; }
         .card { background: transparent; border: none; padding: 0; }
         
-        /* BLOOMBERG FOOTER */
         .footer-info { 
             display: flex; 
             gap: 12px; 
@@ -320,7 +287,6 @@
             .data-grid { grid-template-columns: repeat(5, 1fr); font-size: 0.55rem; }
             .data-label { font-size: 0.4rem; }
             .data-val { font-size: 0.65rem; }
-            .signal-history { font-size: 0.5rem; padding: 4px 8px; }
         }
     </style>
 </head>
@@ -395,9 +361,6 @@
             </div>
         </main>
 
-        <!-- SIGNAL HISTORY -->
-        <div id="signal-history" class="signal-history">📜 SIGNAL: ⏳ No signal yet</div>
-
         <section class="data-grid">
             <div class="data-item data-item-swing-left" id="swing-hl-container" onclick="copySwingHL()">
                 <span class="data-label">SWING H/L</span>
@@ -437,7 +400,6 @@
                     <div class="date-module-new" id="date-display">--/--/--</div>
                     <div class="clock-module-new" id="clock-display">00:00:00</div>
                     <div id="news-status" class="news-status" style="display: none;">NO NEWS</div>
-                    <div id="trailing-status" class="trailing-status" style="display: none;">TRAILING OFF</div>
                 </div>
             </div>
         </section>
@@ -486,72 +448,6 @@
     
     // Factor Status
     let factorStatus = { f1: false, f2: false, f3: false, f4: false, f5: false, f6: false, f7: false, f_sma50: false };
-    
-    // ==================== SIGNAL HISTORY LOG ====================
-    let signalHistory = [];
-    const SIGNAL_EXPIRY_MS = 5 * 60 * 1000;
-    
-    function recordSignalToHistory(decision, currentPrice) {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        const pairName = currentPair === "XAUUSDT" ? "XAUUSD" : "BTCUSD";
-        
-        let signalType = "", signalIcon = "";
-        if (decision.includes("BUY NOW!")) { signalType = "BUY"; signalIcon = "🟢"; }
-        else if (decision.includes("SELL NOW!")) { signalType = "SELL"; signalIcon = "🔴"; }
-        else return;
-        
-        const lastSignal = signalHistory[0];
-        if (lastSignal && Date.now() - lastSignal.timestamp < 3000 && lastSignal.type === signalType) return;
-        
-        const signalRecord = {
-            type: signalType, icon: signalIcon, pair: pairName,
-            price: currentPrice.toFixed(currentPair === "XAUUSDT" ? 2 : 1),
-            time: timeStr, timestamp: Date.now(),
-            expiryTime: Date.now() + SIGNAL_EXPIRY_MS, fullDecision: decision
-        };
-        
-        signalHistory.unshift(signalRecord);
-        updateSignalHistoryDisplay();
-        console.log(`📝 SIGNAL RECORDED: ${signalType} ${pairName} at ${timeStr}`);
-    }
-    
-    function cleanExpiredSignals() {
-        const now = Date.now();
-        let changed = false;
-        for (let i = signalHistory.length - 1; i >= 0; i--) {
-            if (signalHistory[i].expiryTime <= now) {
-                signalHistory.splice(i, 1);
-                changed = true;
-            }
-        }
-        if (changed) updateSignalHistoryDisplay();
-    }
-    
-    function updateSignalHistoryDisplay() {
-        const historyElem = document.getElementById('signal-history');
-        if (!historyElem) return;
-        if (signalHistory.length === 0) {
-            historyElem.innerHTML = `📜 SIGNAL: ⏳ No signal yet`;
-            return;
-        }
-        let displayHtml = `📜 SIGNAL: `;
-        for (let i = 0; i < signalHistory.length; i++) {
-            const s = signalHistory[i];
-            if (i > 0) displayHtml += ` | `;
-            displayHtml += `${s.icon} ${s.type} ${s.pair} ${s.price} ${s.time}`;
-        }
-        historyElem.innerHTML = displayHtml;
-        historyElem.style.background = 'rgba(0, 255, 136, 0.15)';
-        setTimeout(() => { historyElem.style.background = ''; }, 300);
-    }
-    
-    function startHistoryUpdater() {
-        setInterval(() => {
-            cleanExpiredSignals();
-            updateSignalHistoryDisplay();
-        }, 1000);
-    }
     
     // ==================== FUNGSI SWAP CARD ====================
     function swapCardDisplay() {
@@ -674,101 +570,10 @@
         return volumeRatio > 1.5;
     }
     
-    // ==================== TRAILING STOP ====================
-    let trailingActive = false, trailingStopPrice = 0, maxProfitPercent = 0, entryPriceForTrailing = 0, tradeDirectionForTrailing = null;
-    let isInTrade = false, lastEntryPrice = 0, lastTradeDirection = null, lastEntryTime = 0, lastResetTime = 0;
-    const RESET_COOLDOWN = 2000, TRAILING_ACTIVATION_PROFIT = 27, TRAILING_DISTANCE_PERCENT = 15;
-    
-    function checkAndActivateTrailingStop(currentPrice) {
-        if (!isInTrade || trailingActive) return false;
-        const isLongTrade = lastTradeDirection === "BUY";
-        let currentProfitPercent = 0;
-        if (isLongTrade && engine.tp > 0) {
-            const targetDistance = Math.abs(engine.tp - lastEntryPrice);
-            const currentDistance = currentPrice - lastEntryPrice;
-            currentProfitPercent = (currentDistance / targetDistance) * 100;
-            if (currentProfitPercent >= TRAILING_ACTIVATION_PROFIT) {
-                trailingActive = true;
-                entryPriceForTrailing = lastEntryPrice;
-                tradeDirectionForTrailing = lastTradeDirection;
-                maxProfitPercent = currentProfitPercent;
-                trailingStopPrice = currentPrice - (Math.abs(engine.tp - lastEntryPrice) * (TRAILING_DISTANCE_PERCENT / 100));
-                updateTrailingStatusDisplay(true);
-                return true;
-            }
-        } else if (!isLongTrade && engine.tp > 0) {
-            const targetDistance = Math.abs(engine.tp - lastEntryPrice);
-            const currentDistance = lastEntryPrice - currentPrice;
-            currentProfitPercent = (currentDistance / targetDistance) * 100;
-            if (currentProfitPercent >= TRAILING_ACTIVATION_PROFIT) {
-                trailingActive = true;
-                entryPriceForTrailing = lastEntryPrice;
-                tradeDirectionForTrailing = lastTradeDirection;
-                maxProfitPercent = currentProfitPercent;
-                trailingStopPrice = currentPrice + (Math.abs(engine.tp - lastEntryPrice) * (TRAILING_DISTANCE_PERCENT / 100));
-                updateTrailingStatusDisplay(true);
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    function updateTrailingStop(currentPrice) {
-        if (!trailingActive || !isInTrade) return false;
-        const isLongTrade = tradeDirectionForTrailing === "BUY";
-        let currentProfitPercent = 0, newTrailingStop = trailingStopPrice;
-        if (isLongTrade && engine.tp > 0) {
-            const targetDistance = Math.abs(engine.tp - entryPriceForTrailing);
-            const currentDistance = currentPrice - entryPriceForTrailing;
-            currentProfitPercent = (currentDistance / targetDistance) * 100;
-            if (currentProfitPercent > maxProfitPercent) {
-                maxProfitPercent = currentProfitPercent;
-                newTrailingStop = currentPrice - (targetDistance * (TRAILING_DISTANCE_PERCENT / 100));
-                if (newTrailingStop > trailingStopPrice) {
-                    trailingStopPrice = newTrailingStop;
-                    updateTrailingStatusDisplay(true, currentProfitPercent);
-                }
-            }
-            if (currentPrice <= trailingStopPrice) {
-                fullStructureReset(`TRAILING STOP HIT (${currentProfitPercent.toFixed(0)}% profit)`);
-                return true;
-            }
-        } else if (!isLongTrade && engine.tp > 0) {
-            const targetDistance = Math.abs(engine.tp - entryPriceForTrailing);
-            const currentDistance = entryPriceForTrailing - currentPrice;
-            currentProfitPercent = (currentDistance / targetDistance) * 100;
-            if (currentProfitPercent > maxProfitPercent) {
-                maxProfitPercent = currentProfitPercent;
-                newTrailingStop = currentPrice + (targetDistance * (TRAILING_DISTANCE_PERCENT / 100));
-                if (newTrailingStop < trailingStopPrice) {
-                    trailingStopPrice = newTrailingStop;
-                    updateTrailingStatusDisplay(true, currentProfitPercent);
-                }
-            }
-            if (currentPrice >= trailingStopPrice) {
-                fullStructureReset(`TRAILING STOP HIT (${currentProfitPercent.toFixed(0)}% profit)`);
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    function updateTrailingStatusDisplay(active, profitPercent = null) {
-        const trailingElem = document.getElementById('trailing-status');
-        if (!trailingElem) return;
-        if (active && trailingActive) {
-            trailingElem.style.display = "inline-flex";
-            trailingElem.innerHTML = profitPercent ? `TRAILING @ ${profitPercent.toFixed(0)}%` : `TRAILING ACTIVE`;
-        } else { trailingElem.style.display = "none"; }
-    }
-    
-    function resetTrailingStop() {
-        trailingActive = false; trailingStopPrice = 0; maxProfitPercent = 0;
-        entryPriceForTrailing = 0; tradeDirectionForTrailing = null;
-        updateTrailingStatusDisplay(false);
-    }
-    
     // ==================== AUTO RESET SYSTEM ====================
+    let isInTrade = false, lastEntryPrice = 0, lastTradeDirection = null, lastEntryTime = 0, lastResetTime = 0;
+    const RESET_COOLDOWN = 2000;
+    
     function flashReset() {
         const wrapper = document.querySelector('.app-wrapper');
         if (wrapper) { wrapper.classList.add('reset-flash'); setTimeout(() => wrapper.classList.remove('reset-flash'), 500); }
@@ -779,7 +584,6 @@
         if (now - lastResetTime < RESET_COOLDOWN) return;
         lastResetTime = now;
         flashReset();
-        resetTrailingStop();
         engine.sweepDetected = false; engine.bosConfirmed = false; engine.liquiditySide = null;
         engine.fvgEntryActive = false; engine.bias = "NEUTRAL";
         engine.lastSweepTime = 0; engine.lastBosTime = 0;
@@ -800,7 +604,7 @@
         let isHit = false;
         if (isLongTrade && currentPrice <= engine.sl) isHit = true;
         else if (!isLongTrade && currentPrice >= engine.sl) isHit = true;
-        if (isHit) { resetTrailingStop(); setTimeout(() => fullStructureReset("STOP LOSS HIT"), 500); return true; }
+        if (isHit) { setTimeout(() => fullStructureReset("STOP LOSS HIT"), 500); return true; }
         return false;
     }
     
@@ -810,7 +614,7 @@
         let isHit = false;
         if (isLongTrade && currentPrice >= engine.tp) isHit = true;
         else if (!isLongTrade && currentPrice <= engine.tp) isHit = true;
-        if (isHit && !trailingActive) { setTimeout(() => fullStructureReset("TAKE PROFIT HIT"), 500); return true; }
+        if (isHit) { setTimeout(() => fullStructureReset("TAKE PROFIT HIT"), 500); return true; }
         return false;
     }
     
@@ -824,7 +628,7 @@
         if (currentPrice < engine.swingLow - (buffer * 0.5)) {
             if (engine.swingLow !== engine.lastSwingLow) { breakthrough = true; breakthroughType = "SWING LOW BROKEN"; }
         }
-        if (breakthrough) { resetTrailingStop(); setTimeout(() => fullStructureReset(breakthroughType), 300); return true; }
+        if (breakthrough) { setTimeout(() => fullStructureReset(breakthroughType), 300); return true; }
         return false;
     }
     
@@ -836,7 +640,6 @@
             lastEntryPrice = currentPrice;
             lastTradeDirection = decision.includes("BUY NOW!") ? "BUY" : "SELL";
             lastEntryTime = Date.now();
-            resetTrailingStop();
             localStorage.setItem('lastTradeEntry', JSON.stringify({ price: lastEntryPrice, direction: lastTradeDirection, time: lastEntryTime, sl: engine.sl, tp: engine.tp }));
         }
     }
@@ -1855,14 +1658,12 @@
             decisionElem.classList.add('decision-animate');
             setTimeout(() => decisionElem.classList.remove('decision-animate'), 800);
             trackTradeEntry(decision, currentPrice);
-            recordSignalToHistory(decision, currentPrice);
             return;
         }
         decisionElem.innerHTML = decision;
         decisionElem.style.color = decisionColor;
         decisionElem.style.background = decisionBg;
         trackTradeEntry(decision, currentPrice);
-        recordSignalToHistory(decision, currentPrice);
     }
     
     function periodicUpdate() {
@@ -1947,11 +1748,9 @@
             setTimeout(() => priceElem.style.color = "#fff", 100);
         }
         
-        if (trailingActive && isInTrade) updateTrailingStop(currentPrice);
         checkStopLossHit(currentPrice);
         checkTakeProfitHit(currentPrice);
         checkSwingBreakthrough(currentPrice);
-        if (isInTrade && !trailingActive) checkAndActivateTrailingStop(currentPrice);
         if (now - lastResetTime > RESET_COOLDOWN) checkMajorStructureChange(currentPrice);
         calculateSMCLevels();
         updateDirectionArrow(currentPrice);
@@ -1987,7 +1786,7 @@
             const rangeChangePercent = Math.abs((newRange - oldRange) / oldRange) * 100;
             if (rangeChangePercent > 30) { majorChange = true; changeReason = `RANGE CHANGE: ${rangeChangePercent.toFixed(1)}%`; }
         }
-        if (majorChange && (now - lastResetTime) > RESET_COOLDOWN) { resetTrailingStop(); setTimeout(() => fullStructureReset(changeReason), 300); return true; }
+        if (majorChange && (now - lastResetTime) > RESET_COOLDOWN) { setTimeout(() => fullStructureReset(changeReason), 300); return true; }
         return false;
     }
     
@@ -2025,7 +1824,6 @@
         
         engine.sweepDetected = false; engine.bosConfirmed = false; engine.liquiditySide = null; engine.fvgEntryActive = false;
         recentPrices = []; lastSignalExpiry = 0; lastSignalDecision = "";
-        resetTrailingStop();
         
         const klinesPromise = fetchKlines();
         const mtfPromise = fetchMTFData();
@@ -2048,7 +1846,6 @@
         await mtfPromise;
         await newsPromise;
         loadSavedTrade();
-        startHistoryUpdater();
     }
     
     // ==================== EVENT HANDLERS ====================
@@ -2057,7 +1854,6 @@
             if (currentPair === btn.dataset.pair || isReloading) return; 
             currentPair = btn.dataset.pair; 
             localStorage.setItem('lastPair', currentPair);
-            resetTrailingStop();
             fullReload(); 
         };
     });
