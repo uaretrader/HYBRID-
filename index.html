@@ -324,7 +324,7 @@
                 <div class="data-val tp-blue" id="rTP">0.00</div>
             </div>
             <div class="data-item data-item-pips-center" id="pips-value" onclick="smartCopy('pips-value')">
-                <span class="data-label">📏 PIPS</span>
+                <span class="data-label">🎯 RANGE</span>
                 <div class="data-val pips-cyan" id="pips-display">0.0</div>
             </div>
         </section>
@@ -867,7 +867,6 @@
         }
     }
     
-    // PERBAIKAN 2: Volume Ratio Default - ubah dari 1 menjadi 0
     let wysetrade = {
         support: 0, resistance: 0, isNearSupport: false, isNearResistance: false,
         candlePattern: "NONE", volumeRatio: 0,
@@ -886,19 +885,19 @@
     function getPrecision() { return currentPair === "XAUUSDT" ? 2 : 1; }
     function getPipValue() { return currentPair === "XAUUSDT" ? 0.01 : 1.0; }
     
-    function calculatePips(price1, price2) {
-        const pipValue = getPipValue();
-        const diff = Math.abs(price1 - price2);
-        return (diff / pipValue).toFixed(1);
-    }
-    
     function updatePipsDisplay() {
         const pipsElem = document.getElementById('pips-display');
         if (!pipsElem || engine.tp === 0 || engine.sl === 0) return;
         const entryMid = (engine.f618 + engine.deep) / 2;
-        const tpDistance = Math.abs(engine.tp - entryMid);
-        const pips = calculatePips(0, tpDistance);
-        pipsElem.innerText = `${pips}`;
+        const distanceInPoints = Math.abs(engine.tp - entryMid);
+        
+        let displayValue;
+        if (currentPair === "XAUUSDT") {
+            displayValue = distanceInPoints.toFixed(2);
+        } else {
+            displayValue = distanceInPoints.toFixed(1);
+        }
+        pipsElem.innerText = displayValue;
     }
     
     window.copySwingHL = function() {
@@ -952,11 +951,10 @@
         return "NEUTRAL";
     }
     
-    // ==================== ATR CALCULATION ====================
+    // ==================== ATR CALCULATION (OPTIMASI: 500ms) ====================
     function calculateATR(period = 14, data = candleData) {
         const now = Date.now();
-        // PERBAIKAN 3: ATR Cache - ubah dari 5000ms menjadi 1000ms
-        if (now - lastATRCalc < 1000 && cachedATR > 0) return cachedATR;
+        if (now - lastATRCalc < 500 && cachedATR > 0) return cachedATR;
         if (!data.length || data.length < period + 1) return 0;
         let tr = [];
         for (let i = 1; i < data.length; i++) {
@@ -1237,7 +1235,6 @@
         return isValid;
     }
     
-    // PERBAIKAN 1: RSI Panel untuk BTC - fungsi baru untuk update RSI terpisah
     function updateRSIDisplay() {
         const rsi = computeRSI(lastPrice);
         const rsiVal = document.getElementById('rsi-val');
@@ -1250,6 +1247,7 @@
     }
     
     // ==================== UPDATE FUNCTIONS UNTUK CARD ====================
+    // OPTIMASI 3: Hapus kode RSI redundant di updateDivergenceDisplay
     function updateDivergenceDisplay() {
         if (currentPair !== "XAUUSDT") return;
         
@@ -1278,6 +1276,7 @@
         }
     }
     
+    // OPTIMASI 3: Hapus kode RSI redundant di updateVolumeDisplay
     function updateVolumeDisplay() {
         if (currentPair !== "BTCUSDT") return;
         
@@ -1527,9 +1526,10 @@
     }
     
     // ==================== FAKTOR 3: INSTITUTIONAL LOGIC ====================
+    // OPTIMASI 1: ADX Cache - turunkan dari 2000ms menjadi 1000ms
     function calculateADXWithTick(currentPrice) {
         const now = Date.now();
-        if (now - lastADXCalc < 2000 && cachedADX > 0) return cachedADX;
+        if (now - lastADXCalc < 1000 && cachedADX > 0) return cachedADX;
         if (!candleData.length || candleData.length < 28) return 25;
         try {
             const period = 14;
@@ -2071,7 +2071,6 @@
     }
     
     function updateUIElements(currentPrice) {
-        // PERBAIKAN 1: Panggil updateRSIDisplay untuk update RSI panel
         updateRSIDisplay();
         updatesma20UI(currentPrice);
         updatesma50UI(currentPrice);
@@ -2208,7 +2207,8 @@
     };
     
     setInterval(updateClock, 1000);
-    setInterval(fetchMTFData, 60000);
+    // OPTIMASI 4: Turunkan interval MTF fetch dari 60 detik menjadi 30 detik
+    setInterval(fetchMTFData, 30000);
     
     fullReload();
 </script>
