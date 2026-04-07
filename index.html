@@ -80,23 +80,23 @@
         .nav-section { display: flex; gap: 8px; padding: 10px 16px; justify-content: space-between; flex-wrap: wrap; background: #050505; align-items: center; border-bottom: 1px solid var(--bloomberg-border); }
         .nav-group { display: flex; gap: 4px; flex-wrap: wrap; }
         .btn-tab { 
-            background: transparent; 
-            border: 1px solid var(--bloomberg-border); 
-            color: var(--bloomberg-text-dim); 
-            padding: 5px 12px; 
-            border-radius: 0px; 
-            font-size: 0.65rem; 
-            font-weight: 500; 
-            cursor: pointer; 
-            font-family: 'JetBrains Mono'; 
-            transition: 0.2s; 
-        }
-        .btn-tab.active { 
-            color: var(--bloomberg-accent); 
-            background: rgba(0, 255, 136, 0.08); 
-            border-color: var(--bloomberg-accent); 
-        }
-        .btn-tab.disabled { opacity: 0.5; cursor: wait; pointer-events: none; }
+    background: transparent; 
+    border: none;                           /* ← border dihilangkan */
+    color: var(--bloomberg-text-dim); 
+    padding: 5px 12px; 
+    border-radius: 0px; 
+    font-size: 0.65rem; 
+    font-weight: 500; 
+    cursor: pointer; 
+    font-family: 'JetBrains Mono'; 
+    transition: 0.2s; 
+}
+.btn-tab.active { 
+    color: var(--bloomberg-accent); 
+    background: rgba(0, 255, 136, 0.08); 
+    border: none;                           /* ← border aktif juga dihilangkan */
+}
+.btn-tab.disabled { opacity: 0.5; cursor: wait; pointer-events: none; }
         
         .hero-display { padding: 12px 20px 16px; display: flex; flex-direction: column; width: 100%; }
         .hero-meta-row { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; margin-bottom: 16px; font-family: 'JetBrains Mono'; font-weight: 500; font-size: 0.6rem; align-items: center; }
