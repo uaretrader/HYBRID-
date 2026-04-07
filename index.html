@@ -1220,7 +1220,7 @@
                 status.style.color = divergence.type === "BULLISH" ? "var(--bloomberg-accent)" : "var(--bloomberg-danger)";
             } else {
                 card.classList.remove('active');
-                if (divergence.type === "NONE") { status.innerHTML = "⚪"; }
+                if (divergence.type === "NONE") { status.innerHTML = "◉"; }
                 else {
                     const arrow = divergence.type === "BULLISH" ? "▲" : "▼";
                     status.innerHTML = `${arrow} ${Math.round(divergence.strength)}%`;
