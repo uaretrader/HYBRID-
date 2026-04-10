@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SMC APEX v21.0 | SNIPER MODE</title>
+    <title>SMC APEX v20.0 | OPTIMIZED FINAL</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
         
@@ -23,6 +23,7 @@
             --bloomberg-orange: #ff884d;
             --bloomberg-purple: #aa66ff;
             --gold-dim: rgba(255, 204, 0, 0.12);
+            --news-ban: #ff3366;
         }
         
         body { 
@@ -107,7 +108,7 @@
         .hero-display { padding: 12px 20px 16px; display: flex; flex-direction: column; width: 100%; }
         .hero-meta-row { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; margin-bottom: 16px; font-family: 'JetBrains Mono'; font-weight: 500; font-size: 0.6rem; align-items: center; }
         
-        .factor-card, .ema21-status, .sma50-status, .decision-panel, .rsi-panel, .mtf-paragraph-card {
+        .factor-card, .sma20-status, .sma50-status, .decision-panel, .rsi-panel, .mtf-paragraph-card {
             background: var(--bloomberg-panel);
             border: 1px solid var(--bloomberg-border);
             border-radius: 0px;
@@ -130,7 +131,7 @@
             100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
         }
         
-        .ema21-status, .sma50-status {
+        .sma20-status, .sma50-status {
             background: var(--bloomberg-panel);
             padding: 4px 10px;
             border: 1px solid var(--bloomberg-border);
@@ -138,9 +139,9 @@
             align-items: center;
             gap: 8px;
         }
-        .ema21-value, .sma50-value { font-weight: 700; min-width: 60px; text-align: right; }
-        .ema21-status.bullish, .sma50-status.bullish { border-left: 3px solid var(--bloomberg-accent); }
-        .ema21-status.bearish, .sma50-status.bearish { border-left: 3px solid var(--bloomberg-danger); }
+        .sma20-value, .sma50-value { font-weight: 700; min-width: 60px; text-align: right; }
+        .sma20-status.bullish, .sma50-status.bullish { border-left: 3px solid var(--bloomberg-accent); }
+        .sma20-status.bearish, .sma50-status.bearish { border-left: 3px solid var(--bloomberg-danger); }
         
         .decision-panel {
             background: var(--bloomberg-panel);
@@ -160,6 +161,16 @@
         .decision-label { color: var(--bloomberg-gold); }
         #decision-status { font-weight: 700; transition: all 0.3s ease; }
         .direction-arrow { font-size: 1.1rem; font-weight: 700; min-width: 35px; text-align: right; }
+        
+        .news-status {
+            background: rgba(255, 51, 102, 0.15);
+            border: 1px solid var(--news-ban);
+            border-radius: 0px;
+            padding: 2px 8px;
+            font-size: 0.5rem;
+            font-family: 'JetBrains Mono';
+            color: var(--news-ban);
+        }
         
         .rsi-panel { margin-top: 12px; margin-bottom: 12px; padding: 8px 12px; border: 1px solid var(--bloomberg-border); border-radius: 0px; background: var(--bloomberg-panel); }
         .rsi-meta { display: flex; justify-content: space-between; margin-bottom: 6px; }
@@ -289,13 +300,28 @@
         }
         .price-decimal { color: var(--bloomberg-accent); opacity: 0.8; font-size: 2.5rem; }
         
-        .reset-flash { animation: resetFlash 0.5s ease; }
-        @keyframes resetFlash { 0% { background: rgba(255, 204, 0, 0); } 50% { background: rgba(255, 204, 0, 0.2); } 100% { background: rgba(255, 204, 0, 0); } }
+        .reset-flash {
+            animation: resetFlash 0.5s ease;
+        }
+        @keyframes resetFlash {
+            0% { background: rgba(255, 204, 0, 0); }
+            50% { background: rgba(255, 204, 0, 0.2); }
+            100% { background: rgba(255, 204, 0, 0); }
+        }
         
-        .stale-warning { background: rgba(255, 51, 102, 0.2) !important; border-left: 3px solid var(--bloomberg-danger) !important; }
+        .stale-warning {
+            background: rgba(255, 51, 102, 0.2) !important;
+            border-left: 3px solid var(--bloomberg-danger) !important;
+        }
         
-        .spike-warning { border: 1px solid var(--bloomberg-danger) !important; animation: spikePulse 0.5s ease; }
-        @keyframes spikePulse { 0%, 100% { box-shadow: 0 0 0 rgba(255, 51, 102, 0); } 50% { box-shadow: 0 0 15px rgba(255, 51, 102, 0.5); } }
+        .spike-warning {
+            border: 1px solid var(--bloomberg-danger) !important;
+            animation: spikePulse 0.5s ease;
+        }
+        @keyframes spikePulse {
+            0%, 100% { box-shadow: 0 0 0 rgba(255, 51, 102, 0); }
+            50% { box-shadow: 0 0 15px rgba(255, 51, 102, 0.5); }
+        }
         
         .mode-indicator {
             display: inline-block;
@@ -324,7 +350,7 @@
     <div class="terminal-container">
         <header class="header">
             <div class="brand-container">
-                <div class="brand">SMC_APEX v21.0</div>
+                <div class="brand">SMC_APEX v20.0</div>
                 <div class="meta-label-sub">URTRADER TERMINAL | SNIPER MODE</div>
             </div>
             <div id="sys-status">
@@ -353,9 +379,9 @@
 
         <main class="hero-display">
             <div class="hero-meta-row">
-                <div class="ema21-status" id="ema21-status">
+                <div class="sma20-status" id="sma20-status">
                     <span>MA</span>
-                    <span class="ema21-value" id="ema21-value">--</span>
+                    <span class="sma20-value" id="sma20-value">--</span>
                 </div>
                 <div class="factor-card" id="factor4-card">
                     <span>DV</span>
@@ -394,7 +420,7 @@
             
             <div class="rsi-panel">
                 <div class="rsi-meta">
-                    <div class="rsi-tag">RSI (14)</div>
+                    <div class="rsi-tag">RSI (14) REAL-TIME</div>
                     <div id="rsi-val">---</div>
                 </div>
                 <div class="rsi-track"><div id="rsi-bar"></div></div>
@@ -439,6 +465,7 @@
                     <div class="session-module-new"><span id="session-tag">ASIA</span></div>
                     <div class="date-module-new" id="date-display">--/--/--</div>
                     <div class="clock-module-new" id="clock-display">00:00:00</div>
+                    <div id="news-status" class="news-status" style="display: none;">NO NEWS</div>
                 </div>
             </div>
         </section>
@@ -449,8 +476,9 @@
 (function() {
     'use strict';
     
-    const VERSION = '21.0.0-EMA-NONEWS';
-    console.log(`%c🚀 SMC APEX ${VERSION} | EMA 21 | No News | Optimized`, 'color: #00ff88; font-weight: bold;');
+    // ==================== VERSION ====================
+    const VERSION = '20.0.0-OPTIMIZED-FINAL';
+    console.log(`%c🚀 SMC APEX ${VERSION} | Null-Safe | Anti-Future-Leak | Optimized`, 'color: #00ff88; font-weight: bold;');
     
     // ==================== NULL-SAFE UTILITIES ====================
     const safeValue = (val, fallback = 0, context = '') => {
@@ -470,8 +498,12 @@
                 current = current[key];
             }
             return safeValue(current, fallback, path);
-        } catch { return fallback; }
+        } catch {
+            return fallback;
+        }
     };
+    
+    const safeArray = (arr) => Array.isArray(arr) ? arr : [];
     
     const safeNumberOperation = (numerator, denominator, fallback = 0) => {
         const num = safeValue(numerator, 0);
@@ -483,7 +515,10 @@
     
     // ==================== KONFIGURASI ====================
     const ADX_DEFAULT_RANGING = 15;
-    const DECISION_MODES = { CONSERVATIVE: 'conservative', SNIPER: 'sniper' };
+    const DECISION_MODES = {
+        CONSERVATIVE: 'conservative',
+        SNIPER: 'sniper'
+    };
     
     let currentMode = localStorage.getItem('decisionMode') || DECISION_MODES.CONSERVATIVE;
     let currentPair = localStorage.getItem('lastPair') || "XAUUSDT";
@@ -496,68 +531,87 @@
     let lastSignalDecision = "";
     let mtfBiasCache = { m5: "NEUTRAL", m15: "NEUTRAL", h1: "NEUTRAL" };
     let lastArrowDirection = "neutral";
+    
+    // Data freshness tracking
     let lastPriceUpdateTime = 0;
+    let lastRESTUpdateTime = 0;
     const DATA_STALE_THRESHOLD = 10000;
     let isDataStale = false;
+    
+    // Dynamic precision cache
     let cachedPrecision = null;
     let precisionCacheTime = 0;
     const PRECISION_CACHE_DURATION = 3600000;
     
-    let levelStatus = { swingTouched: false, swingDirection: null, slTouched: false, entryTouched: false, tpTouched: false };
-    let spikeDetected = false, lastSpikeTime = 0;
-    const SPIKE_COOLDOWN = 10000;
-    let abnormalPriceChangeCount = 0;
-    let currentOrderBlock = null, lastOBUpdate = 0, realtimeOBActive = false, lastOBDetectionTime = 0, priceActionBuffer = [];
-    let realtimePriceBuffer = [], realtimeRSIBuffer = [], lastDivergenceCheck = 0, pendingDivergence = null, divergenceCooldown = 0;
-    let sniperLevels = [];
-    let pendingUIUpdate = null, lastUIUpdateTime = 0;
-    const UI_UPDATE_THROTTLE = 50;
-    let lastBiasChange = 0, lastBias = "NEUTRAL";
-    const MIN_BIAS_DURATION = 30000;
-    
-    let reconnectDelay = 1000, lastWSMessageTime = Date.now(), isUsingFallback = false;
-    let restFallbackInterval = null, periodicUpdateInterval = null, heartbeatInterval = null, stuckCheckInterval = null, reconnectTimer = null, isManualDisconnect = false;
-    let volumeFetcherInterval = null, lastVolumeRatio = 0;
-    
-    let engine = {
-        swingHigh: 0, swingLow: 0, f618: 0, deep: 0, tp: 0, sl: 0,
-        bias: "NEUTRAL", sweepDetected: false, bosConfirmed: false,
-        adx: ADX_DEFAULT_RANGING, ema21: 0, sma50: 0, plusDI: 25, minusDI: 25,
-        lastSwingHigh: 0, lastSwingLow: 0,
-        lastSweepTime: 0, lastBosTime: 0, lastTPHitTime: 0,
-        liquiditySide: null, fvgEntryActive: false
+    // Level touched status
+    let levelStatus = {
+        swingTouched: false,
+        swingDirection: null,
+        slTouched: false,
+        entryTouched: false,
+        tpTouched: false
     };
     
-    let factorStatus = { f1: false, f2: false, f3: false, f4: false, f5: false, f6: false, f7: false, f8: false, f_sma50: false };
-    let lastSMCUpdate = 0;
-    const SMC_UPDATE_INTERVAL = 5000;
-    let cachedATR = 0, lastATRCalc = 0;
-    let cachedADX = { value: ADX_DEFAULT_RANGING, timestamp: 0 };
-    const ADX_CACHE_DURATION = 500;
-    let recentPrices = [], lastDecisionPrice = 0, lastStructureUpdateTime = 0;
-    const THROTTLE_MINUTES = 2;
-    const throttleMap = new Map();
-    let currentCandleStartTime = 0;
-    let isInTrade = false, lastEntryPrice = 0, lastTradeDirection = null, lastEntryTime = 0, lastResetTime = 0;
-    const RESET_COOLDOWN = 2000;
-    let wysetrade = { support: 0, resistance: 0, isNearSupport: false, isNearResistance: false, candlePattern: "NONE", volumeRatio: 0, isValidSR: false, isValidCandle: false, isValidVolume: false };
+    // Spike detection state (ENHANCED)
+    let spikeDetected = false;
+    let lastSpikeTime = 0;
+    const SPIKE_COOLDOWN = 10000;
+    let abnormalPriceChangeCount = 0;
+    
+    // Order Block state dengan real-time support
+    let currentOrderBlock = null;
+    let lastOBUpdate = 0;
+    let lastOBPrice = 0;
+    let realtimeOBActive = false;
+    let lastOBDetectionTime = 0;
+    let priceActionBuffer = [];
+    
+    // Divergence real-time state (FIXED - NO FUTURE LEAK)
+    let realtimePriceBuffer = [];
+    let realtimeRSIBuffer = [];
+    let lastDivergenceCheck = 0;
+    let pendingDivergence = null;
+    let divergenceCooldown = 0;
+    
+    // Sniper confluences
+    let sniperLevels = [];
+    
+    // UI Throttling
+    let pendingUIUpdate = null;
+    let lastUIUpdateTime = 0;
+    const UI_UPDATE_THROTTLE = 50; // ms
+    
+    // Hysteresis untuk mencegah whipsaw
+    let lastBiasChange = 0;
+    let lastBias = "NEUTRAL";
+    const MIN_BIAS_DURATION = 30000; // 30 detik
     
     // ==================== FUNGSI RESET LEVEL ====================
     function resetLevelStatus() {
-        levelStatus = { swingTouched: false, swingDirection: null, slTouched: false, entryTouched: false, tpTouched: false };
+        levelStatus = {
+            swingTouched: false,
+            swingDirection: null,
+            slTouched: false,
+            entryTouched: false,
+            tpTouched: false
+        };
+        
         const swingContainer = document.getElementById('swing-value-container');
         const slContainer = document.getElementById('sl-zone');
         const entryContainer = document.getElementById('entry-zone');
         const tpContainer = document.getElementById('rTP');
+        
         if (swingContainer) swingContainer.classList.remove('swing-active');
         if (slContainer) slContainer.classList.remove('sl-active');
         if (entryContainer) entryContainer.classList.remove('entry-active');
         if (tpContainer) tpContainer.classList.remove('tp-active');
+        
         const swingHigh = document.getElementById('swing-high-value');
         const swingLow = document.getElementById('swing-low-value');
         const slElem = document.getElementById('sl-value');
         const entryElems = document.querySelectorAll('.entry-gold');
         const tpElem = document.getElementById('rTP');
+        
         if (swingHigh) swingHigh.style.color = '';
         if (swingLow) swingLow.style.color = '';
         if (slElem) slElem.style.color = '';
@@ -570,10 +624,23 @@
         const slContainer = document.getElementById('sl-zone');
         const entryContainer = document.getElementById('entry-zone');
         const tpContainer = document.getElementById('rTP');
-        if (swingContainer) { if (levelStatus.swingTouched) swingContainer.classList.add('swing-active'); else swingContainer.classList.remove('swing-active'); }
-        if (slContainer) { if (levelStatus.slTouched) slContainer.classList.add('sl-active'); else slContainer.classList.remove('sl-active'); }
-        if (entryContainer) { if (levelStatus.entryTouched) entryContainer.classList.add('entry-active'); else entryContainer.classList.remove('entry-active'); }
-        if (tpContainer) { if (levelStatus.tpTouched) tpContainer.classList.add('tp-active'); else tpContainer.classList.remove('tp-active'); }
+        
+        if (swingContainer) {
+            if (levelStatus.swingTouched) swingContainer.classList.add('swing-active');
+            else swingContainer.classList.remove('swing-active');
+        }
+        if (slContainer) {
+            if (levelStatus.slTouched) slContainer.classList.add('sl-active');
+            else slContainer.classList.remove('sl-active');
+        }
+        if (entryContainer) {
+            if (levelStatus.entryTouched) entryContainer.classList.add('entry-active');
+            else entryContainer.classList.remove('entry-active');
+        }
+        if (tpContainer) {
+            if (levelStatus.tpTouched) tpContainer.classList.add('tp-active');
+            else tpContainer.classList.remove('tp-active');
+        }
     }
     
     function checkLevelsTouched(currentPrice) {
@@ -593,23 +660,33 @@
             let slTouched = false;
             if (isLongTrade && safePrice <= engine.sl) slTouched = true;
             else if (!isLongTrade && safePrice >= engine.sl) slTouched = true;
-            if (slTouched && !levelStatus.slTouched) { levelStatus.slTouched = true; updateLevelColors(); }
+            if (slTouched && !levelStatus.slTouched) {
+                levelStatus.slTouched = true;
+                updateLevelColors();
+            }
         }
         if (engine.f618 > 0 && engine.deep > 0) {
             const entryLow = Math.min(engine.f618, engine.deep);
             const entryHigh = Math.max(engine.f618, engine.deep);
             const entryTouched = safePrice >= entryLow && safePrice <= entryHigh;
-            if (entryTouched && !levelStatus.entryTouched) { levelStatus.entryTouched = true; updateLevelColors(); }
+            if (entryTouched && !levelStatus.entryTouched) {
+                levelStatus.entryTouched = true;
+                updateLevelColors();
+            }
         }
         if (engine.tp > 0 && isInTrade) {
             const isLongTrade = lastTradeDirection === "BUY";
             let tpTouched = false;
             if (isLongTrade && safePrice >= engine.tp) tpTouched = true;
             else if (!isLongTrade && safePrice <= engine.tp) tpTouched = true;
-            if (tpTouched && !levelStatus.tpTouched) { levelStatus.tpTouched = true; updateLevelColors(); }
+            if (tpTouched && !levelStatus.tpTouched) {
+                levelStatus.tpTouched = true;
+                updateLevelColors();
+            }
         }
     }
     
+    // ==================== ENHANCED SPIKE DETECTION ====================
     function isAbnormalSpike(newPrice, oldPrice) {
         if (oldPrice <= 0) return false;
         const safeNew = safeValue(newPrice, 0);
@@ -617,61 +694,104 @@
         const change = Math.abs(safeNew - safeOld);
         const maxNormalChange = safeOld * (currentPair === "XAUUSDT" ? 0.01 : 0.03);
         const isAbnormal = change > maxNormalChange;
-        if (isAbnormal) { abnormalPriceChangeCount++; console.warn(`⚠️ Abnormal spike detected: ${change.toFixed(2)}`); }
-        else { abnormalPriceChangeCount = Math.max(0, abnormalPriceChangeCount - 0.5); }
+        
+        if (isAbnormal) {
+            abnormalPriceChangeCount++;
+            console.warn(`⚠️ Abnormal spike detected: ${change.toFixed(2)} (${((change/safeOld)*100).toFixed(2)}%)`);
+        } else {
+            abnormalPriceChangeCount = Math.max(0, abnormalPriceChangeCount - 0.5);
+        }
+        
         return isAbnormal;
     }
     
+    // ==================== REAL-TIME ORDER BLOCK (OPTIMIZED) ====================
     function detectOrderBlockRealtime(currentPrice, lastPriceVal, direction) {
         const safePrice = safeValue(currentPrice, 0);
         const safeLast = safeValue(lastPriceVal, 0);
+        
         if (!candleData.length || candleData.length < 5) return null;
         if (Date.now() - lastOBDetectionTime < 500) return currentOrderBlock;
+        
         const priceMove = Math.abs(safePrice - safeLast);
         const atr = calculateATR(14);
         const minMove = currentPair === "XAUUSDT" ? (atr * 0.05) : (atr * 0.03);
+        
         if (priceMove < minMove) return currentOrderBlock;
+        
         priceActionBuffer.push({ price: safePrice, time: Date.now(), direction: direction });
         if (priceActionBuffer.length > 20) priceActionBuffer.shift();
+        
         if (priceActionBuffer.length >= 5) {
             const recentMoves = priceActionBuffer.slice(-5);
             const firstPrice = safeObject(priceActionBuffer[0], 'price', 0);
-            const isImpulsive = recentMoves.every(m => { const movePrice = safeObject(m, 'price', 0); return (direction === "BULLISH" && movePrice > firstPrice) || (direction === "BEARISH" && movePrice < firstPrice); });
+            const isImpulsive = recentMoves.every(m => {
+                const movePrice = safeObject(m, 'price', 0);
+                return (direction === "BULLISH" && movePrice > firstPrice) ||
+                       (direction === "BEARISH" && movePrice < firstPrice);
+            });
+            
             if (isImpulsive && priceActionBuffer.length >= 10) {
                 const lookback = priceActionBuffer.slice(-10, -5);
                 if (lookback.length >= 3) {
                     const lastLookback = lookback[lookback.length-1];
                     const firstLookback = lookback[0];
                     const isSmallBody = Math.abs(safeObject(lastLookback, 'price', 0) - safeObject(firstLookback, 'price', 0)) < priceMove * 0.3;
+                    
                     if (isSmallBody) {
                         lastOBDetectionTime = Date.now();
                         realtimeOBActive = true;
-                        return { high: Math.max(...lookback.map(m => safeObject(m, 'price', 0))), low: Math.min(...lookback.map(m => safeObject(m, 'price', 0))), price: safeObject(lastLookback, 'price', 0), type: direction === "BULLISH" ? "BULLISH_OB" : "BEARISH_OB", strength: Math.min(3, priceMove / (atr * 0.5)), realtime: true };
+                        
+                        return {
+                            high: Math.max(...lookback.map(m => safeObject(m, 'price', 0))),
+                            low: Math.min(...lookback.map(m => safeObject(m, 'price', 0))),
+                            price: safeObject(lastLookback, 'price', 0),
+                            type: direction === "BULLISH" ? "BULLISH_OB" : "BEARISH_OB",
+                            strength: Math.min(3, priceMove / (atr * 0.5)),
+                            realtime: true
+                        };
                     }
                 }
             }
         }
+        
         return currentOrderBlock;
     }
     
+    // OPTIMIZED: Batasi lookback ke 50 candle
     function detectOrderBlock(data, direction) {
         if (!data || data.length < 10) return null;
-        const validData = data.filter(c => c && typeof c.h === 'number' && typeof c.l === 'number' && typeof c.o === 'number' && typeof c.c === 'number');
+        
+        const validData = data.filter(c => c && typeof c.h === 'number' && typeof c.l === 'number' && 
+                                            typeof c.o === 'number' && typeof c.c === 'number');
         if (validData.length < 10) return null;
+        
         const now = Date.now();
         if (now - lastOBUpdate < 2000 && currentOrderBlock && !currentOrderBlock.realtime) return currentOrderBlock;
-        let bestOB = null, bestStrength = 0;
+        
+        let bestOB = null;
+        let bestStrength = 0;
+        
+        // OPTIMIZATION: Batasi loop ke 50 candle terakhir
         const OB_LOOKBACK = Math.min(50, validData.length);
         const startIdx = Math.max(10, validData.length - OB_LOOKBACK);
+        
         for (let i = validData.length - 5; i >= startIdx; i--) {
-            const current = validData[i], next = validData[i + 1], nextNext = validData[i + 2];
+            const current = validData[i];
+            const next = validData[i + 1];
+            const nextNext = validData[i + 2];
+            
             if (!current || !next || !nextNext) continue;
+            
             const bodySize = Math.abs(safeValue(current.c, 0) - safeValue(current.o, 0));
             const totalRange = safeValue(current.h, 0) - safeValue(current.l, 0);
             if (totalRange <= 0) continue;
+            
             const bodyRatio = bodySize / totalRange;
             const isSmallBody = bodyRatio < 0.35;
-            if ((direction === "BULLISH" || direction.includes("BULL")) && isSmallBody && safeValue(current.c, 0) < safeValue(current.o, 0) && safeValue(next.c, 0) > safeValue(next.o, 0)) {
+            
+            if ((direction === "BULLISH" || direction.includes("BULL")) && isSmallBody && 
+                safeValue(current.c, 0) < safeValue(current.o, 0) && safeValue(next.c, 0) > safeValue(next.o, 0)) {
                 const nextBodySize = Math.abs(safeValue(next.c, 0) - safeValue(next.o, 0));
                 const nextRange = safeValue(next.h, 0) - safeValue(next.l, 0);
                 const impulseStrength = nextRange > 0 ? nextBodySize / nextRange : 0;
@@ -679,11 +799,20 @@
                     const strength = safeNumberOperation(nextBodySize, totalRange, 0) * (safeValue(next.c, 0) > safeObject(nextNext, 'c', 0) ? 1.2 : 1.0);
                     if (strength > bestStrength) {
                         bestStrength = strength;
-                        bestOB = { high: safeValue(current.h, 0), low: safeValue(current.l, 0), price: safeValue(current.o, 0), type: "BULLISH_OB", strength: strength, realtime: false };
+                        bestOB = {
+                            high: safeValue(current.h, 0),
+                            low: safeValue(current.l, 0),
+                            price: safeValue(current.o, 0),
+                            type: "BULLISH_OB",
+                            strength: strength,
+                            realtime: false
+                        };
                     }
                 }
             }
-            if ((direction === "BEARISH" || direction.includes("BEAR")) && isSmallBody && safeValue(current.c, 0) > safeValue(current.o, 0) && safeValue(next.c, 0) < safeValue(next.o, 0)) {
+            
+            if ((direction === "BEARISH" || direction.includes("BEAR")) && isSmallBody && 
+                safeValue(current.c, 0) > safeValue(current.o, 0) && safeValue(next.c, 0) < safeValue(next.o, 0)) {
                 const nextBodySize = Math.abs(safeValue(next.o, 0) - safeValue(next.c, 0));
                 const nextRange = safeValue(next.h, 0) - safeValue(next.l, 0);
                 const impulseStrength = nextRange > 0 ? nextBodySize / nextRange : 0;
@@ -691,269 +820,718 @@
                     const strength = safeNumberOperation(nextBodySize, totalRange, 0) * (safeValue(next.c, 0) < safeObject(nextNext, 'c', 0) ? 1.2 : 1.0);
                     if (strength > bestStrength) {
                         bestStrength = strength;
-                        bestOB = { high: safeValue(current.h, 0), low: safeValue(current.l, 0), price: safeValue(current.c, 0), type: "BEARISH_OB", strength: strength, realtime: false };
+                        bestOB = {
+                            high: safeValue(current.h, 0),
+                            low: safeValue(current.l, 0),
+                            price: safeValue(current.c, 0),
+                            type: "BEARISH_OB",
+                            strength: strength,
+                            realtime: false
+                        };
                     }
                 }
             }
         }
-        if (bestOB && bestStrength > 1.2) { currentOrderBlock = bestOB; lastOBUpdate = now; return bestOB; }
+        
+        if (bestOB && bestStrength > 1.2) {
+            currentOrderBlock = bestOB;
+            lastOBUpdate = now;
+            return bestOB;
+        }
+        
         return null;
     }
     
     function updateOBRealtime(currentPrice, lastPriceVal, bias) {
         if (!bias || bias === "NEUTRAL") return false;
+        
         const direction = bias.includes("BULL") ? "BULLISH" : "BEARISH";
         const realtimeOB = detectOrderBlockRealtime(currentPrice, lastPriceVal, direction);
-        if (realtimeOB && realtimeOB.strength > 1.2) { currentOrderBlock = realtimeOB; updateFactorOBUI(realtimeOB, true); return true; }
+        
+        if (realtimeOB && realtimeOB.strength > 1.2) {
+            currentOrderBlock = realtimeOB;
+            updateFactorOBUI(realtimeOB, true);
+            return true;
+        }
+        
         if (Date.now() - lastOBUpdate > 2000) {
             const candleOB = detectOrderBlock(candleData, bias);
-            if (candleOB && candleOB.strength > 1.2) { currentOrderBlock = candleOB; updateFactorOBUI(candleOB, false); return true; }
+            if (candleOB && candleOB.strength > 1.2) {
+                currentOrderBlock = candleOB;
+                updateFactorOBUI(candleOB, false);
+                return true;
+            }
         }
+        
         return false;
     }
     
     function updateFactorOBUI(ob, isRealtime) {
         const card = document.getElementById('factor-ob-card');
         const status = document.getElementById('factor-ob-status');
+        
         if (!card || !status) return;
+        
         const isValid = ob !== null && ob.strength > 1.2;
         factorStatus.f8 = isValid;
+        
         if (isValid) {
             card.classList.add('ob-active');
             const arrow = ob.type === "BULLISH_OB" ? "▲" : "▼";
             const rt = isRealtime ? "⚡" : "";
             status.innerHTML = `${rt}${arrow} ${ob.strength.toFixed(1)}x`;
             status.style.color = "var(--bloomberg-purple)";
-            if (isRealtime) { card.style.animation = 'obPulseRealtime 0.3s ease'; setTimeout(() => card.style.animation = '', 300); highlightOBEntry(); }
-        } else { card.classList.remove('ob-active'); status.innerHTML = ob ? `${ob.strength.toFixed(1)}x` : "NO OB"; status.style.color = "var(--bloomberg-text-dim)"; }
+            
+            if (isRealtime) {
+                card.style.animation = 'obPulseRealtime 0.3s ease';
+                setTimeout(() => card.style.animation = '', 300);
+                highlightOBEntry();
+            }
+        } else {
+            card.classList.remove('ob-active');
+            status.innerHTML = ob ? `${ob.strength.toFixed(1)}x` : "NO OB";
+            status.style.color = "var(--bloomberg-text-dim)";
+        }
     }
     
     function highlightOBEntry() {
         if (!currentOrderBlock) return;
-        ['r618', 'r786'].forEach(id => { const el = document.getElementById(id); if (el) { el.classList.add('ob-highlight'); setTimeout(() => el.classList.remove('ob-highlight'), 2000); } });
+        const entryElems = ['r618', 'r786'];
+        entryElems.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('ob-highlight');
+                setTimeout(() => el.classList.remove('ob-highlight'), 2000);
+            }
+        });
     }
     
+    // ==================== REAL-TIME DIVERGENCE (FIXED - NO FUTURE LEAK) ====================
     function calculateRealtimeRSI(prices, period = 14) {
         if (prices.length < period + 1) return 50;
+        
         let gains = 0, losses = 0;
-        for (let i = prices.length - period; i < prices.length; i++) { const diff = safeValue(prices[i], 0) - safeValue(prices[i-1], 0); if (diff >= 0) gains += diff; else losses += Math.abs(diff); }
-        const avgGain = gains / period, avgLoss = losses / period;
+        for (let i = prices.length - period; i < prices.length; i++) {
+            const diff = safeValue(prices[i], 0) - safeValue(prices[i-1], 0);
+            if (diff >= 0) gains += diff;
+            else losses += Math.abs(diff);
+        }
+        
+        const avgGain = gains / period;
+        const avgLoss = losses / period;
+        
         if (avgLoss === 0) return 100;
-        return 100 - (100 / (1 + avgGain / avgLoss));
+        const rs = avgGain / avgLoss;
+        return 100 - (100 / (1 + rs));
     }
     
+    // FIXED: Tidak ada future leak - mencari indeks PERTAMA (bukan terakhir)
     function detectRealtimeDivergence(prices, rsiValues) {
         if (prices.length < 30 || rsiValues.length < 30) return { type: "NONE", strength: 0 };
-        const recentPrices = prices.slice(-20), recentRSI = rsiValues.slice(-20);
-        let priceLowIdx = 0, minPrice = Infinity;
-        for (let i = 0; i < recentPrices.length; i++) { const price = safeValue(recentPrices[i], 0); if (price < minPrice) { minPrice = price; priceLowIdx = i; } }
-        let priceHighIdx = 0, maxPrice = -Infinity;
-        for (let i = 0; i < recentPrices.length; i++) { const price = safeValue(recentPrices[i], 0); if (price > maxPrice) { maxPrice = price; priceHighIdx = i; } }
-        const rsiAtLow = safeValue(recentRSI[priceLowIdx], 50), rsiAtHigh = safeValue(recentRSI[priceHighIdx], 50);
-        const prevPrices = prices.slice(-30, -20), prevRSI = rsiValues.slice(-30, -20);
-        if (prevPrices.length > 0) {
-            const prevLow = Math.min(...prevPrices.map(p => safeValue(p, 0))), prevHigh = Math.max(...prevPrices.map(p => safeValue(p, 0))), lastPrevRSI = safeValue(prevRSI[prevRSI.length-1], 50);
-            if (minPrice < prevLow && rsiAtLow > lastPrevRSI) { const strength = Math.min(100, (rsiAtLow - 25) * 2.5); if (strength > 20) return { type: "BULLISH", strength, isRealtime: true }; }
-            if (maxPrice > prevHigh && rsiAtHigh < lastPrevRSI) { const strength = Math.min(100, (75 - rsiAtHigh) * 2.5); if (strength > 20) return { type: "BEARISH", strength, isRealtime: true }; }
+        
+        const recentPrices = prices.slice(-20);
+        const recentRSI = rsiValues.slice(-20);
+        
+        // Cari indeks pertama untuk harga terendah (tidak ada future leak)
+        let priceLowIdx = 0;
+        let minPrice = Infinity;
+        for (let i = 0; i < recentPrices.length; i++) {
+            const price = safeValue(recentPrices[i], 0);
+            if (price < minPrice) {
+                minPrice = price;
+                priceLowIdx = i;
+            }
         }
+        
+        // Cari indeks pertama untuk harga tertinggi (tidak ada future leak)
+        let priceHighIdx = 0;
+        let maxPrice = -Infinity;
+        for (let i = 0; i < recentPrices.length; i++) {
+            const price = safeValue(recentPrices[i], 0);
+            if (price > maxPrice) {
+                maxPrice = price;
+                priceHighIdx = i;
+            }
+        }
+        
+        const rsiAtLow = safeValue(recentRSI[priceLowIdx], 50);
+        const rsiAtHigh = safeValue(recentRSI[priceHighIdx], 50);
+        
+        const prevPrices = prices.slice(-30, -20);
+        const prevRSI = rsiValues.slice(-30, -20);
+        
+        if (prevPrices.length > 0) {
+            const prevLow = Math.min(...prevPrices.map(p => safeValue(p, 0)));
+            const prevHigh = Math.max(...prevPrices.map(p => safeValue(p, 0)));
+            const lastPrevRSI = safeValue(prevRSI[prevRSI.length-1], 50);
+            
+            if (minPrice < prevLow && rsiAtLow > lastPrevRSI) {
+                const strength = Math.min(100, (rsiAtLow - 25) * 2.5);
+                if (strength > 20) {
+                    return { type: "BULLISH", strength: strength, isRealtime: true };
+                }
+            }
+            
+            if (maxPrice > prevHigh && rsiAtHigh < lastPrevRSI) {
+                const strength = Math.min(100, (75 - rsiAtHigh) * 2.5);
+                if (strength > 20) {
+                    return { type: "BEARISH", strength: strength, isRealtime: true };
+                }
+            }
+        }
+        
         return { type: "NONE", strength: 0 };
     }
     
     function updateDivergenceRealtime(currentPrice) {
         if (currentPair !== "XAUUSDT") return false;
+        
         const now = Date.now();
         if (now - lastDivergenceCheck < 300) return false;
         lastDivergenceCheck = now;
+        
         const safePrice = safeValue(currentPrice, 0);
         realtimePriceBuffer.push(safePrice);
         if (realtimePriceBuffer.length > 50) realtimePriceBuffer.shift();
+        
         if (realtimePriceBuffer.length >= 20) {
             const realtimeRSI = calculateRealtimeRSI(realtimePriceBuffer, 14);
             realtimeRSIBuffer.push(realtimeRSI);
             if (realtimeRSIBuffer.length > 50) realtimeRSIBuffer.shift();
+            
             const divergence = detectRealtimeDivergence(realtimePriceBuffer, realtimeRSIBuffer);
+            
             if (divergence.type !== "NONE" && divergence.strength > 25 && now > divergenceCooldown) {
-                pendingDivergence = divergence; divergenceCooldown = now + 5000;
-                updateDivergenceUIRealtime(divergence); factorStatus.f4 = true; return true;
-            } else if (now > divergenceCooldown + 3000) { if (factorStatus.f4 && !pendingDivergence) { factorStatus.f4 = false; updateDivergenceUIRealtime({ type: "NONE", strength: 0 }); } }
+                pendingDivergence = divergence;
+                divergenceCooldown = now + 5000;
+                updateDivergenceUIRealtime(divergence);
+                factorStatus.f4 = true;
+                return true;
+            } else if (now > divergenceCooldown + 3000) {
+                if (factorStatus.f4 && !pendingDivergence) {
+                    factorStatus.f4 = false;
+                    updateDivergenceUIRealtime({ type: "NONE", strength: 0 });
+                }
+            }
         }
+        
         return false;
     }
     
     function updateDivergenceUIRealtime(divergence) {
-        const card = document.getElementById('factor4-card'), status = document.getElementById('factor4-status');
+        const card = document.getElementById('factor4-card');
+        const status = document.getElementById('factor4-status');
+        
         if (!card || !status) return;
+        
         if (divergence.type !== "NONE" && divergence.strength > 25) {
             card.classList.add('active');
-            const arrow = divergence.type === "BULLISH" ? "▲" : "▼", rt = divergence.isRealtime ? "⚡" : "";
+            const arrow = divergence.type === "BULLISH" ? "▲" : "▼";
+            const rt = divergence.isRealtime ? "⚡" : "";
             status.innerHTML = `${rt}${arrow} ${Math.round(divergence.strength)}%`;
             status.style.color = divergence.type === "BULLISH" ? "var(--bloomberg-accent)" : "var(--bloomberg-danger)";
             card.style.animation = 'divPulseRealtime 0.3s ease';
             setTimeout(() => card.style.animation = '', 300);
             if (lastPrice > 0) updateFinalDecision();
-        } else { card.classList.remove('active'); status.innerHTML = "◉"; status.style.color = "var(--bloomberg-text-dim)"; }
+        } else {
+            card.classList.remove('active');
+            status.innerHTML = "◉";
+            status.style.color = "var(--bloomberg-text-dim)";
+        }
     }
     
+    // ==================== SNIPER ENTRY SETUP ====================
     function evaluateSniperEntry(currentPrice) {
         const safePrice = safeValue(currentPrice, 0);
         const levels = [];
         const tolerance = currentPair === "XAUUSDT" ? 0.5 : 50;
-        if (currentOrderBlock) { const obPrice = safeObject(currentOrderBlock, 'price', 0); levels.push({ price: obPrice, type: "OB", weight: 3, desc: `OB @ ${obPrice.toFixed(getPrecision())}` }); }
-        if (engine.f618 > 0 && engine.deep > 0) { const fvgMid = (engine.f618 + engine.deep) / 2; levels.push({ price: fvgMid, type: "FVG", weight: 2, desc: `FVG Mid @ ${fvgMid.toFixed(getPrecision())}` }); }
-        if (engine.f618 > 0) { levels.push({ price: engine.f618, type: "FIB618", weight: 2, desc: `Fib 61.8% @ ${engine.f618.toFixed(getPrecision())}` }); }
-        if (engine.deep > 0) { levels.push({ price: engine.deep, type: "FIB786", weight: 2, desc: `Fib 78.6% @ ${engine.deep.toFixed(getPrecision())}` }); }
+        
+        if (currentOrderBlock) {
+            const obPrice = safeObject(currentOrderBlock, 'price', 0);
+            levels.push({ 
+                price: obPrice, 
+                type: "OB", 
+                weight: 3,
+                desc: `OB @ ${obPrice.toFixed(getPrecision())}`
+            });
+        }
+        
+        if (engine.f618 > 0 && engine.deep > 0) {
+            const fvgMid = (engine.f618 + engine.deep) / 2;
+            levels.push({ 
+                price: fvgMid, 
+                type: "FVG", 
+                weight: 2,
+                desc: `FVG Mid @ ${fvgMid.toFixed(getPrecision())}`
+            });
+        }
+        
+        if (engine.f618 > 0) {
+            levels.push({ 
+                price: engine.f618, 
+                type: "FIB618", 
+                weight: 2,
+                desc: `Fib 61.8% @ ${engine.f618.toFixed(getPrecision())}`
+            });
+        }
+        
+        if (engine.deep > 0) {
+            levels.push({ 
+                price: engine.deep, 
+                type: "FIB786", 
+                weight: 2,
+                desc: `Fib 78.6% @ ${engine.deep.toFixed(getPrecision())}`
+            });
+        }
+        
         const prevSwing = engine.bias.includes("BULL") ? engine.lastSwingLow : engine.lastSwingHigh;
-        if (prevSwing > 0) { levels.push({ price: prevSwing, type: "SWING", weight: 2, desc: `Prev Swing @ ${prevSwing.toFixed(getPrecision())}` }); }
-        if (engine.ema21 > 0) { levels.push({ price: engine.ema21, type: "EMA21", weight: 1, desc: `EMA21 @ ${engine.ema21.toFixed(getPrecision())}` }); }
-        const clusters = [], used = new Set();
+        if (prevSwing > 0) {
+            levels.push({ 
+                price: prevSwing, 
+                type: "SWING", 
+                weight: 2,
+                desc: `Prev Swing @ ${prevSwing.toFixed(getPrecision())}`
+            });
+        }
+        
+        if (engine.sma20 > 0) {
+            levels.push({ 
+                price: engine.sma20, 
+                type: "SMA20", 
+                weight: 1,
+                desc: `SMA20 @ ${engine.sma20.toFixed(getPrecision())}`
+            });
+        }
+        
+        const clusters = [];
+        const used = new Set();
+        
         for (let i = 0; i < levels.length; i++) {
             if (used.has(i)) continue;
-            const cluster = { levels: [levels[i]], totalWeight: levels[i].weight, price: levels[i].price, descriptions: [levels[i].desc] };
+            
+            const cluster = {
+                levels: [levels[i]],
+                totalWeight: levels[i].weight,
+                price: levels[i].price,
+                descriptions: [levels[i].desc]
+            };
             used.add(i);
+            
             for (let j = i + 1; j < levels.length; j++) {
                 if (used.has(j)) continue;
+                
                 if (Math.abs(levels[i].price - levels[j].price) <= tolerance) {
-                    cluster.levels.push(levels[j]); cluster.totalWeight += levels[j].weight; cluster.descriptions.push(levels[j].desc);
+                    cluster.levels.push(levels[j]);
+                    cluster.totalWeight += levels[j].weight;
+                    cluster.descriptions.push(levels[j].desc);
                     cluster.price = (cluster.price * (cluster.levels.length - 1) + levels[j].price) / cluster.levels.length;
                     used.add(j);
                 }
             }
+            
             clusters.push(cluster);
         }
+        
         clusters.sort((a, b) => b.totalWeight - a.totalWeight);
         sniperLevels = clusters;
+        
         const bestCluster = clusters[0];
+        
         if (bestCluster && bestCluster.totalWeight >= 5) {
             const isPriceNearCluster = Math.abs(safePrice - bestCluster.price) <= tolerance * 2;
-            return { isValid: true, entryPrice: bestCluster.price, confidence: bestCluster.totalWeight, confluenceLevels: bestCluster.descriptions, sniperQuality: bestCluster.totalWeight >= 7 ? "GOLDEN" : "SILVER", isPriceNear: isPriceNearCluster, cluster: bestCluster };
+            
+            return {
+                isValid: true,
+                entryPrice: bestCluster.price,
+                confidence: bestCluster.totalWeight,
+                confluenceLevels: bestCluster.descriptions,
+                sniperQuality: bestCluster.totalWeight >= 7 ? "GOLDEN" : "SILVER",
+                isPriceNear: isPriceNearCluster,
+                cluster: bestCluster
+            };
         }
+        
         return { isValid: false, confidence: 0 };
     }
     
-    function flashReset() { const wrapper = document.querySelector('.app-wrapper'); if (wrapper) { wrapper.classList.add('reset-flash'); setTimeout(() => wrapper.classList.remove('reset-flash'), 500); } }
+    // ==================== CONNECTION MANAGEMENT ====================
+    let reconnectDelay = 1000;
+    let lastWSMessageTime = Date.now();
+    let isUsingFallback = false;
+    let restFallbackInterval = null;
+    let periodicUpdateInterval = null;
+    let heartbeatInterval = null;
+    let stuckCheckInterval = null;
+    let reconnectTimer = null;
+    let isManualDisconnect = false;
+    let volumeFetcherInterval = null;
+    let lastVolumeRatio = 0;
+    
+    // Engine State
+    let engine = {
+        swingHigh: 0, swingLow: 0, f618: 0, deep: 0, tp: 0, sl: 0,
+        bias: "NEUTRAL", sweepDetected: false, bosConfirmed: false,
+        adx: ADX_DEFAULT_RANGING, sma20: 0, sma50: 0, plusDI: 25, minusDI: 25,
+        lastSwingHigh: 0, lastSwingLow: 0,
+        lastSweepTime: 0, lastBosTime: 0, lastTPHitTime: 0,
+        liquiditySide: null, fvgEntryActive: false
+    };
+    
+    // Factor Status
+    let factorStatus = { f1: false, f2: false, f3: false, f4: false, f5: false, f6: false, f7: false, f8: false, f_sma50: false };
+    
+    let lastSMCUpdate = 0;
+    const SMC_UPDATE_INTERVAL = 5000;
+    
+    let cachedATR = 0, lastATRCalc = 0;
+    let cachedADX = { value: ADX_DEFAULT_RANGING, timestamp: 0 };
+    const ADX_CACHE_DURATION = 500;
+    
+    let recentPrices = [], lastDecisionPrice = 0, lastStructureUpdateTime = 0;
+    const THROTTLE_MINUTES = 2;
+    const throttleMap = new Map();
+    let currentCandleStartTime = 0;
+    
+    // Auto Reset System
+    let isInTrade = false, lastEntryPrice = 0, lastTradeDirection = null, lastEntryTime = 0, lastResetTime = 0;
+    const RESET_COOLDOWN = 2000;
+    
+    let wysetrade = {
+        support: 0, resistance: 0, isNearSupport: false, isNearResistance: false,
+        candlePattern: "NONE", volumeRatio: 0,
+        isValidSR: false, isValidCandle: false, isValidVolume: false
+    };
+    
+    // ==================== FULL STRUCTURE RESET ====================
+    function flashReset() {
+        const wrapper = document.querySelector('.app-wrapper');
+        if (wrapper) { 
+            wrapper.classList.add('reset-flash'); 
+            setTimeout(() => wrapper.classList.remove('reset-flash'), 500); 
+        }
+    }
     
     function fullStructureReset(reason) {
-        const now = Date.now(); if (now - lastResetTime < RESET_COOLDOWN) return; lastResetTime = now; flashReset();
-        engine.sweepDetected = false; engine.bosConfirmed = false; engine.liquiditySide = null; engine.fvgEntryActive = false; engine.bias = "NEUTRAL";
-        engine.lastSweepTime = 0; engine.lastBosTime = 0; engine.lastSwingHigh = engine.swingHigh; engine.lastSwingLow = engine.swingLow;
-        spikeDetected = false; abnormalPriceChangeCount = 0; currentOrderBlock = null; sniperLevels = [];
-        priceActionBuffer = []; realtimePriceBuffer = []; realtimeRSIBuffer = []; lastOBDetectionTime = 0; lastDivergenceCheck = 0; pendingDivergence = null; realtimeOBActive = false;
+        const now = Date.now();
+        if (now - lastResetTime < RESET_COOLDOWN) return;
+        lastResetTime = now;
+        
+        flashReset();
+        
+        engine.sweepDetected = false; 
+        engine.bosConfirmed = false; 
+        engine.liquiditySide = null;
+        engine.fvgEntryActive = false; 
+        engine.bias = "NEUTRAL";
+        engine.lastSweepTime = 0; 
+        engine.lastBosTime = 0;
+        engine.lastSwingHigh = engine.swingHigh; 
+        engine.lastSwingLow = engine.swingLow;
+        
+        spikeDetected = false;
+        abnormalPriceChangeCount = 0;
+        currentOrderBlock = null;
+        sniperLevels = [];
+        
+        priceActionBuffer = [];
+        realtimePriceBuffer = [];
+        realtimeRSIBuffer = [];
+        lastOBDetectionTime = 0;
+        lastDivergenceCheck = 0;
+        pendingDivergence = null;
+        realtimeOBActive = false;
+        
         if (candleData.length >= 30) calculateSMCLevels();
-        isInTrade = false; lastEntryPrice = 0; lastTradeDirection = null; resetLevelStatus(); lastDecisionPrice = 0;
+        
+        isInTrade = false; 
+        lastEntryPrice = 0; 
+        lastTradeDirection = null;
+        
+        resetLevelStatus();
+        
+        lastDecisionPrice = 0;
         localStorage.removeItem('lastTradeEntry');
+        
         const decisionElem = document.getElementById('decision-status');
-        if (decisionElem) { decisionElem.innerHTML = `RESET: ${reason}`; setTimeout(() => { if (decisionElem.innerHTML.includes("RESET")) updateFinalDecision(); }, 1500); }
+        if (decisionElem) {
+            decisionElem.innerHTML = `RESET: ${reason}`;
+            setTimeout(() => { 
+                if (decisionElem.innerHTML.includes("RESET")) updateFinalDecision(); 
+            }, 1500);
+        }
+        
         console.log(`🔄 Structure Reset: ${reason}`);
     }
     
     function checkStopLossHit(currentPrice) {
         if (!isInTrade || engine.sl === 0) return false;
-        const safePrice = safeValue(currentPrice, 0), isLongTrade = lastTradeDirection === "BUY";
+        const safePrice = safeValue(currentPrice, 0);
+        const isLongTrade = lastTradeDirection === "BUY";
         let isHit = false;
-        if (isLongTrade && safePrice <= engine.sl) isHit = true; else if (!isLongTrade && safePrice >= engine.sl) isHit = true;
-        if (isHit) { setTimeout(() => fullStructureReset("STOP LOSS HIT"), 500); return true; } return false;
+        if (isLongTrade && safePrice <= engine.sl) isHit = true;
+        else if (!isLongTrade && safePrice >= engine.sl) isHit = true;
+        if (isHit) { 
+            setTimeout(() => fullStructureReset("STOP LOSS HIT"), 500); 
+            return true; 
+        }
+        return false;
     }
     
     function checkTakeProfitHit(currentPrice) {
         if (!isInTrade || engine.tp === 0) return false;
-        const safePrice = safeValue(currentPrice, 0), isLongTrade = lastTradeDirection === "BUY";
+        const safePrice = safeValue(currentPrice, 0);
+        const isLongTrade = lastTradeDirection === "BUY";
         let isHit = false;
-        if (isLongTrade && safePrice >= engine.tp) isHit = true; else if (!isLongTrade && safePrice <= engine.tp) isHit = true;
-        if (isHit) { setTimeout(() => fullStructureReset("TAKE PROFIT HIT"), 500); return true; } return false;
+        if (isLongTrade && safePrice >= engine.tp) isHit = true;
+        else if (!isLongTrade && safePrice <= engine.tp) isHit = true;
+        if (isHit) { 
+            setTimeout(() => fullStructureReset("TAKE PROFIT HIT"), 500); 
+            return true; 
+        }
+        return false;
     }
     
     function checkSwingBreakthrough(currentPrice) {
         if (!engine.swingHigh || !engine.swingLow) return false;
-        const safePrice = safeValue(currentPrice, 0), buffer = getSweepBuffer();
+        const safePrice = safeValue(currentPrice, 0);
+        const buffer = getSweepBuffer();
         let breakthrough = false, breakthroughType = null;
-        if (safePrice > engine.swingHigh + (buffer * 0.5)) { if (engine.swingHigh !== engine.lastSwingHigh) { breakthrough = true; breakthroughType = "SWING HIGH BROKEN"; } }
-        if (safePrice < engine.swingLow - (buffer * 0.5)) { if (engine.swingLow !== engine.lastSwingLow) { breakthrough = true; breakthroughType = "SWING LOW BROKEN"; } }
-        if (breakthrough) { setTimeout(() => fullStructureReset(breakthroughType), 300); return true; } return false;
+        if (safePrice > engine.swingHigh + (buffer * 0.5)) {
+            if (engine.swingHigh !== engine.lastSwingHigh) { 
+                breakthrough = true; 
+                breakthroughType = "SWING HIGH BROKEN"; 
+            }
+        }
+        if (safePrice < engine.swingLow - (buffer * 0.5)) {
+            if (engine.swingLow !== engine.lastSwingLow) { 
+                breakthrough = true; 
+                breakthroughType = "SWING LOW BROKEN"; 
+            }
+        }
+        if (breakthrough) { 
+            setTimeout(() => fullStructureReset(breakthroughType), 300); 
+            return true; 
+        }
+        return false;
     }
     
     function trackTradeEntry(decision, currentPrice) {
         if ((decision.includes("BUY NOW!") || decision.includes("SELL NOW!") || decision.includes("SNIPER")) && !isInTrade) {
+            if (isNewsBlocked()) return;
             if (currentPair === "BTCUSDT" && !isBTCVolumeValid()) return;
-            isInTrade = true; lastEntryPrice = safeValue(currentPrice, 0); lastTradeDirection = decision.includes("BUY") ? "BUY" : "SELL"; lastEntryTime = Date.now();
-            localStorage.setItem('lastTradeEntry', JSON.stringify({ price: lastEntryPrice, direction: lastTradeDirection, time: lastEntryTime, sl: engine.sl, tp: engine.tp }));
+            isInTrade = true;
+            lastEntryPrice = safeValue(currentPrice, 0);
+            lastTradeDirection = decision.includes("BUY") ? "BUY" : "SELL";
+            lastEntryTime = Date.now();
+            localStorage.setItem('lastTradeEntry', JSON.stringify({ 
+                price: lastEntryPrice, 
+                direction: lastTradeDirection, 
+                time: lastEntryTime, 
+                sl: engine.sl, 
+                tp: engine.tp 
+            }));
         }
     }
     
     function loadSavedTrade() {
         const savedTrade = localStorage.getItem('lastTradeEntry');
-        if (savedTrade) { try { const trade = JSON.parse(savedTrade); if (Date.now() - trade.time < 3600000) { isInTrade = true; lastEntryPrice = trade.price; lastTradeDirection = trade.direction; lastEntryTime = trade.time; } else { localStorage.removeItem('lastTradeEntry'); } } catch(e) {} }
+        if (savedTrade) {
+            try {
+                const trade = JSON.parse(savedTrade);
+                if (Date.now() - trade.time < 3600000) {
+                    isInTrade = true; 
+                    lastEntryPrice = trade.price;
+                    lastTradeDirection = trade.direction; 
+                    lastEntryTime = trade.time;
+                } else { 
+                    localStorage.removeItem('lastTradeEntry'); 
+                }
+            } catch(e) {}
+        }
     }
     
+    // ==================== HELPER FUNCTIONS ====================
     async function fetchDynamicPrecision() {
         const now = Date.now();
-        if (cachedPrecision !== null && (now - precisionCacheTime) < PRECISION_CACHE_DURATION) return cachedPrecision;
-        try { const resp = await fetch('https://fapi.binance.com/fapi/v1/exchangeInfo'); const data = await resp.json(); const symbolInfo = data.symbols.find(s => s.symbol === currentPair); if (symbolInfo) { const priceFilter = symbolInfo.filters.find(f => f.filterType === 'PRICE_FILTER'); const tickSize = parseFloat(priceFilter.tickSize); const precision = Math.max(0, Math.round(Math.abs(Math.log10(tickSize)))); cachedPrecision = precision; precisionCacheTime = now; return precision; } } catch(e) {}
-        const fallback = currentPair === "XAUUSDT" ? 2 : 1; cachedPrecision = fallback; precisionCacheTime = now; return fallback;
+        if (cachedPrecision !== null && (now - precisionCacheTime) < PRECISION_CACHE_DURATION) {
+            return cachedPrecision;
+        }
+        
+        try {
+            const resp = await fetch('https://fapi.binance.com/fapi/v1/exchangeInfo');
+            const data = await resp.json();
+            const symbolInfo = data.symbols.find(s => s.symbol === currentPair);
+            if (symbolInfo) {
+                const priceFilter = symbolInfo.filters.find(f => f.filterType === 'PRICE_FILTER');
+                const tickSize = parseFloat(priceFilter.tickSize);
+                const precision = Math.max(0, Math.round(Math.abs(Math.log10(tickSize))));
+                cachedPrecision = precision;
+                precisionCacheTime = now;
+                return precision;
+            }
+        } catch(e) {}
+        
+        const fallback = currentPair === "XAUUSDT" ? 2 : 1;
+        cachedPrecision = fallback;
+        precisionCacheTime = now;
+        return fallback;
     }
     
-    function getPrecision() { if (cachedPrecision !== null) return cachedPrecision; return currentPair === "XAUUSDT" ? 2 : 1; }
+    function getPrecision() {
+        if (cachedPrecision !== null) return cachedPrecision;
+        return currentPair === "XAUUSDT" ? 2 : 1;
+    }
     
     function swapCardDisplay() {
-        const divCard = document.getElementById('factor4-card'), volCard = document.getElementById('factor-volume-card'), obCard = document.getElementById('factor-ob-card');
+        const divCard = document.getElementById('factor4-card');
+        const volCard = document.getElementById('factor-volume-card');
+        const obCard = document.getElementById('factor-ob-card');
+        
         if (obCard) obCard.style.display = "inline-flex";
-        if (currentPair === "BTCUSDT") { if (divCard) divCard.style.display = "none"; if (volCard) volCard.style.display = "inline-flex"; }
-        else { if (divCard) divCard.style.display = "inline-flex"; if (volCard) volCard.style.display = "none"; }
+        
+        if (currentPair === "BTCUSDT") {
+            if (divCard) divCard.style.display = "none";
+            if (volCard) volCard.style.display = "inline-flex";
+        } else {
+            if (divCard) divCard.style.display = "inline-flex";
+            if (volCard) volCard.style.display = "none";
+        }
     }
     
-    function getTimeframeMilliseconds() { switch(currentTF) { case "4h": return 14400000; case "1h": return 3600000; case "15m": return 900000; case "5m": return 300000; default: return 900000; } }
-    function getCandleStartTime(timestamp) { const tfMs = getTimeframeMilliseconds(); return Math.floor(timestamp / tfMs) * tfMs; }
+    function getTimeframeMilliseconds() {
+        switch(currentTF) {
+            case "4h": return 4 * 60 * 60 * 1000;
+            case "1h": return 60 * 60 * 1000;
+            case "15m": return 15 * 60 * 1000;
+            case "5m": return 5 * 60 * 1000;
+            default: return 15 * 60 * 1000;
+        }
+    }
+    
+    function getCandleStartTime(timestamp) {
+        const tfMs = getTimeframeMilliseconds();
+        return Math.floor(timestamp / tfMs) * tfMs;
+    }
     
     function isThrottled(pair, timeframe) {
-        const key = `${pair}_${timeframe}_${currentMode}`, now = Date.now(), lastSignal = throttleMap.get(key) || 0;
+        const key = `${pair}_${timeframe}_${currentMode}`;
+        const now = Date.now();
+        const lastSignal = throttleMap.get(key) || 0;
         const remaining = THROTTLE_MINUTES * 60 * 1000 - (now - lastSignal);
         if (remaining > 0) return { throttled: true, remaining: Math.ceil(remaining / 1000) };
         return { throttled: false, remaining: 0 };
     }
-    function updateThrottle(pair, timeframe) { const key = `${pair}_${timeframe}_${currentMode}`; throttleMap.set(key, Date.now()); }
+    
+    function updateThrottle(pair, timeframe) {
+        const key = `${pair}_${timeframe}_${currentMode}`;
+        throttleMap.set(key, Date.now());
+    }
     
     function getDominantMTFBias() {
         const bullishCount = [mtfBiasCache.m5, mtfBiasCache.m15, mtfBiasCache.h1].filter(b => b === "BULLISH").length;
         const bearishCount = [mtfBiasCache.m5, mtfBiasCache.m15, mtfBiasCache.h1].filter(b => b === "BEARISH").length;
-        if (bullishCount >= 2) return "BULLISH"; if (bearishCount >= 2) return "BEARISH"; return "NEUTRAL";
+        if (bullishCount >= 2) return "BULLISH";
+        if (bearishCount >= 2) return "BEARISH";
+        return "NEUTRAL";
     }
     
     function calculateATR(period = 14, data = candleData) {
-        const now = Date.now(); if (now - lastATRCalc < 100 && cachedATR > 0) return cachedATR;
+        const now = Date.now();
+        if (now - lastATRCalc < 100 && cachedATR > 0) return cachedATR;
         if (!data.length || data.length < period + 1) return 0;
-        const dataSlice = data.slice(-period - 1); let tr = [];
-        for (let i = 1; i < dataSlice.length; i++) { tr.push(Math.max(safeValue(dataSlice[i].h,0)-safeValue(dataSlice[i].l,0), Math.abs(safeValue(dataSlice[i].h,0)-safeValue(dataSlice[i-1].c,0)), Math.abs(safeValue(dataSlice[i].l,0)-safeValue(dataSlice[i-1].c,0)))); }
-        cachedATR = tr.slice(-period).reduce((a,b)=>a+b,0)/period; lastATRCalc = now; return safeValue(cachedATR,0);
+        
+        const dataSlice = data.slice(-period - 1);
+        let tr = [];
+        for (let i = 1; i < dataSlice.length; i++) {
+            const trueRange = Math.max(
+                safeValue(dataSlice[i].h, 0) - safeValue(dataSlice[i].l, 0), 
+                Math.abs(safeValue(dataSlice[i].h, 0) - safeValue(dataSlice[i-1].c, 0)), 
+                Math.abs(safeValue(dataSlice[i].l, 0) - safeValue(dataSlice[i-1].c, 0))
+            );
+            tr.push(trueRange);
+        }
+        cachedATR = tr.slice(-period).reduce((a, b) => a + b, 0) / period;
+        lastATRCalc = now;
+        return safeValue(cachedATR, 0);
     }
     
-    function getSweepBuffer() { const atr = calculateATR(14); if (atr === 0) return currentPair === "XAUUSDT" ? 0.3 : 45; return currentPair === "XAUUSDT" ? Math.max(0.2, atr * 0.12) : Math.max(30, atr * 0.1); }
-    function getSweepCooldown() { return currentPair === "XAUUSDT" ? 5000 : 6500; }
+    function getSweepBuffer() {
+        const atr = calculateATR(14);
+        if (atr === 0) return currentPair === "XAUUSDT" ? 0.3 : 45;
+        return currentPair === "XAUUSDT" ? Math.max(0.2, atr * 0.12) : Math.max(30, atr * 0.1);
+    }
+    
+    function getSweepCooldown() { 
+        return currentPair === "XAUUSDT" ? 5000 : 6500; 
+    }
     
     function isValidSweep(price, direction) {
         if (currentPair !== "BTCUSDT") return true;
-        const safePrice = safeValue(price, 0), spikeSize = Math.abs(safePrice - (direction === "BUY" ? engine.swingLow : engine.swingHigh)), atr = calculateATR(14), volumeRatio = lastVolumeRatio > 0 ? lastVolumeRatio : wysetrade.volumeRatio;
-        if (spikeSize > atr * 3 && volumeRatio < 2.0) { spikeDetected = true; lastSpikeTime = Date.now(); const dp = document.getElementById('decision-panel'); if (dp) { dp.classList.add('spike-warning'); setTimeout(() => dp.classList.remove('spike-warning'), 2000); } return false; } return true;
+        
+        const safePrice = safeValue(price, 0);
+        const spikeSize = Math.abs(safePrice - (direction === "BUY" ? engine.swingLow : engine.swingHigh));
+        const atr = calculateATR(14);
+        const volumeRatio = lastVolumeRatio > 0 ? lastVolumeRatio : wysetrade.volumeRatio;
+        
+        if (spikeSize > atr * 3 && volumeRatio < 2.0) {
+            spikeDetected = true;
+            lastSpikeTime = Date.now();
+            
+            const decisionPanel = document.getElementById('decision-panel');
+            if (decisionPanel) {
+                decisionPanel.classList.add('spike-warning');
+                setTimeout(() => decisionPanel.classList.remove('spike-warning'), 2000);
+            }
+            return false;
+        }
+        return true;
     }
     
-    function getFractalLookback() { if (currentPair === "BTCUSDT") return 4; if (currentTF === "5m") return 2; return 3; }
+    function getFractalLookback() {
+        if (currentPair === "BTCUSDT") return 4;
+        if (currentTF === "5m") return 2;
+        return 3;
+    }
     
     function getLookback() {
-        if (currentPair === "BTCUSDT") { switch(currentTF) { case "5m": return 50; case "15m": return 80; case "1h": return 120; case "4h": return 160; default: return 80; } }
-        else { switch(currentTF) { case "5m": return 40; case "15m": return 55; case "1h": return 80; case "4h": return 100; default: return 55; } }
+        if (currentPair === "BTCUSDT") {
+            switch(currentTF) {
+                case "5m": return 50; case "15m": return 80; case "1h": return 120; case "4h": return 160;
+                default: return 80;
+            }
+        } else {
+            switch(currentTF) {
+                case "5m": return 40; case "15m": return 55; case "1h": return 80; case "4h": return 100;
+                default: return 55;
+            }
+        }
     }
     
     function detectFractalSwingPoints(data, lookback = 5) {
         if (!data || data.length < lookback * 2 + 1) return { swingHigh: 0, swingLow: Infinity };
+        
         const validData = data.filter(c => c && typeof c.h === 'number' && typeof c.l === 'number');
         if (validData.length < lookback * 2 + 1) return { swingHigh: 0, swingLow: Infinity };
+        
         let swingHigh = 0, swingLow = Infinity;
         for (let i = lookback; i < validData.length - lookback; i++) {
-            let isSwingHigh = true; for (let j = i - lookback; j <= i + lookback; j++) { if (j !== i && safeValue(validData[j].h,0) >= safeValue(validData[i].h,0)) { isSwingHigh = false; break; } }
-            let isSwingLow = true; for (let j = i - lookback; j <= i + lookback; j++) { if (j !== i && safeValue(validData[j].l,0) <= safeValue(validData[i].l,0)) { isSwingLow = false; break; } }
-            if (isSwingHigh && safeValue(validData[i].h,0) > swingHigh) swingHigh = safeValue(validData[i].h,0);
-            if (isSwingLow && safeValue(validData[i].l,0) < swingLow) swingLow = safeValue(validData[i].l,0);
+            let isSwingHigh = true;
+            for (let j = i - lookback; j <= i + lookback; j++) {
+                if (j !== i && safeValue(validData[j].h, 0) >= safeValue(validData[i].h, 0)) { 
+                    isSwingHigh = false; break; 
+                }
+            }
+            let isSwingLow = true;
+            for (let j = i - lookback; j <= i + lookback; j++) {
+                if (j !== i && safeValue(validData[j].l, 0) <= safeValue(validData[i].l, 0)) { 
+                    isSwingLow = false; break; 
+                }
+            }
+            if (isSwingHigh && safeValue(validData[i].h, 0) > swingHigh) swingHigh = safeValue(validData[i].h, 0);
+            if (isSwingLow && safeValue(validData[i].l, 0) < swingLow) swingLow = safeValue(validData[i].l, 0);
         }
-        if (swingHigh === 0) swingHigh = Math.max(...validData.map(c => safeValue(c.h,0)));
-        if (swingLow === Infinity) swingLow = Math.min(...validData.map(c => safeValue(c.l,0)));
+        if (swingHigh === 0) swingHigh = Math.max(...validData.map(c => safeValue(c.h, 0)));
+        if (swingLow === Infinity) swingLow = Math.min(...validData.map(c => safeValue(c.l, 0)));
         return { swingHigh, swingLow };
     }
     
@@ -961,56 +1539,135 @@
         let fractalPoints = detectFractalSwingPoints(data, lookback);
         let swingHigh = fractalPoints.swingHigh, swingLow = fractalPoints.swingLow;
         let minRange;
-        if (currentPair === "XAUUSDT") { switch(currentTF) { case "5m": minRange = 2.5; break; case "15m": minRange = 5.0; break; case "1h": minRange = 8.0; break; case "4h": minRange = 12.0; break; default: minRange = 5.0; } }
-        else { switch(currentTF) { case "5m": minRange = 250; break; case "15m": minRange = 500; break; case "1h": minRange = 800; break; case "4h": minRange = 1200; break; default: minRange = 500; } }
+        if (currentPair === "XAUUSDT") {
+            switch(currentTF) {
+                case "5m": minRange = 2.5; break;
+                case "15m": minRange = 5.0; break;
+                case "1h": minRange = 8.0; break;
+                case "4h": minRange = 12.0; break;
+                default: minRange = 5.0;
+            }
+        } else {
+            switch(currentTF) {
+                case "5m": minRange = 250; break;
+                case "15m": minRange = 500; break;
+                case "1h": minRange = 800; break;
+                case "4h": minRange = 1200; break;
+                default: minRange = 500;
+            }
+        }
         let range = swingHigh - swingLow;
         if (range < minRange && data.length > lookback * 4) {
-            const extendedLookback = Math.min(lookback * 2, 10), extendedSlice = data.slice(-Math.min(data.length, Math.floor(data.length * 0.8)));
-            const extendedPoints = detectFractalSwingPoints(extendedSlice, extendedLookback), extendedRange = extendedPoints.swingHigh - extendedPoints.swingLow;
-            if (extendedRange > range && extendedRange >= minRange) { swingHigh = extendedPoints.swingHigh; swingLow = extendedPoints.swingLow; }
+            const extendedLookback = Math.min(lookback * 2, 10);
+            const extendedSlice = data.slice(-Math.min(data.length, Math.floor(data.length * 0.8)));
+            const extendedPoints = detectFractalSwingPoints(extendedSlice, extendedLookback);
+            const extendedRange = extendedPoints.swingHigh - extendedPoints.swingLow;
+            if (extendedRange > range && extendedRange >= minRange) {
+                swingHigh = extendedPoints.swingHigh;
+                swingLow = extendedPoints.swingLow;
+            }
         }
         return { swingHigh, swingLow, range: swingHigh - swingLow };
     }
     
-    function detectCandleImbalance(data) { if (!data.length || data.length < 3) return null; const lastThree = data.slice(-3); for (let i = 0; i < lastThree.length - 1; i++) { const curr = lastThree[i], next = lastThree[i + 1]; if (safeValue(next.l,0) > safeValue(curr.h,0)) return { type: "BULLISH", price: safeValue(curr.h,0) }; if (safeValue(next.h,0) < safeValue(curr.l,0)) return { type: "BEARISH", price: safeValue(curr.l,0) }; } return null; }
+    function detectCandleImbalance(data) {
+        if (!data.length || data.length < 3) return null;
+        const lastThree = data.slice(-3);
+        for (let i = 0; i < lastThree.length - 1; i++) {
+            const curr = lastThree[i], next = lastThree[i + 1];
+            if (safeValue(next.l, 0) > safeValue(curr.h, 0)) return { type: "BULLISH", price: safeValue(curr.h, 0) };
+            if (safeValue(next.h, 0) < safeValue(curr.l, 0)) return { type: "BEARISH", price: safeValue(curr.l, 0) };
+        }
+        return null;
+    }
     
     function getFVGMitigationDepthAdvanced(swingHigh, swingLow, currentPrice, candleData) {
-        const safePrice = safeValue(currentPrice, 0), imbalance = detectCandleImbalance(candleData), range = swingHigh - swingLow; if (range <= 0) return 50;
-        if (!imbalance) { const depth = ((safePrice - swingLow) / range) * 100; return Math.min(100, Math.max(0, depth)); }
-        const distanceToImbalance = Math.abs(safePrice - imbalance.price), maxDistance = range * 0.15;
+        const safePrice = safeValue(currentPrice, 0);
+        const imbalance = detectCandleImbalance(candleData);
+        const range = swingHigh - swingLow;
+        if (range <= 0) return 50;
+        if (!imbalance) {
+            const depth = ((safePrice - swingLow) / range) * 100;
+            return Math.min(100, Math.max(0, depth));
+        }
+        const distanceToImbalance = Math.abs(safePrice - imbalance.price);
+        const maxDistance = range * 0.15;
         const mitigation = Math.min(100, Math.max(0, (1 - distanceToImbalance / maxDistance) * 100));
         return imbalance.type === "BULLISH" ? mitigation : 100 - mitigation;
     }
     
-    function isFVGReady(depth, isBullish, candleData) { const minDepth = 30, imbalance = detectCandleImbalance(candleData); if (imbalance && imbalance.type === (isBullish ? "BULLISH" : "BEARISH")) return depth >= 20; return isBullish ? depth >= minDepth : (100 - depth) >= minDepth; }
-    
-    function highlightFVGEntry() { engine.fvgEntryActive = true; ['r618', 'r786'].forEach(id => { const el = document.getElementById(id); if (el) { el.classList.add('fvg-highlight'); setTimeout(() => el.classList.remove('fvg-highlight'), 2000); } }); }
-    
-    function updatePipsDisplay() {
-        const pipsElem = document.getElementById('pips-display'); if (!pipsElem || engine.tp === 0 || engine.sl === 0) return;
-        const entryMid = (engine.f618 + engine.deep) / 2, distanceInPoints = Math.abs(engine.tp - entryMid);
-        pipsElem.innerText = currentPair === "XAUUSDT" ? distanceInPoints.toFixed(2) : distanceInPoints.toFixed(getPrecision());
+    function isFVGReady(depth, isBullish, candleData) {
+        const minDepth = 30;
+        const imbalance = detectCandleImbalance(candleData);
+        if (imbalance && imbalance.type === (isBullish ? "BULLISH" : "BEARISH")) return depth >= 20;
+        return isBullish ? depth >= minDepth : (100 - depth) >= minDepth;
     }
     
+    function highlightFVGEntry() {
+        engine.fvgEntryActive = true;
+        const fvgElements = ['r618', 'r786'];
+        fvgElements.forEach(id => { 
+            const el = document.getElementById(id); 
+            if (el) { 
+                el.classList.add('fvg-highlight'); 
+                setTimeout(() => el.classList.remove('fvg-highlight'), 2000); 
+            } 
+        });
+    }
+    
+    function updatePipsDisplay() {
+        const pipsElem = document.getElementById('pips-display');
+        if (!pipsElem || engine.tp === 0 || engine.sl === 0) return;
+        const entryMid = (engine.f618 + engine.deep) / 2;
+        const distanceInPoints = Math.abs(engine.tp - entryMid);
+        let displayValue;
+        if (currentPair === "XAUUSDT") { 
+            displayValue = distanceInPoints.toFixed(2); 
+        } else { 
+            const prec = getPrecision();
+            displayValue = distanceInPoints.toFixed(prec);
+        }
+        pipsElem.innerText = displayValue;
+    }
+    
+    // ==================== SMC CALCULATION ====================
     function calculateSMCLevels() {
-        const now = Date.now(); if (now - lastSMCUpdate < SMC_UPDATE_INTERVAL && engine.swingHigh > 0) return; lastSMCUpdate = now;
+        const now = Date.now();
+        if (now - lastSMCUpdate < SMC_UPDATE_INTERVAL && engine.swingHigh > 0) {
+            return;
+        }
+        lastSMCUpdate = now;
+        
         if (!candleData.length || candleData.length < 30) return;
-        const lookback = getLookback(), fractalLookback = getFractalLookback(), slice = candleData.slice(-Math.min(candleData.length, lookback));
+        
+        const lookback = getLookback();
+        const fractalLookback = getFractalLookback();
+        const slice = candleData.slice(-Math.min(candleData.length, lookback));
         const swingPoints = detectSwingPointsWithMinRange(slice, fractalLookback);
-        engine.swingHigh = swingPoints.swingHigh; engine.swingLow = swingPoints.swingLow;
-        const range = engine.swingHigh - engine.swingLow; if (range <= 0) return;
+        engine.swingHigh = swingPoints.swingHigh;
+        engine.swingLow = swingPoints.swingLow;
+        const range = engine.swingHigh - engine.swingLow;
+        if (range <= 0) return;
         resetSweepIfStructureChanged();
         const lastCandlePrice = safeObject(candleData[candleData.length-1], 'c', lastPrice);
         if (!engine.bosConfirmed) engine.bias = lastCandlePrice > (engine.swingHigh + engine.swingLow)/2 ? "BULLISH" : "BEARISH";
         const isBullish = engine.bias === "BULLISH" || engine.bias === "BULLISH_BOS";
         if (isBullish) {
-            engine.f618 = engine.swingLow + range * 0.618; engine.deep = engine.swingLow + range * 0.786; engine.tp = engine.swingHigh + range * 0.27;
-            const entryZoneMid = (engine.f618 + engine.deep) / 2, distanceToTP = Math.abs(engine.tp - entryZoneMid);
-            engine.sl = entryZoneMid - (distanceToTP * 0.5); if (engine.sl < engine.swingLow) engine.sl = engine.swingLow;
+            engine.f618 = engine.swingLow + range * 0.618;
+            engine.deep = engine.swingLow + range * 0.786;
+            engine.tp = engine.swingHigh + range * 0.27;
+            const entryZoneMid = (engine.f618 + engine.deep) / 2;
+            const distanceToTP = Math.abs(engine.tp - entryZoneMid);
+            engine.sl = entryZoneMid - (distanceToTP * 0.5);
+            if (engine.sl < engine.swingLow) engine.sl = engine.swingLow;
         } else {
-            engine.f618 = engine.swingHigh - range * 0.618; engine.deep = engine.swingHigh - range * 0.786; engine.tp = engine.swingLow - range * 0.27;
-            const entryZoneMid = (engine.f618 + engine.deep) / 2, distanceToTP = Math.abs(entryZoneMid - engine.tp);
-            engine.sl = entryZoneMid + (distanceToTP * 0.5); if (engine.sl > engine.swingHigh) engine.sl = engine.swingHigh;
+            engine.f618 = engine.swingHigh - range * 0.618;
+            engine.deep = engine.swingHigh - range * 0.786;
+            engine.tp = engine.swingLow - range * 0.27;
+            const entryZoneMid = (engine.f618 + engine.deep) / 2;
+            const distanceToTP = Math.abs(entryZoneMid - engine.tp);
+            engine.sl = entryZoneMid + (distanceToTP * 0.5);
+            if (engine.sl > engine.swingHigh) engine.sl = engine.swingHigh;
         }
         const prec = getPrecision();
         document.getElementById('swing-high-value').innerText = engine.swingHigh.toFixed(prec);
@@ -1022,35 +1679,94 @@
         updatePipsDisplay();
     }
     
-    function forceRecalculateStructure() { if (!candleData.length || candleData.length < 30) return; engine.sweepDetected = false; engine.bosConfirmed = false; engine.liquiditySide = null; engine.fvgEntryActive = false; spikeDetected = false; currentOrderBlock = null; lastSMCUpdate = 0; calculateSMCLevels(); if (lastPrice > 0) throttledUpdateUI(lastPrice); }
+    function forceRecalculateStructure() {
+        if (!candleData.length || candleData.length < 30) return;
+        engine.sweepDetected = false; engine.bosConfirmed = false;
+        engine.liquiditySide = null; engine.fvgEntryActive = false;
+        spikeDetected = false;
+        currentOrderBlock = null;
+        lastSMCUpdate = 0;
+        calculateSMCLevels();
+        if (lastPrice > 0) throttledUpdateUI(lastPrice);
+    }
     
-    function resetSweepIfStructureChanged() { if (engine.swingHigh !== engine.lastSwingHigh || engine.swingLow !== engine.lastSwingLow) { if (engine.sweepDetected && !engine.bosConfirmed) { engine.sweepDetected = false; engine.liquiditySide = null; engine.fvgEntryActive = false; } engine.lastSwingHigh = engine.swingHigh; engine.lastSwingLow = engine.swingLow; spikeDetected = false; currentOrderBlock = null; } }
+    function resetSweepIfStructureChanged() {
+        if (engine.swingHigh !== engine.lastSwingHigh || engine.swingLow !== engine.lastSwingLow) {
+            if (engine.sweepDetected && !engine.bosConfirmed) { 
+                engine.sweepDetected = false; 
+                engine.liquiditySide = null; 
+                engine.fvgEntryActive = false; 
+            }
+            engine.lastSwingHigh = engine.swingHigh; 
+            engine.lastSwingLow = engine.swingLow;
+            spikeDetected = false;
+            currentOrderBlock = null;
+        }
+    }
     
+    // ==================== FACTOR FUNCTIONS ====================
     function detectLiquiditySweep(price) {
         if (!engine.swingHigh || !engine.swingLow) return { swept: false, side: null };
-        const safePrice = safeValue(price, 0), buffer = getSweepBuffer(), cooldown = getSweepCooldown(), now = Date.now();
-        if (spikeDetected && (now - lastSpikeTime) < SPIKE_COOLDOWN) return { swept: false, side: null };
-        if (safePrice > engine.swingHigh + buffer && !engine.sweepDetected && now - engine.lastSweepTime > cooldown) { if (!isValidSweep(safePrice, "SELL")) return { swept: false, side: null }; engine.sweepDetected = true; engine.liquiditySide = "SELL"; engine.lastSweepTime = now; engine.bosConfirmed = false; engine.fvgEntryActive = false; return { swept: true, side: "SELL" }; }
-        else if (safePrice < engine.swingLow - buffer && !engine.sweepDetected && now - engine.lastSweepTime > cooldown) { if (!isValidSweep(safePrice, "BUY")) return { swept: false, side: null }; engine.sweepDetected = true; engine.liquiditySide = "BUY"; engine.lastSweepTime = now; engine.bosConfirmed = false; engine.fvgEntryActive = false; return { swept: true, side: "BUY" }; }
+        const safePrice = safeValue(price, 0);
+        const buffer = getSweepBuffer();
+        const cooldown = getSweepCooldown();
+        const now = Date.now();
+        
+        if (spikeDetected && (now - lastSpikeTime) < SPIKE_COOLDOWN) {
+            return { swept: false, side: null };
+        }
+        
+        if (safePrice > engine.swingHigh + buffer && !engine.sweepDetected && now - engine.lastSweepTime > cooldown) {
+            if (!isValidSweep(safePrice, "SELL")) return { swept: false, side: null };
+            engine.sweepDetected = true; engine.liquiditySide = "SELL"; engine.lastSweepTime = now;
+            engine.bosConfirmed = false; engine.fvgEntryActive = false;
+            return { swept: true, side: "SELL" };
+        } else if (safePrice < engine.swingLow - buffer && !engine.sweepDetected && now - engine.lastSweepTime > cooldown) {
+            if (!isValidSweep(safePrice, "BUY")) return { swept: false, side: null };
+            engine.sweepDetected = true; engine.liquiditySide = "BUY"; engine.lastSweepTime = now;
+            engine.bosConfirmed = false; engine.fvgEntryActive = false;
+            return { swept: true, side: "BUY" };
+        }
         return { swept: false, side: null };
     }
     
     function confirmBOS(currentPrice) {
         if (!engine.sweepDetected || engine.bosConfirmed) return false;
-        const safePrice = safeValue(currentPrice, 0), now = Date.now();
-        if (engine.liquiditySide === "BUY" && safePrice > engine.swingHigh) { engine.bosConfirmed = true; engine.bias = "BULLISH_BOS"; engine.lastBosTime = now; engine.fvgEntryActive = true; highlightFVGEntry(); highlightOBEntry(); return true; }
-        else if (engine.liquiditySide === "SELL" && safePrice < engine.swingLow) { engine.bosConfirmed = true; engine.bias = "BEARISH_BOS"; engine.lastBosTime = now; engine.fvgEntryActive = true; highlightFVGEntry(); highlightOBEntry(); return true; }
+        const safePrice = safeValue(currentPrice, 0);
+        const now = Date.now();
+        if (engine.liquiditySide === "BUY" && safePrice > engine.swingHigh) {
+            engine.bosConfirmed = true; engine.bias = "BULLISH_BOS"; engine.lastBosTime = now;
+            engine.fvgEntryActive = true; highlightFVGEntry(); 
+            highlightOBEntry();
+            return true;
+        } else if (engine.liquiditySide === "SELL" && safePrice < engine.swingLow) {
+            engine.bosConfirmed = true; engine.bias = "BEARISH_BOS"; engine.lastBosTime = now;
+            engine.fvgEntryActive = true; highlightFVGEntry(); 
+            highlightOBEntry();
+            return true;
+        }
         return false;
     }
     
     function updateFactor1(price) {
         const sweep = detectLiquiditySweep(price);
-        const isValidStructure = (engine.bias === "BULLISH" || engine.bias === "BEARISH" || engine.bias === "BULLISH_BOS" || engine.bias === "BEARISH_BOS") && (sweep.swept || engine.bosConfirmed);
+        const isValidStructure = (engine.bias === "BULLISH" || engine.bias === "BEARISH" || 
+                                 engine.bias === "BULLISH_BOS" || engine.bias === "BEARISH_BOS") && 
+                                 (sweep.swept || engine.bosConfirmed);
         factorStatus.f1 = isValidStructure;
-        const card = document.getElementById('factor1-card'), status = document.getElementById('factor1-status');
+        const card = document.getElementById('factor1-card');
+        const status = document.getElementById('factor1-status');
         if (card && status) {
-            if (isValidStructure) { card.classList.add('active'); const isBullish = engine.bias === "BULLISH" || engine.bias === "BULLISH_BOS"; status.innerHTML = isBullish ? "▲ BULLISH" : "▼ BEARISH"; status.style.color = isBullish ? "var(--bloomberg-accent)" : "var(--bloomberg-danger)"; }
-            else { card.classList.remove('active'); status.innerHTML = sweep.swept ? "SWEEP" : (spikeDetected ? "⚠️ SPIKE" : "WAITING"); status.style.color = spikeDetected ? "var(--bloomberg-danger)" : "var(--bloomberg-text-dim)"; }
+            if (isValidStructure) {
+                card.classList.add('active');
+                const isBullish = engine.bias === "BULLISH" || engine.bias === "BULLISH_BOS";
+                status.innerHTML = isBullish ? "▲ BULLISH" : "▼ BEARISH";
+                status.style.color = isBullish ? "var(--bloomberg-accent)" : "var(--bloomberg-danger)";
+            } else {
+                card.classList.remove('active');
+                status.innerHTML = sweep.swept ? "SWEEP" : (spikeDetected ? "⚠️ SPIKE" : "WAITING");
+                status.style.color = spikeDetected ? "var(--bloomberg-danger)" : "var(--bloomberg-text-dim)";
+            }
         }
         return isValidStructure;
     }
@@ -1058,182 +1774,1208 @@
     async function fetchMTFData() {
         const tfs = ['1h', '15m', '5m'];
         await Promise.all(tfs.map(async (tf) => {
-            try { const url = `https://fapi.binance.com/fapi/v1/klines?symbol=${currentPair}&interval=${tf}&limit=100`; const resp = await fetch(url); const data = await resp.json(); if (Array.isArray(data) && data.length > 0) { const closes = data.map(d => safeValue(parseFloat(d[4]), 0)); const lastPriceMTF = closes[closes.length - 1]; const ema21 = calculateEMA21FromCloses(closes); const bias = lastPriceMTF > ema21 ? "BULLISH" : "BEARISH"; if (tf === '5m') mtfBiasCache.m5 = bias; else if (tf === '15m') mtfBiasCache.m15 = bias; else if (tf === '1h') mtfBiasCache.h1 = bias; } } catch(e) {}
+            try {
+                const url = `https://fapi.binance.com/fapi/v1/klines?symbol=${currentPair}&interval=${tf}&limit=100`;
+                const resp = await fetch(url);
+                const data = await resp.json();
+                if (Array.isArray(data) && data.length > 0) {
+                    const closes = data.map(d => safeValue(parseFloat(d[4]), 0));
+                    const lastPriceMTF = closes[closes.length - 1];
+                    const sma20 = closes.slice(-20).reduce((a,b) => a+b, 0) / 20;
+                    const bias = lastPriceMTF > sma20 ? "BULLISH" : "BEARISH";
+                    if (tf === '5m') mtfBiasCache.m5 = bias;
+                    else if (tf === '15m') mtfBiasCache.m15 = bias;
+                    else if (tf === '1h') mtfBiasCache.h1 = bias;
+                }
+            } catch(e) {}
         }));
-        updateMTFDisplay(); updateFactor2();
+        updateMTFDisplay();
+        updateFactor2();
     }
     
-    function calculateEMA21FromCloses(closes) { if (closes.length < 21) return closes.reduce((a,b)=>a+b,0)/closes.length; let ema = closes.slice(0,21).reduce((a,b)=>a+b,0)/21; const multiplier = 2/(21+1); for (let i=21; i<closes.length; i++) { ema = (closes[i] - ema) * multiplier + ema; } return ema; }
-    
-    function updateFactor2() { const bullishCount = [mtfBiasCache.m5, mtfBiasCache.m15, mtfBiasCache.h1].filter(b => b === "BULLISH").length; const bearishCount = [mtfBiasCache.m5, mtfBiasCache.m15, mtfBiasCache.h1].filter(b => b === "BEARISH").length; factorStatus.f2 = bullishCount >= 2 || bearishCount >= 2; return factorStatus.f2; }
-    
-    function updateMTFDisplay() { const mtfElem = document.getElementById('mtf-paragraph-text'); if (!mtfElem) return; const getBiasHtml = (bias) => { if (bias === "BULLISH") return '<span class="mtf-highlight-bull">▲ BULLISH</span>'; if (bias === "BEARISH") return '<span class="mtf-highlight-bear">▼ BEARISH</span>'; return '<span class="mtf-highlight-neutral">⚪ NEUTRAL</span>'; }; mtfElem.innerHTML = `MULTI-TIMEFRAME:<br>H1 → ${getBiasHtml(mtfBiasCache.h1)} &nbsp;|&nbsp;M15 → ${getBiasHtml(mtfBiasCache.m15)} &nbsp;|&nbsp;M5 → ${getBiasHtml(mtfBiasCache.m5)}`; }
-    
-    function calculateEMA21() {
-        if (!candleData.length || candleData.length < 21) return 0;
-        const last21 = candleData.slice(-21);
-        const closes = last21.map(c => safeObject(c, 'c', 0));
-        let ema = closes.reduce((a, b) => a + b, 0) / 21;
-        return ema;
+    function updateFactor2() {
+        const bullishCount = [mtfBiasCache.m5, mtfBiasCache.m15, mtfBiasCache.h1].filter(b => b === "BULLISH").length;
+        const bearishCount = [mtfBiasCache.m5, mtfBiasCache.m15, mtfBiasCache.h1].filter(b => b === "BEARISH").length;
+        factorStatus.f2 = bullishCount >= 2 || bearishCount >= 2;
+        return factorStatus.f2;
     }
     
-    function calculatesma50() { if (!candleData.length || candleData.length < 50) return 0; const last50 = candleData.slice(-50); const closes = last50.map(c => safeObject(c, 'c', 0)); return closes.reduce((a, b) => a + b, 0) / 50; }
+    function updateMTFDisplay() {
+        const mtfElem = document.getElementById('mtf-paragraph-text');
+        if (!mtfElem) return;
+        const getBiasHtml = (bias) => {
+            if (bias === "BULLISH") return '<span class="mtf-highlight-bull">▲ BULLISH</span>';
+            if (bias === "BEARISH") return '<span class="mtf-highlight-bear">▼ BEARISH</span>';
+            return '<span class="mtf-highlight-neutral">⚪ NEUTRAL</span>';
+        };
+        mtfElem.innerHTML = `MULTI-TIMEFRAME:<br>
+            H1 → ${getBiasHtml(mtfBiasCache.h1)} &nbsp;|&nbsp;
+            M15 → ${getBiasHtml(mtfBiasCache.m15)} &nbsp;|&nbsp;
+            M5 → ${getBiasHtml(mtfBiasCache.m5)}`;
+    }
+    
+    function calculatesma20() {
+        if (!candleData.length || candleData.length < 20) return 0;
+        const last20 = candleData.slice(-20);
+        const closes = last20.map(c => safeObject(c, 'c', 0));
+        return closes.reduce((a, b) => a + b, 0) / 20;
+    }
+    
+    function calculatesma50() {
+        if (!candleData.length || candleData.length < 50) return 0;
+        const last50 = candleData.slice(-50);
+        const closes = last50.map(c => safeObject(c, 'c', 0));
+        return closes.reduce((a, b) => a + b, 0) / 50;
+    }
     
     function calculateADXWithTick(currentPrice) {
-        const now = Date.now(); if (now - cachedADX.timestamp < ADX_CACHE_DURATION && cachedADX.value > 0) return cachedADX.value;
+        const now = Date.now();
+        if (now - cachedADX.timestamp < ADX_CACHE_DURATION && cachedADX.value > 0) {
+            return cachedADX.value;
+        }
+        
         if (!candleData.length || candleData.length < 28) return ADX_DEFAULT_RANGING;
-        try { const period = 14; const data = [...candleData]; if (data.length < period + 1) return ADX_DEFAULT_RANGING; let tr = [], plusDM = [], minusDM = []; for (let i = 1; i < data.length; i++) { const high = safeObject(data[i], 'h', 0), low = safeObject(data[i], 'l', 0), prevHigh = safeObject(data[i-1], 'h', 0), prevLow = safeObject(data[i-1], 'l', 0), prevClose = safeObject(data[i-1], 'c', 0); const trueRange = Math.max(high - low, Math.abs(high - prevClose), Math.abs(low - prevClose)); tr.push(trueRange); const upMove = high - prevHigh, downMove = prevLow - low; if (upMove > downMove && upMove > 0) { plusDM.push(upMove); minusDM.push(0); } else if (downMove > upMove && downMove > 0) { plusDM.push(0); minusDM.push(downMove); } else { plusDM.push(0); minusDM.push(0); } } const lastCandle = data[data.length - 1]; const safeCurrentPrice = safeValue(currentPrice, 0); const currentHigh = Math.max(safeObject(lastCandle, 'h', 0), safeCurrentPrice), currentLow = Math.min(safeObject(lastCandle, 'l', 0), safeCurrentPrice), prevClose = safeObject(lastCandle, 'c', 0); const tickTR = Math.max(currentHigh - currentLow, Math.abs(currentHigh - prevClose), Math.abs(currentLow - prevClose)); tr.push(tickTR); const tickUpMove = currentHigh - safeObject(lastCandle, 'h', 0), tickDownMove = safeObject(lastCandle, 'l', 0) - currentLow; if (tickUpMove > tickDownMove && tickUpMove > 0) { plusDM.push(tickUpMove); minusDM.push(0); } else if (tickDownMove > tickUpMove && tickDownMove > 0) { plusDM.push(0); minusDM.push(tickDownMove); } else { plusDM.push(0); minusDM.push(0); } if (tr.length < period) return ADX_DEFAULT_RANGING; let smoothedTR = 0, smoothedPlusDM = 0, smoothedMinusDM = 0; const startIdx = tr.length - period; for (let i = startIdx; i < tr.length; i++) { smoothedTR += tr[i]; smoothedPlusDM += plusDM[i]; smoothedMinusDM += minusDM[i]; } smoothedTR /= period; smoothedPlusDM /= period; smoothedMinusDM /= period; const plusDI = smoothedTR > 0 ? (smoothedPlusDM / smoothedTR) * 100 : 0, minusDI = smoothedTR > 0 ? (smoothedMinusDM / smoothedTR) * 100 : 0; const diSum = plusDI + minusDI, diDiff = Math.abs(plusDI - minusDI); const dx = diSum === 0 ? 0 : (diDiff / diSum) * 100; engine.plusDI = plusDI; engine.minusDI = minusDI; const result = Math.min(100, Math.max(0, isNaN(dx) ? ADX_DEFAULT_RANGING : dx)); cachedADX = { value: result, timestamp: now }; return result; } catch (error) { return ADX_DEFAULT_RANGING; }
+        try {
+            const period = 14;
+            const data = [...candleData];
+            if (data.length < period + 1) return ADX_DEFAULT_RANGING;
+            let tr = [], plusDM = [], minusDM = [];
+            for (let i = 1; i < data.length; i++) {
+                const high = safeObject(data[i], 'h', 0);
+                const low = safeObject(data[i], 'l', 0);
+                const prevHigh = safeObject(data[i-1], 'h', 0);
+                const prevLow = safeObject(data[i-1], 'l', 0);
+                const prevClose = safeObject(data[i-1], 'c', 0);
+                const trueRange = Math.max(high - low, Math.abs(high - prevClose), Math.abs(low - prevClose));
+                tr.push(trueRange);
+                const upMove = high - prevHigh;
+                const downMove = prevLow - low;
+                if (upMove > downMove && upMove > 0) { plusDM.push(upMove); minusDM.push(0); }
+                else if (downMove > upMove && downMove > 0) { plusDM.push(0); minusDM.push(downMove); }
+                else { plusDM.push(0); minusDM.push(0); }
+            }
+            const lastCandle = data[data.length - 1];
+            const safeCurrentPrice = safeValue(currentPrice, 0);
+            const currentHigh = Math.max(safeObject(lastCandle, 'h', 0), safeCurrentPrice);
+            const currentLow = Math.min(safeObject(lastCandle, 'l', 0), safeCurrentPrice);
+            const prevClose = safeObject(lastCandle, 'c', 0);
+            const tickTR = Math.max(currentHigh - currentLow, Math.abs(currentHigh - prevClose), Math.abs(currentLow - prevClose));
+            tr.push(tickTR);
+            const tickUpMove = currentHigh - safeObject(lastCandle, 'h', 0);
+            const tickDownMove = safeObject(lastCandle, 'l', 0) - currentLow;
+            if (tickUpMove > tickDownMove && tickUpMove > 0) { plusDM.push(tickUpMove); minusDM.push(0); }
+            else if (tickDownMove > tickUpMove && tickDownMove > 0) { plusDM.push(0); minusDM.push(tickDownMove); }
+            else { plusDM.push(0); minusDM.push(0); }
+            if (tr.length < period) return ADX_DEFAULT_RANGING;
+            let smoothedTR = 0, smoothedPlusDM = 0, smoothedMinusDM = 0;
+            const startIdx = tr.length - period;
+            for (let i = startIdx; i < tr.length; i++) {
+                smoothedTR += tr[i];
+                smoothedPlusDM += plusDM[i];
+                smoothedMinusDM += minusDM[i];
+            }
+            smoothedTR /= period;
+            smoothedPlusDM /= period;
+            smoothedMinusDM /= period;
+            
+            // FIXED: Hindari pembagian nol
+            const plusDI = smoothedTR > 0 ? (smoothedPlusDM / smoothedTR) * 100 : 0;
+            const minusDI = smoothedTR > 0 ? (smoothedMinusDM / smoothedTR) * 100 : 0;
+            const diSum = plusDI + minusDI;
+            const diDiff = Math.abs(plusDI - minusDI);
+            const dx = diSum === 0 ? 0 : (diDiff / diSum) * 100;
+            engine.plusDI = plusDI;
+            engine.minusDI = minusDI;
+            const result = Math.min(100, Math.max(0, isNaN(dx) ? ADX_DEFAULT_RANGING : dx));
+            cachedADX = { value: result, timestamp: now };
+            return result;
+        } catch (error) { 
+            console.warn('ADX calculation error:', error);
+            return ADX_DEFAULT_RANGING; 
+        }
     }
     
     function updateFactor3(price) {
-        engine.adx = calculateADXWithTick(price); engine.ema21 = calculateEMA21();
-        const safePrice = safeValue(price, 0), isTrendStrong = engine.adx >= 20, isPriceInZone = safePrice >= Math.min(engine.f618, engine.deep) && safePrice <= Math.max(engine.f618, engine.deep);
-        const isAboveEMA = safePrice > engine.ema21, isBelowEMA = safePrice < engine.ema21, isBullishBias = engine.bias === "BULLISH" || engine.bias === "BULLISH_BOS";
-        const isValid = isTrendStrong && isPriceInZone && ((isBullishBias && isAboveEMA) || (!isBullishBias && isBelowEMA));
+        engine.adx = calculateADXWithTick(price);
+        engine.sma20 = calculatesma20();
+        const safePrice = safeValue(price, 0);
+        const isTrendStrong = engine.adx >= 20;
+        const isPriceInZone = safePrice >= Math.min(engine.f618, engine.deep) && safePrice <= Math.max(engine.f618, engine.deep);
+        const isAboveSMA = safePrice > engine.sma20;
+        const isBelowSMA = safePrice < engine.sma20;
+        const isBullishBias = engine.bias === "BULLISH" || engine.bias === "BULLISH_BOS";
+        const isValid = isTrendStrong && isPriceInZone && ((isBullishBias && isAboveSMA) || (!isBullishBias && isBelowSMA));
         factorStatus.f3 = isValid;
-        const card = document.getElementById('factor3-card'), status = document.getElementById('factor3-status');
-        if (card && status) { if (isValid) { card.classList.add('active'); status.innerHTML = `${Math.round(engine.adx)} ✅`; status.style.color = "var(--bloomberg-accent)"; } else { card.classList.remove('active'); status.innerHTML = `${Math.round(engine.adx)}`; status.style.color = "var(--bloomberg-text-dim)"; } }
-        updateEMA21UI(price); return isValid;
+        const card = document.getElementById('factor3-card');
+        const status = document.getElementById('factor3-status');
+        if (card && status) {
+            if (isValid) {
+                card.classList.add('active');
+                status.innerHTML = `${Math.round(engine.adx)} ✅`;
+                status.style.color = "var(--bloomberg-accent)";
+            } else {
+                card.classList.remove('active');
+                status.innerHTML = `${Math.round(engine.adx)}`;
+                status.style.color = "var(--bloomberg-text-dim)";
+            }
+        }
+        updateSMA20UI(price);
+        return isValid;
     }
     
-    function updateEMA21UI(currentPrice) {
-        const emaValue = calculateEMA21(), emaElem = document.getElementById('ema21-value'), emaStatus = document.getElementById('ema21-status'), safePrice = safeValue(currentPrice, 0);
-        if (!emaElem || !emaStatus) return;
-        if (emaValue !== null && !isNaN(emaValue) && emaValue > 0) { engine.ema21 = emaValue; const prec = getPrecision(); emaElem.innerText = emaValue.toFixed(prec); if (safePrice > emaValue) { emaStatus.className = "ema21-status bullish"; emaElem.style.color = "var(--bloomberg-accent)"; } else { emaStatus.className = "ema21-status bearish"; emaElem.style.color = "var(--bloomberg-danger)"; } }
-        else { emaElem.innerText = "--"; emaStatus.className = "ema21-status"; }
-    }
-    
-    function updateSMA50UI(currentPrice) { const smaValue = calculatesma50(), smaElem = document.getElementById('sma50-value'), smaStatus = document.getElementById('sma50-status'), safePrice = safeValue(currentPrice, 0); if (!smaElem || !smaStatus) return; if (smaValue !== null && !isNaN(smaValue) && smaValue > 0) { engine.sma50 = smaValue; const prec = getPrecision(); smaElem.innerText = smaValue.toFixed(prec); if (safePrice > smaValue) { smaStatus.className = "sma50-status bullish"; smaElem.style.color = "var(--bloomberg-accent)"; } else { smaStatus.className = "sma50-status bearish"; smaElem.style.color = "var(--bloomberg-danger)"; } } else { smaElem.innerText = "--"; smaStatus.className = "sma50-status"; } }
-    
-    function updateFactorSMA50(price) { const safePrice = safeValue(price, 0); factorStatus.f_sma50 = safePrice > engine.sma50; return factorStatus.f_sma50; }
-    
-    function computeRSI(currentPrice) { if (!candleData.length || candleData.length < 20) return 50; const period = 14; let closes = candleData.map(c => safeObject(c, 'c', 0)); const safeCurrentPrice = safeValue(currentPrice, 0); if (closes.length > 0 && safeCurrentPrice !== closes[closes.length - 1]) closes.push(safeCurrentPrice); if (closes.length < period + 1) return 50; let gains = [], losses = []; for (let i = 1; i < closes.length; i++) { const diff = closes[i] - closes[i - 1]; if (diff >= 0) { gains.push(diff); losses.push(0); } else { gains.push(0); losses.push(Math.abs(diff)); } } let avgGain = 0, avgLoss = 0; for (let i = 0; i < period; i++) { avgGain += gains[i]; avgLoss += losses[i]; } avgGain /= period; avgLoss /= period; for (let i = period; i < gains.length; i++) { avgGain = ((avgGain * (period - 1)) + gains[i]) / period; avgLoss = ((avgLoss * (period - 1)) + losses[i]) / period; } if (avgLoss === 0) return 100; const rs = avgGain / avgLoss; return Math.min(100, Math.max(0, 100 - (100 / (1 + rs)))); }
-    
-    function detectSupportResistance() { if (!candleData.length || candleData.length < 50) return false; const recentData = candleData.slice(-50); const swingPoints = detectFractalSwingPoints(recentData, 3); wysetrade.resistance = swingPoints.swingHigh; wysetrade.support = swingPoints.swingLow; const safePrice = safeValue(lastPrice, 0), distanceToResistance = Math.abs(safePrice - wysetrade.resistance), distanceToSupport = Math.abs(safePrice - wysetrade.support), atr = calculateATR(14), threshold = atr * 0.15; wysetrade.isNearResistance = distanceToResistance < threshold; wysetrade.isNearSupport = distanceToSupport < threshold; wysetrade.isValidSR = wysetrade.isNearSupport || wysetrade.isNearResistance; return wysetrade.isValidSR; }
-    function updateFactor5() { factorStatus.f5 = detectSupportResistance(); return factorStatus.f5; }
-    
-    function detectCandlestickPattern() { if (!candleData.length || candleData.length < 5) return "NONE"; const lastCandle = candleData[candleData.length - 1], prevCandle = candleData[candleData.length - 2]; const lastClose = safeObject(lastCandle, 'c', 0), lastOpen = safeObject(lastCandle, 'o', 0), lastHigh = safeObject(lastCandle, 'h', 0), lastLow = safeObject(lastCandle, 'l', 0); const prevClose = safeObject(prevCandle, 'c', 0), prevOpen = safeObject(prevCandle, 'o', 0), prevHigh = safeObject(prevCandle, 'h', 0), prevLow = safeObject(prevCandle, 'l', 0); const body = Math.abs(lastClose - lastOpen), upperWick = lastHigh - Math.max(lastClose, lastOpen), lowerWick = Math.min(lastClose, lastOpen) - lastLow, totalRange = lastHigh - lastLow; let pattern = "NONE"; if (totalRange > 0) { const upperWickPercent = upperWick / totalRange, lowerWickPercent = lowerWick / totalRange, bodyPercent = body / totalRange; if (upperWickPercent > 0.6 && bodyPercent < 0.3) pattern = "PIN_BAR_BEARISH"; else if (lowerWickPercent > 0.6 && bodyPercent < 0.3) pattern = "PIN_BAR_BULLISH"; } if (prevCandle && lastCandle) { const prevBullish = prevClose > prevOpen, currentBullish = lastClose > lastOpen; if (!prevBullish && currentBullish && lastClose > prevHigh && lastOpen < prevLow) pattern = "BULLISH_ENGULFING"; else if (prevBullish && !currentBullish && lastClose < prevLow && lastOpen > prevHigh) pattern = "BEARISH_ENGULFING"; } if (prevCandle && lastCandle) { if (lastHigh < prevHigh && lastLow > prevLow) pattern = pattern === "NONE" ? "INSIDE_BAR" : pattern; } wysetrade.candlePattern = pattern; const isBullishSetup = (engine.bias === "BULLISH" || engine.bias === "BULLISH_BOS"), isBearishSetup = (engine.bias === "BEARISH" || engine.bias === "BEARISH_BOS"); let isValid = false; if (isBullishSetup && (pattern === "PIN_BAR_BULLISH" || pattern === "BULLISH_ENGULFING")) isValid = true; else if (isBearishSetup && (pattern === "PIN_BAR_BEARISH" || pattern === "BEARISH_ENGULFING")) isValid = true; else if (pattern === "INSIDE_BAR") isValid = true; wysetrade.isValidCandle = isValid; return isValid; }
-    function updateFactor6() { factorStatus.f6 = detectCandlestickPattern(); return factorStatus.f6; }
-    
-    function updateVolumeDisplay() { if (currentPair !== "BTCUSDT") return; const volumeRatio = lastVolumeRatio > 0 ? lastVolumeRatio : wysetrade.volumeRatio; factorStatus.f7 = volumeRatio > 1.5; const card = document.getElementById('factor-volume-card'), status = document.getElementById('factor-volume-status'); if (card && status) { card.style.display = "inline-flex"; if (factorStatus.f7) { card.classList.add('active'); status.innerHTML = `${volumeRatio.toFixed(2)}x ✅`; status.style.color = "var(--bloomberg-accent)"; } else { card.classList.remove('active'); status.innerHTML = `${volumeRatio.toFixed(2)}x`; status.style.color = "var(--bloomberg-orange)"; } } }
-    function isBTCVolumeValid() { if (currentPair !== "BTCUSDT") return true; if (!candleData.length || candleData.length < 21) return false; const volumeRatio = lastVolumeRatio > 0 ? lastVolumeRatio : wysetrade.volumeRatio; return volumeRatio > 1.5; }
-    
-    async function fetchLatestVolume() { if (currentPair !== "BTCUSDT") return; if (!candleData.length) return; try { const url = `https://fapi.binance.com/fapi/v1/klines?symbol=${currentPair}&interval=${currentTF}&limit=2`; const resp = await fetch(url); const data = await resp.json(); if (Array.isArray(data) && data.length >= 1) { const latestCandle = data[data.length - 1]; const latestVolume = safeValue(parseFloat(latestCandle[5]), 0), latestClose = safeValue(parseFloat(latestCandle[4]), 0), latestHigh = safeValue(parseFloat(latestCandle[2]), 0), latestLow = safeValue(parseFloat(latestCandle[3]), 0); if (candleData.length > 0) { const lastCandle = candleData[candleData.length - 1]; lastCandle.v = latestVolume; lastCandle.c = latestClose; lastCandle.h = Math.max(lastCandle.h, latestHigh); lastCandle.l = Math.min(lastCandle.l, latestLow); } const last20Volumes = candleData.slice(-21, -1).map(c => safeObject(c, 'v', 0)); const avgVolume = last20Volumes.reduce((a, b) => a + b, 0) / 20; lastVolumeRatio = avgVolume === 0 ? 1 : latestVolume / avgVolume; wysetrade.volumeRatio = lastVolumeRatio; updateVolumeDisplay(); updateFinalDecision(); } } catch(e) {} }
-    
-    function updateDirectionArrow(currentPrice) {
-        const arrowElem = document.getElementById('direction-arrow'); if (!arrowElem) return;
+    function updateSMA20UI(currentPrice) {
+        const smaValue = calculatesma20();
+        const smaElem = document.getElementById('sma20-value');
+        const smaStatus = document.getElementById('sma20-status');
         const safePrice = safeValue(currentPrice, 0);
-        if (engine.adx < ADX_DEFAULT_RANGING) { if (lastArrowDirection !== "neutral") { arrowElem.innerHTML = "⬌"; arrowElem.style.color = "var(--bloomberg-text-dim)"; lastArrowDirection = "neutral"; } return; }
-        const atr = calculateATR(14), threshold = currentPair === "XAUUSDT" ? (atr * 0.07) : (atr * 0.05);
-        const priceAboveSwing = safePrice > engine.swingHigh, priceBelowSwing = safePrice < engine.swingLow;
+        if (!smaElem || !smaStatus) return;
+        if (smaValue !== null && !isNaN(smaValue) && smaValue > 0) {
+            engine.sma20 = smaValue;
+            const prec = getPrecision();
+            smaElem.innerText = smaValue.toFixed(prec);
+            if (safePrice > smaValue) {
+                smaStatus.className = "sma20-status bullish";
+                smaElem.style.color = "var(--bloomberg-accent)";
+            } else {
+                smaStatus.className = "sma20-status bearish";
+                smaElem.style.color = "var(--bloomberg-danger)";
+            }
+        } else {
+            smaElem.innerText = "--";
+            smaStatus.className = "sma20-status";
+        }
+    }
+    
+    function updateSMA50UI(currentPrice) {
+        const smaValue = calculatesma50();
+        const smaElem = document.getElementById('sma50-value');
+        const smaStatus = document.getElementById('sma50-status');
+        const safePrice = safeValue(currentPrice, 0);
+        if (!smaElem || !smaStatus) return;
+        if (smaValue !== null && !isNaN(smaValue) && smaValue > 0) {
+            engine.sma50 = smaValue;
+            const prec = getPrecision();
+            smaElem.innerText = smaValue.toFixed(prec);
+            if (safePrice > smaValue) {
+                smaStatus.className = "sma50-status bullish";
+                smaElem.style.color = "var(--bloomberg-accent)";
+            } else {
+                smaStatus.className = "sma50-status bearish";
+                smaElem.style.color = "var(--bloomberg-danger)";
+            }
+        } else {
+            smaElem.innerText = "--";
+            smaStatus.className = "sma50-status";
+        }
+    }
+    
+    function updateFactorSMA50(price) {
+        const safePrice = safeValue(price, 0);
+        factorStatus.f_sma50 = safePrice > engine.sma50;
+        return factorStatus.f_sma50;
+    }
+    
+    function computeRSI(currentPrice) {
+        if (!candleData.length || candleData.length < 20) return 50;
+        const period = 14;
+        let closes = candleData.map(c => safeObject(c, 'c', 0));
+        const safeCurrentPrice = safeValue(currentPrice, 0);
+        if (closes.length > 0 && safeCurrentPrice !== closes[closes.length - 1]) closes.push(safeCurrentPrice);
+        if (closes.length < period + 1) return 50;
+        let gains = [], losses = [];
+        for (let i = 1; i < closes.length; i++) {
+            const diff = closes[i] - closes[i - 1];
+            if (diff >= 0) { gains.push(diff); losses.push(0); }
+            else { gains.push(0); losses.push(Math.abs(diff)); }
+        }
+        let avgGain = 0, avgLoss = 0;
+        for (let i = 0; i < period; i++) { avgGain += gains[i]; avgLoss += losses[i]; }
+        avgGain /= period; avgLoss /= period;
+        for (let i = period; i < gains.length; i++) {
+            avgGain = ((avgGain * (period - 1)) + gains[i]) / period;
+            avgLoss = ((avgLoss * (period - 1)) + losses[i]) / period;
+        }
+        if (avgLoss === 0) return 100;
+        const rs = avgGain / avgLoss;
+        return Math.min(100, Math.max(0, 100 - (100 / (1 + rs))));
+    }
+    
+    function detectSupportResistance() {
+        if (!candleData.length || candleData.length < 50) return false;
+        const recentData = candleData.slice(-50);
+        const swingPoints = detectFractalSwingPoints(recentData, 3);
+        wysetrade.resistance = swingPoints.swingHigh;
+        wysetrade.support = swingPoints.swingLow;
+        const safePrice = safeValue(lastPrice, 0);
+        const distanceToResistance = Math.abs(safePrice - wysetrade.resistance);
+        const distanceToSupport = Math.abs(safePrice - wysetrade.support);
+        const atr = calculateATR(14);
+        const threshold = atr * 0.15;
+        wysetrade.isNearResistance = distanceToResistance < threshold;
+        wysetrade.isNearSupport = distanceToSupport < threshold;
+        wysetrade.isValidSR = wysetrade.isNearSupport || wysetrade.isNearResistance;
+        return wysetrade.isValidSR;
+    }
+    
+    function updateFactor5() { 
+        factorStatus.f5 = detectSupportResistance(); 
+        return factorStatus.f5; 
+    }
+    
+    function detectCandlestickPattern() {
+        if (!candleData.length || candleData.length < 5) return "NONE";
+        const lastCandle = candleData[candleData.length - 1];
+        const prevCandle = candleData[candleData.length - 2];
+        const lastClose = safeObject(lastCandle, 'c', 0);
+        const lastOpen = safeObject(lastCandle, 'o', 0);
+        const lastHigh = safeObject(lastCandle, 'h', 0);
+        const lastLow = safeObject(lastCandle, 'l', 0);
+        const prevClose = safeObject(prevCandle, 'c', 0);
+        const prevOpen = safeObject(prevCandle, 'o', 0);
+        const prevHigh = safeObject(prevCandle, 'h', 0);
+        const prevLow = safeObject(prevCandle, 'l', 0);
+        
+        const body = Math.abs(lastClose - lastOpen);
+        const upperWick = lastHigh - Math.max(lastClose, lastOpen);
+        const lowerWick = Math.min(lastClose, lastOpen) - lastLow;
+        const totalRange = lastHigh - lastLow;
+        let pattern = "NONE";
+        if (totalRange > 0) {
+            const upperWickPercent = upperWick / totalRange;
+            const lowerWickPercent = lowerWick / totalRange;
+            const bodyPercent = body / totalRange;
+            if (upperWickPercent > 0.6 && bodyPercent < 0.3) pattern = "PIN_BAR_BEARISH";
+            else if (lowerWickPercent > 0.6 && bodyPercent < 0.3) pattern = "PIN_BAR_BULLISH";
+        }
+        if (prevCandle && lastCandle) {
+            const prevBullish = prevClose > prevOpen;
+            const currentBullish = lastClose > lastOpen;
+            if (!prevBullish && currentBullish && lastClose > prevHigh && lastOpen < prevLow) pattern = "BULLISH_ENGULFING";
+            else if (prevBullish && !currentBullish && lastClose < prevLow && lastOpen > prevHigh) pattern = "BEARISH_ENGULFING";
+        }
+        if (prevCandle && lastCandle) {
+            if (lastHigh < prevHigh && lastLow > prevLow) pattern = pattern === "NONE" ? "INSIDE_BAR" : pattern;
+        }
+        wysetrade.candlePattern = pattern;
+        const isBullishSetup = (engine.bias === "BULLISH" || engine.bias === "BULLISH_BOS");
+        const isBearishSetup = (engine.bias === "BEARISH" || engine.bias === "BEARISH_BOS");
+        let isValid = false;
+        if (isBullishSetup && (pattern === "PIN_BAR_BULLISH" || pattern === "BULLISH_ENGULFING")) isValid = true;
+        else if (isBearishSetup && (pattern === "PIN_BAR_BEARISH" || pattern === "BEARISH_ENGULFING")) isValid = true;
+        else if (pattern === "INSIDE_BAR") isValid = true;
+        wysetrade.isValidCandle = isValid;
+        return isValid;
+    }
+    
+    function updateFactor6() { 
+        factorStatus.f6 = detectCandlestickPattern(); 
+        return factorStatus.f6; 
+    }
+    
+    function updateVolumeDisplay() {
+        if (currentPair !== "BTCUSDT") return;
+        const volumeRatio = lastVolumeRatio > 0 ? lastVolumeRatio : wysetrade.volumeRatio;
+        factorStatus.f7 = volumeRatio > 1.5;
+        const card = document.getElementById('factor-volume-card');
+        const status = document.getElementById('factor-volume-status');
+        if (card && status) {
+            card.style.display = "inline-flex";
+            if (factorStatus.f7) {
+                card.classList.add('active');
+                status.innerHTML = `${volumeRatio.toFixed(2)}x ✅`;
+                status.style.color = "var(--bloomberg-accent)";
+            } else {
+                card.classList.remove('active');
+                status.innerHTML = `${volumeRatio.toFixed(2)}x`;
+                status.style.color = "var(--bloomberg-orange)";
+            }
+        }
+    }
+    
+    function isBTCVolumeValid() {
+        if (currentPair !== "BTCUSDT") return true;
+        if (!candleData.length || candleData.length < 21) return false;
+        const volumeRatio = lastVolumeRatio > 0 ? lastVolumeRatio : wysetrade.volumeRatio;
+        return volumeRatio > 1.5;
+    }
+    
+    async function fetchLatestVolume() {
+        if (currentPair !== "BTCUSDT") return;
+        if (!candleData.length) return;
+        try {
+            const url = `https://fapi.binance.com/fapi/v1/klines?symbol=${currentPair}&interval=${currentTF}&limit=2`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (Array.isArray(data) && data.length >= 1) {
+                const latestCandle = data[data.length - 1];
+                const latestVolume = safeValue(parseFloat(latestCandle[5]), 0);
+                const latestClose = safeValue(parseFloat(latestCandle[4]), 0);
+                const latestHigh = safeValue(parseFloat(latestCandle[2]), 0);
+                const latestLow = safeValue(parseFloat(latestCandle[3]), 0);
+                if (candleData.length > 0) {
+                    const lastCandle = candleData[candleData.length - 1];
+                    lastCandle.v = latestVolume;
+                    lastCandle.c = latestClose;
+                    lastCandle.h = Math.max(lastCandle.h, latestHigh);
+                    lastCandle.l = Math.min(lastCandle.l, latestLow);
+                }
+                const last20Volumes = candleData.slice(-21, -1).map(c => safeObject(c, 'v', 0));
+                const avgVolume = last20Volumes.reduce((a, b) => a + b, 0) / 20;
+                lastVolumeRatio = avgVolume === 0 ? 1 : latestVolume / avgVolume;
+                wysetrade.volumeRatio = lastVolumeRatio;
+                updateVolumeDisplay();
+                updateFinalDecision();
+            }
+        } catch(e) {}
+    }
+    
+    // ==================== NEWS FUNCTIONS ====================
+    let upcomingNews = [], isNewsBlackout = false, newsBlackoutReason = "", newsCheckInterval = null;
+    
+    async function fetchEconomicCalendar() {
+        try {
+            const response = await fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json');
+            if (response.ok) {
+                const data = await response.json();
+                upcomingNews = data.filter(event => {
+                    const impact = event.impact || "";
+                    const relevant = impact.toLowerCase().includes("high") || impact.toLowerCase().includes("medium");
+                    const pairRelevant = event.currency === "USD" || 
+                                        (currentPair === "XAUUSDT" && event.currency === "USD") ||
+                                        (currentPair === "BTCUSDT" && (event.currency === "USD" || event.currency === "BTC"));
+                    return relevant && pairRelevant;
+                }).map(event => ({ 
+                    title: event.title || event.country, 
+                    time: new Date(event.date).getTime(), 
+                    impactHours: event.impact === "High" ? 2 : 1 
+                }));
+            } else { generateStaticNews(); }
+        } catch(e) { generateStaticNews(); }
+        checkNewsBlackout();
+    }
+    
+    function generateStaticNews() {
+        const now = Date.now();
+        upcomingNews = [];
+        const days = [1, 3, 5];
+        days.forEach(day => {
+            const baseDate = new Date();
+            baseDate.setDate(baseDate.getDate() + ((day - baseDate.getDay() + 7) % 7));
+            baseDate.setHours(13, 30, 0, 0);
+            if (baseDate.getTime() > now) upcomingNews.push({ title: "High Impact News", time: baseDate.getTime(), impactHours: 2 });
+        });
+    }
+    
+    function checkNewsBlackout() {
+        const now = Date.now();
+        let isBlackout = false, reason = "";
+        for (const news of upcomingNews) {
+            const newsTime = news.time;
+            const startBlackout = newsTime - (30 * 60 * 1000);
+            const endBlackout = newsTime + (30 * 60 * 1000);
+            if (now >= startBlackout && now <= endBlackout) {
+                isBlackout = true;
+                reason = `⛔ ${news.title.toUpperCase()} (${Math.ceil((endBlackout - now) / 60000)}m left)`;
+                break;
+            }
+        }
+        isNewsBlackout = isBlackout;
+        newsBlackoutReason = reason;
+        const newsStatusElem = document.getElementById('news-status');
+        if (newsStatusElem) {
+            if (isNewsBlackout) {
+                newsStatusElem.style.display = "inline-flex";
+                newsStatusElem.innerHTML = `${reason}`;
+                newsStatusElem.style.background = "rgba(255, 51, 102, 0.2)";
+            } else { newsStatusElem.style.display = "none"; }
+        }
+        if (lastPrice > 0) updateFinalDecision();
+    }
+    
+    function isNewsBlocked() { return isNewsBlackout; }
+    
+    // ==================== DIRECTION ARROW ====================
+    function updateDirectionArrow(currentPrice) {
+        const arrowElem = document.getElementById('direction-arrow');
+        if (!arrowElem) return;
+        const safePrice = safeValue(currentPrice, 0);
+        if (engine.adx < ADX_DEFAULT_RANGING) {
+            if (lastArrowDirection !== "neutral") {
+                arrowElem.innerHTML = "⬌";
+                arrowElem.style.color = "var(--bloomberg-text-dim)";
+                lastArrowDirection = "neutral";
+            }
+            return;
+        }
+        const atr = calculateATR(14);
+        const threshold = currentPair === "XAUUSDT" ? (atr * 0.07) : (atr * 0.05);
+        const priceAboveSwing = safePrice > engine.swingHigh;
+        const priceBelowSwing = safePrice < engine.swingLow;
         let direction = "neutral";
-        if ((safePrice > (engine.ema21 + threshold) || priceAboveSwing) && engine.plusDI > engine.minusDI) direction = "up";
-        else if ((safePrice < (engine.ema21 - threshold) || priceBelowSwing) && engine.minusDI > engine.plusDI) direction = "down";
-        if (lastArrowDirection !== direction) { let arrow = "⬌", arrowColor = "var(--bloomberg-text-dim)"; if (direction === "up") { arrow = "▲"; arrowColor = "var(--bloomberg-accent)"; } else if (direction === "down") { arrow = "▼"; arrowColor = "var(--bloomberg-danger)"; } arrowElem.innerHTML = arrow; arrowElem.style.color = arrowColor; arrowElem.classList.add('arrow-pulse'); setTimeout(() => arrowElem.classList.remove('arrow-pulse'), 300); lastArrowDirection = direction; }
+        if ((safePrice > (engine.sma20 + threshold) || priceAboveSwing) && engine.plusDI > engine.minusDI) direction = "up";
+        else if ((safePrice < (engine.sma20 - threshold) || priceBelowSwing) && engine.minusDI > engine.plusDI) direction = "down";
+        if (lastArrowDirection !== direction) {
+            let arrow = "⬌", arrowColor = "var(--bloomberg-text-dim)";
+            if (direction === "up") { arrow = "▲"; arrowColor = "var(--bloomberg-accent)"; }
+            else if (direction === "down") { arrow = "▼"; arrowColor = "var(--bloomberg-danger)"; }
+            arrowElem.innerHTML = arrow;
+            arrowElem.style.color = arrowColor;
+            arrowElem.classList.add('arrow-pulse');
+            setTimeout(() => arrowElem.classList.remove('arrow-pulse'), 300);
+            lastArrowDirection = direction;
+        }
     }
     
+    // ==================== DECISION ENGINE (WITH HYSTERESIS) ====================
     function updateFinalDecision() {
-        const decisionElem = document.getElementById('decision-status'), modeIndicator = document.getElementById('mode-indicator'); if (!decisionElem) return;
-        if (modeIndicator) { modeIndicator.innerText = currentMode === DECISION_MODES.CONSERVATIVE ? "CONSERVATIVE" : "🎯 SNIPER"; modeIndicator.style.background = currentMode === DECISION_MODES.CONSERVATIVE ? "rgba(0, 255, 136, 0.1)" : "rgba(170, 102, 255, 0.15)"; modeIndicator.style.color = currentMode === DECISION_MODES.CONSERVATIVE ? "var(--bloomberg-accent)" : "var(--bloomberg-purple)"; }
-        const currentPrice = lastPrice, now = Date.now(), safePrice = safeValue(currentPrice, 0);
-        if (isDataStale || (now - lastPriceUpdateTime) > DATA_STALE_THRESHOLD) { decisionElem.innerHTML = "⏳ DATA STALE - WAITING..."; decisionElem.style.color = "var(--bloomberg-orange)"; decisionElem.style.background = "rgba(255, 136, 77, 0.15)"; decisionElem.classList.remove('signal-active'); return; }
-        if (now < lastSignalExpiry && lastSignalDecision) { const remainingSeconds = Math.ceil((lastSignalExpiry - now) / 1000), minutes = Math.floor(remainingSeconds / 60), seconds = remainingSeconds % 60; let displayText = lastSignalDecision; if (remainingSeconds > 60) displayText = `${lastSignalDecision} ⏱️ ${minutes}m`; else displayText = `${lastSignalDecision} ⏱️ ${seconds}s`; if (decisionElem.innerHTML !== displayText) decisionElem.innerHTML = displayText; decisionElem.classList.add('signal-active'); return; }
+        const decisionElem = document.getElementById('decision-status');
+        const modeIndicator = document.getElementById('mode-indicator');
+        if (!decisionElem) return;
+        
+        if (modeIndicator) {
+            modeIndicator.innerText = currentMode === DECISION_MODES.CONSERVATIVE ? "CONSERVATIVE" : "🎯 SNIPER";
+            modeIndicator.style.background = currentMode === DECISION_MODES.CONSERVATIVE ? 
+                "rgba(0, 255, 136, 0.1)" : "rgba(170, 102, 255, 0.15)";
+            modeIndicator.style.color = currentMode === DECISION_MODES.CONSERVATIVE ? 
+                "var(--bloomberg-accent)" : "var(--bloomberg-purple)";
+        }
+        
+        const currentPrice = lastPrice;
+        const now = Date.now();
+        const safePrice = safeValue(currentPrice, 0);
+        
+        if (isDataStale || (now - lastPriceUpdateTime) > DATA_STALE_THRESHOLD) {
+            decisionElem.innerHTML = "⏳ DATA STALE - WAITING...";
+            decisionElem.style.color = "var(--bloomberg-orange)";
+            decisionElem.style.background = "rgba(255, 136, 77, 0.15)";
+            decisionElem.classList.remove('signal-active');
+            return;
+        }
+        
+        if (isNewsBlocked()) {
+            decisionElem.innerHTML = `${newsBlackoutReason}`;
+            decisionElem.style.color = "var(--news-ban)";
+            decisionElem.style.background = "rgba(255, 51, 102, 0.15)";
+            decisionElem.classList.remove('signal-active');
+            return;
+        }
+        
+        if (now < lastSignalExpiry && lastSignalDecision) {
+            const remainingSeconds = Math.ceil((lastSignalExpiry - now) / 1000);
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+            let displayText = lastSignalDecision;
+            if (remainingSeconds > 60) displayText = `${lastSignalDecision} ⏱️ ${minutes}m`;
+            else displayText = `${lastSignalDecision} ⏱️ ${seconds}s`;
+            if (decisionElem.innerHTML !== displayText) decisionElem.innerHTML = displayText;
+            decisionElem.classList.add('signal-active');
+            return;
+        }
         decisionElem.classList.remove('signal-active');
-        const newBias = engine.bias; if (newBias !== lastBias && newBias !== "NEUTRAL" && lastBias !== "NEUTRAL") { if (now - lastBiasChange < MIN_BIAS_DURATION) { engine.bias = lastBias; } else { lastBiasChange = now; lastBias = newBias; } } else if (newBias !== lastBias) { lastBiasChange = now; lastBias = newBias; }
-        updateFactor1(safePrice); updateFactor2(); updateFactor3(safePrice); updateFactorSMA50(safePrice);
+        
+        // Hysteresis untuk mencegah whipsaw bias
+        const newBias = engine.bias;
+        if (newBias !== lastBias && newBias !== "NEUTRAL" && lastBias !== "NEUTRAL") {
+            if (now - lastBiasChange < MIN_BIAS_DURATION) {
+                engine.bias = lastBias;
+            } else {
+                lastBiasChange = now;
+                lastBias = newBias;
+            }
+        } else if (newBias !== lastBias) {
+            lastBiasChange = now;
+            lastBias = newBias;
+        }
+        
+        updateFactor1(safePrice);
+        updateFactor2();
+        updateFactor3(safePrice);
+        updateFactorSMA50(safePrice);
         updateOBRealtime(safePrice, lastPrice, engine.bias);
-        if (currentPair === "XAUUSDT") { updateDivergenceRealtime(safePrice); } else { updateVolumeDisplay(); }
-        updateFactor5(); updateFactor6(); updateDirectionArrow(safePrice);
-        let score = 0, activeFactors = [];
-        if (factorStatus.f1) { score += 3; activeFactors.push("STRUCT"); } if (factorStatus.f2) { score += 2; activeFactors.push("MTF"); } if (factorStatus.f3) { score += 2; activeFactors.push("ADX"); } if (factorStatus.f8) { score += 2; activeFactors.push("OB"); } if (factorStatus.f_sma50) { score += 1; activeFactors.push("MA50"); } if (currentPair === "XAUUSDT" && factorStatus.f4) { score += 1; activeFactors.push("DIV"); } if (factorStatus.f5) { score += 1; activeFactors.push("SR"); } if (factorStatus.f6) { score += 1; activeFactors.push("CANDLE"); } if (currentPair === "BTCUSDT" && factorStatus.f7) { score += 1; activeFactors.push("VOL"); }
-        const maxScore = 13, scoreText = `[${score}/${maxScore}]`;
-        const isStructureValid = factorStatus.f1, dominantMTF = getDominantMTFBias(), isMTFBullish = dominantMTF === "BULLISH", isMTFBearish = dominantMTF === "BEARISH", isMTFActive = isMTFBullish || isMTFBearish;
-        const entryZoneLow = Math.min(engine.f618, engine.deep), entryZoneHigh = Math.max(engine.f618, engine.deep), isPriceInZone = safePrice >= entryZoneLow && safePrice <= entryZoneHigh;
-        const isTrendStrong = engine.adx >= 20, isRanging = engine.adx < ADX_DEFAULT_RANGING, priceMove = Math.abs(safePrice - (lastDecisionPrice || safePrice)), hasSignificantMove = currentPair === "XAUUSDT" ? priceMove > 0.25 : priceMove > 25; lastDecisionPrice = safePrice;
+        
+        if (currentPair === "XAUUSDT") {
+            updateDivergenceRealtime(safePrice);
+        } else {
+            updateVolumeDisplay();
+        }
+        
+        updateFactor5();
+        updateFactor6();
+        updateDirectionArrow(safePrice);
+        
+        let score = 0;
+        let activeFactors = [];
+        
+        if (factorStatus.f1) { score += 3; activeFactors.push("STRUCT"); }
+        if (factorStatus.f2) { score += 2; activeFactors.push("MTF"); }
+        if (factorStatus.f3) { score += 2; activeFactors.push("ADX"); }
+        if (factorStatus.f8) { score += 2; activeFactors.push("OB"); }
+        if (factorStatus.f_sma50) { score += 1; activeFactors.push("MA50"); }
+        if (currentPair === "XAUUSDT" && factorStatus.f4) { score += 1; activeFactors.push("DIV"); }
+        if (factorStatus.f5) { score += 1; activeFactors.push("SR"); }
+        if (factorStatus.f6) { score += 1; activeFactors.push("CANDLE"); }
+        if (currentPair === "BTCUSDT" && factorStatus.f7) { score += 1; activeFactors.push("VOL"); }
+        
+        const maxScore = 13;
+        const scoreText = `[${score}/${maxScore}]`;
+        
+        const isStructureValid = factorStatus.f1;
+        const dominantMTF = getDominantMTFBias();
+        const isMTFBullish = dominantMTF === "BULLISH";
+        const isMTFBearish = dominantMTF === "BEARISH";
+        const isMTFActive = isMTFBullish || isMTFBearish;
+        const entryZoneLow = Math.min(engine.f618, engine.deep);
+        const entryZoneHigh = Math.max(engine.f618, engine.deep);
+        const isPriceInZone = safePrice >= entryZoneLow && safePrice <= entryZoneHigh;
+        const isTrendStrong = engine.adx >= 20;
+        const isRanging = engine.adx < ADX_DEFAULT_RANGING;
+        const priceMove = Math.abs(safePrice - (lastDecisionPrice || safePrice));
+        const hasSignificantMove = currentPair === "XAUUSDT" ? priceMove > 0.25 : priceMove > 25;
+        lastDecisionPrice = safePrice;
         const fvgDepth = getFVGMitigationDepthAdvanced(engine.swingHigh, engine.swingLow, safePrice, candleData);
-        const isArrowBullish = lastArrowDirection === "up", isArrowBearish = lastArrowDirection === "down", isArrowNeutral = lastArrowDirection === "neutral";
-        const isBullishSetup = (isMTFBullish && (isArrowBullish || (isArrowNeutral && engine.bias.includes("BULL")))) || (engine.bias === "BULLISH_BOS" && !isArrowBearish);
-        const isBearishSetup = (isMTFBearish && (isArrowBearish || (isArrowNeutral && engine.bias.includes("BEAR")))) || (engine.bias === "BEARISH_BOS" && !isArrowBullish);
-        const isDirectionValid = (isBullishSetup || isBearishSetup) && isStructureValid, isFVGReadyFlag = isFVGReady(fvgDepth, isBullishSetup || isBearishSetup, candleData);
-        const isSweepActive = engine.sweepDetected && !engine.bosConfirmed, isBOSConfirmed = engine.bosConfirmed && engine.fvgEntryActive, throttleCheck = isThrottled(currentPair, currentTF);
+        
+        const isArrowBullish = lastArrowDirection === "up";
+        const isArrowBearish = lastArrowDirection === "down";
+        const isArrowNeutral = lastArrowDirection === "neutral";
+        
+        const isBullishSetup = (isMTFBullish && (isArrowBullish || (isArrowNeutral && engine.bias.includes("BULL")))) || 
+                               (engine.bias === "BULLISH_BOS" && !isArrowBearish);
+        const isBearishSetup = (isMTFBearish && (isArrowBearish || (isArrowNeutral && engine.bias.includes("BEAR")))) || 
+                               (engine.bias === "BEARISH_BOS" && !isArrowBullish);
+        
+        const isDirectionValid = (isBullishSetup || isBearishSetup) && isStructureValid;
+        const isFVGReadyFlag = isFVGReady(fvgDepth, isBullishSetup || isBearishSetup, candleData);
+        const isSweepActive = engine.sweepDetected && !engine.bosConfirmed;
+        const isBOSConfirmed = engine.bosConfirmed && engine.fvgEntryActive;
+        const throttleCheck = isThrottled(currentPair, currentTF);
+        
         const sniperEval = currentMode === DECISION_MODES.SNIPER ? evaluateSniperEntry(safePrice) : null;
-        const minScore = currentMode === DECISION_MODES.CONSERVATIVE ? 7 : (sniperEval?.sniperQuality === "GOLDEN" ? 6 : 8), isScoreValid = score >= minScore;
-        const isValidPosition = isPriceInZone || hasSignificantMove || (currentMode === DECISION_MODES.SNIPER && sniperEval?.isPriceNear);
+        
+        const minScore = currentMode === DECISION_MODES.CONSERVATIVE ? 7 : 
+                        (sniperEval?.sniperQuality === "GOLDEN" ? 6 : 8);
+        const isScoreValid = score >= minScore;
+        const isValidPosition = isPriceInZone || hasSignificantMove || 
+                               (currentMode === DECISION_MODES.SNIPER && sniperEval?.isPriceNear);
+        
         const isBTCVolumeOk = isBTCVolumeValid();
-        if (currentPair === "BTCUSDT" && !isBTCVolumeOk && !isInTrade) { decisionElem.innerHTML = `LOW VOLUME (<1.5x) ${scoreText}`; decisionElem.style.color = "var(--bloomberg-orange)"; decisionElem.style.background = "rgba(255, 136, 77, 0.1)"; return; }
+        if (currentPair === "BTCUSDT" && !isBTCVolumeOk && !isInTrade) {
+            decisionElem.innerHTML = `LOW VOLUME (<1.5x) ${scoreText}`;
+            decisionElem.style.color = "var(--bloomberg-orange)";
+            decisionElem.style.background = "rgba(255, 136, 77, 0.1)";
+            return;
+        }
+        
         let decision = "", decisionColor = "", decisionBg = "", shouldSignal = false;
-        if (throttleCheck.throttled && !lastSignalDecision) { const remaining = throttleCheck.remaining, secRemain = remaining % 60, minRemain = Math.floor(remaining / 60); decision = `THROTTLED (${minRemain}m ${secRemain}s) ${scoreText}`; decisionColor = "var(--bloomberg-orange)"; decisionBg = "rgba(255, 136, 77, 0.15)"; }
-        else if (spikeDetected && (now - lastSpikeTime) < SPIKE_COOLDOWN) { decision = `⚠️ FALSE SPIKE DETECTED ${scoreText}`; decisionColor = "var(--bloomberg-danger)"; decisionBg = "rgba(255, 51, 102, 0.15)"; }
-        else if (!isStructureValid) { decision = `NEED STRUCTURE ${scoreText}`; decisionColor = "var(--bloomberg-gold)"; decisionBg = "rgba(255, 204, 0, 0.1)"; }
-        else if (isSweepActive && !isBOSConfirmed) { decision = `WAITING BOS ${scoreText}`; decisionColor = "var(--bloomberg-orange)"; decisionBg = "rgba(255, 136, 77, 0.1)"; }
-        else if (isBOSConfirmed && !isPriceInZone && currentMode === DECISION_MODES.CONSERVATIVE) { decision = `WAITING ENTRY ZONE ${scoreText}`; decisionColor = "var(--bloomberg-gold)"; decisionBg = "rgba(255, 204, 0, 0.1)"; }
-        else if (!isScoreValid) { const need = minScore - score; decision = `NEED ${need} MORE FACTOR${need > 1 ? 'S' : ''} ${scoreText}`; decisionColor = "var(--bloomberg-gold)"; decisionBg = "rgba(255, 204, 0, 0.1)"; }
-        else if (!isFVGReadyFlag && currentMode === DECISION_MODES.CONSERVATIVE) { const needed = 30, currentFVG = isBullishSetup ? fvgDepth : (100 - fvgDepth); decision = `FVG: ${Math.round(currentFVG)}%/${needed}% ${scoreText}`; decisionColor = "var(--bloomberg-orange)"; decisionBg = "rgba(255, 136, 77, 0.15)"; }
-        else if (currentMode === DECISION_MODES.SNIPER && !sniperEval?.isValid) { decision = `NO SNIPER CONFLUENCE ${scoreText}`; decisionColor = "var(--bloomberg-purple)"; decisionBg = "rgba(170, 102, 255, 0.1)"; }
-        else if (isRanging && !hasSignificantMove) { decision = `LOW VOLATILITY ${scoreText}`; decisionColor = "var(--bloomberg-text-dim)"; decisionBg = "rgba(170, 170, 170, 0.05)"; }
-        else if (!isValidPosition) { decision = `WAIT ENTRY ZONE ${scoreText}`; decisionColor = "var(--bloomberg-gold)"; decisionBg = "rgba(255, 204, 0, 0.1)"; }
-        else if (!isMTFActive && !isSweepActive) { decision = `MTF NO CONFLUENCE ${scoreText}`; decisionColor = "var(--bloomberg-gold)"; decisionBg = "rgba(255, 204, 0, 0.1)"; }
-        else if (!isTrendStrong && !hasSignificantMove) { decision = `WEAK TREND (${Math.round(engine.adx)}) ${scoreText}`; decisionColor = "var(--bloomberg-text-dim)"; decisionBg = "rgba(170, 170, 170, 0.05)"; }
-        else if (isStructureValid && (isTrendStrong || hasSignificantMove) && !isRanging && isValidPosition && isScoreValid && !throttleCheck.throttled && (isMTFActive || isSweepActive || isBOSConfirmed) && isDirectionValid) {
-            if (currentMode === DECISION_MODES.SNIPER && sniperEval?.isValid) { shouldSignal = true; const quality = sniperEval.sniperQuality, direction = isBullishSetup ? "BUY" : "SELL"; decision = `🎯 SNIPER ${direction} [${quality}] ${scoreText}`; decisionColor = "var(--bloomberg-purple)"; decisionBg = "rgba(170, 102, 255, 0.15)"; }
-            else if (isBullishSetup) { shouldSignal = true; decision = `✅ BUY NOW! ${scoreText}`; if (activeFactors.length) decision += ` [${activeFactors.slice(0, 4).join("/")}]`; decisionColor = "var(--bloomberg-accent)"; decisionBg = "rgba(0, 255, 136, 0.15)"; }
-            else if (isBearishSetup) { shouldSignal = true; decision = `🔻 SELL NOW! ${scoreText}`; if (activeFactors.length) decision += ` [${activeFactors.slice(0, 4).join("/")}]`; decisionColor = "var(--bloomberg-danger)"; decisionBg = "rgba(255, 51, 102, 0.15)"; }
-        } else { decision = `NO SETUP ${scoreText}`; decisionColor = "var(--bloomberg-text-dim)"; decisionBg = "rgba(170, 170, 170, 0.05)"; }
-        if (shouldSignal) { lastSignalExpiry = now + (THROTTLE_MINUTES * 60 * 1000); lastSignalDecision = decision; updateThrottle(currentPair, currentTF); decisionElem.innerHTML = decision; decisionElem.style.color = decisionColor; decisionElem.style.background = decisionBg; decisionElem.classList.add('decision-animate'); setTimeout(() => decisionElem.classList.remove('decision-animate'), 800); trackTradeEntry(decision, safePrice); return; }
-        decisionElem.innerHTML = decision; decisionElem.style.color = decisionColor; decisionElem.style.background = decisionBg; trackTradeEntry(decision, safePrice);
+        
+        if (throttleCheck.throttled && !lastSignalDecision) {
+            const remaining = throttleCheck.remaining;
+            const secRemain = remaining % 60;
+            const minRemain = Math.floor(remaining / 60);
+            decision = `THROTTLED (${minRemain}m ${secRemain}s) ${scoreText}`;
+            decisionColor = "var(--bloomberg-orange)"; 
+            decisionBg = "rgba(255, 136, 77, 0.15)";
+        } else if (spikeDetected && (now - lastSpikeTime) < SPIKE_COOLDOWN) {
+            decision = `⚠️ FALSE SPIKE DETECTED ${scoreText}`;
+            decisionColor = "var(--bloomberg-danger)"; 
+            decisionBg = "rgba(255, 51, 102, 0.15)";
+        } else if (!isStructureValid) {
+            decision = `NEED STRUCTURE ${scoreText}`;
+            decisionColor = "var(--bloomberg-gold)"; 
+            decisionBg = "rgba(255, 204, 0, 0.1)";
+        } else if (isSweepActive && !isBOSConfirmed) {
+            decision = `WAITING BOS ${scoreText}`;
+            decisionColor = "var(--bloomberg-orange)"; 
+            decisionBg = "rgba(255, 136, 77, 0.1)";
+        } else if (isBOSConfirmed && !isPriceInZone && currentMode === DECISION_MODES.CONSERVATIVE) {
+            decision = `WAITING ENTRY ZONE ${scoreText}`;
+            decisionColor = "var(--bloomberg-gold)"; 
+            decisionBg = "rgba(255, 204, 0, 0.1)";
+        } else if (!isScoreValid) {
+            const need = minScore - score;
+            decision = `NEED ${need} MORE FACTOR${need > 1 ? 'S' : ''} ${scoreText}`;
+            decisionColor = "var(--bloomberg-gold)"; 
+            decisionBg = "rgba(255, 204, 0, 0.1)";
+        } else if (!isFVGReadyFlag && currentMode === DECISION_MODES.CONSERVATIVE) {
+            const needed = 30;
+            const currentFVG = isBullishSetup ? fvgDepth : (100 - fvgDepth);
+            decision = `FVG: ${Math.round(currentFVG)}%/${needed}% ${scoreText}`;
+            decisionColor = "var(--bloomberg-orange)"; 
+            decisionBg = "rgba(255, 136, 77, 0.15)";
+        } else if (currentMode === DECISION_MODES.SNIPER && !sniperEval?.isValid) {
+            decision = `NO SNIPER CONFLUENCE ${scoreText}`;
+            decisionColor = "var(--bloomberg-purple)"; 
+            decisionBg = "rgba(170, 102, 255, 0.1)";
+        } else if (isRanging && !hasSignificantMove) {
+            decision = `LOW VOLATILITY ${scoreText}`;
+            decisionColor = "var(--bloomberg-text-dim)"; 
+            decisionBg = "rgba(170, 170, 170, 0.05)";
+        } else if (!isValidPosition) {
+            decision = `WAIT ENTRY ZONE ${scoreText}`;
+            decisionColor = "var(--bloomberg-gold)"; 
+            decisionBg = "rgba(255, 204, 0, 0.1)";
+        } else if (!isMTFActive && !isSweepActive) {
+            decision = `MTF NO CONFLUENCE ${scoreText}`;
+            decisionColor = "var(--bloomberg-gold)"; 
+            decisionBg = "rgba(255, 204, 0, 0.1)";
+        } else if (!isTrendStrong && !hasSignificantMove) {
+            decision = `WEAK TREND (${Math.round(engine.adx)}) ${scoreText}`;
+            decisionColor = "var(--bloomberg-text-dim)"; 
+            decisionBg = "rgba(170, 170, 170, 0.05)";
+        } else if (isStructureValid && (isTrendStrong || hasSignificantMove) && !isRanging && isValidPosition && isScoreValid && !throttleCheck.throttled && (isMTFActive || isSweepActive || isBOSConfirmed) && isDirectionValid) {
+            
+            if (currentMode === DECISION_MODES.SNIPER && sniperEval?.isValid) {
+                shouldSignal = true;
+                const quality = sniperEval.sniperQuality;
+                const direction = isBullishSetup ? "BUY" : "SELL";
+                decision = `🎯 SNIPER ${direction} [${quality}] ${scoreText}`;
+                decisionColor = "var(--bloomberg-purple)";
+                decisionBg = "rgba(170, 102, 255, 0.15)";
+            } else if (isBullishSetup) {
+                shouldSignal = true;
+                decision = `✅ BUY NOW! ${scoreText}`;
+                if (activeFactors.length) decision += ` [${activeFactors.slice(0, 4).join("/")}]`;
+                decisionColor = "var(--bloomberg-accent)";
+                decisionBg = "rgba(0, 255, 136, 0.15)";
+            } else if (isBearishSetup) {
+                shouldSignal = true;
+                decision = `🔻 SELL NOW! ${scoreText}`;
+                if (activeFactors.length) decision += ` [${activeFactors.slice(0, 4).join("/")}]`;
+                decisionColor = "var(--bloomberg-danger)";
+                decisionBg = "rgba(255, 51, 102, 0.15)";
+            }
+        } else {
+            decision = `NO SETUP ${scoreText}`;
+            decisionColor = "var(--bloomberg-text-dim)";
+            decisionBg = "rgba(170, 170, 170, 0.05)";
+        }
+        
+        if (shouldSignal) {
+            lastSignalExpiry = now + (THROTTLE_MINUTES * 60 * 1000);
+            lastSignalDecision = decision;
+            updateThrottle(currentPair, currentTF);
+            decisionElem.innerHTML = decision;
+            decisionElem.style.color = decisionColor;
+            decisionElem.style.background = decisionBg;
+            decisionElem.classList.add('decision-animate');
+            setTimeout(() => decisionElem.classList.remove('decision-animate'), 800);
+            trackTradeEntry(decision, safePrice);
+            return;
+        }
+        decisionElem.innerHTML = decision;
+        decisionElem.style.color = decisionColor;
+        decisionElem.style.background = decisionBg;
+        trackTradeEntry(decision, safePrice);
     }
     
-    function periodicUpdate() { 
-    if (lastPrice > 0 && !isReloading && candleData.length > 0) { 
-        const safePrice = safeValue(lastPrice, 0); 
-        engine.adx = calculateADXWithTick(safePrice); 
-        if (currentOrderBlock && Date.now() - lastOBDetectionTime > 2000) { 
-            updateOBRealtime(safePrice, safePrice, engine.bias); 
-        } 
-        if (currentPair === "XAUUSDT" && Date.now() - lastDivergenceCheck > 2000) { 
-            updateDivergenceRealtime(safePrice); 
-        } 
-        updateFinalDecision(); 
-    } 
-}
+    function periodicUpdate() {
+        if (lastPrice > 0 && !isReloading && candleData.length > 0) {
+            const safePrice = safeValue(lastPrice, 0);
+            engine.adx = calculateADXWithTick(safePrice);
+            engine.sma20 = calculatesma20();
+            
+            if (currentOrderBlock && Date.now() - lastOBDetectionTime > 2000) {
+                updateOBRealtime(safePrice, safePrice, engine.bias);
+            }
+            
+            if (currentPair === "XAUUSDT" && Date.now() - lastDivergenceCheck > 2000) {
+                updateDivergenceRealtime(safePrice);
+            }
+            
+            updateFinalDecision();
+        }
+    }
     
-    function updateUI(currentPrice) { const now = Date.now(), safePrice = safeValue(currentPrice, 0), prec = getPrecision(); const priceElem = document.getElementById('live-price'); if (priceElem) { const fixed = safePrice.toFixed(prec), parts = fixed.split('.'); priceElem.innerHTML = `${parts[0]}<span class="price-decimal">.${parts[1] || '00'}</span>`; if (safePrice > lastPrice && lastPrice !== 0) priceElem.style.color = "var(--bloomberg-accent)"; else if (safePrice < lastPrice && lastPrice !== 0) priceElem.style.color = "var(--bloomberg-danger)"; setTimeout(() => priceElem.style.color = "#fff", 100); } if (isAbnormalSpike(safePrice, lastPrice) && !spikeDetected) { spikeDetected = true; lastSpikeTime = now; console.warn('🚨 Abnormal price movement detected!'); } checkStopLossHit(safePrice); checkTakeProfitHit(safePrice); checkSwingBreakthrough(safePrice); checkLevelsTouched(safePrice); if (now - lastResetTime > RESET_COOLDOWN) checkMajorStructureChange(safePrice); calculateSMCLevels(); updateDirectionArrow(safePrice); const rsi = computeRSI(safePrice), rsiVal = document.getElementById('rsi-val'), rsiBar = document.getElementById('rsi-bar'); if (rsiVal) rsiVal.innerText = rsi.toFixed(1); if (rsiBar) { rsiBar.style.width = rsi + "%"; rsiBar.style.background = rsi > 70 ? "var(--bloomberg-danger)" : (rsi < 30 ? "var(--bloomberg-accent)" : "var(--bloomberg-text)"); } updateEMA21UI(safePrice); updateSMA50UI(safePrice); updateFinalDecision(); checkAndUpdateStructure(safePrice); lastPrice = safePrice; }
+    // ==================== UI UPDATE (THROTTLED) ====================
+    function updateUI(currentPrice) {
+        const now = Date.now();
+        const safePrice = safeValue(currentPrice, 0);
+        const prec = getPrecision();
+        
+        const priceElem = document.getElementById('live-price');
+        if (priceElem) {
+            const fixed = safePrice.toFixed(prec);
+            const parts = fixed.split('.');
+            priceElem.innerHTML = `${parts[0]}<span class="price-decimal">.${parts[1] || '00'}</span>`;
+            if (safePrice > lastPrice && lastPrice !== 0) priceElem.style.color = "var(--bloomberg-accent)";
+            else if (safePrice < lastPrice && lastPrice !== 0) priceElem.style.color = "var(--bloomberg-danger)";
+            setTimeout(() => priceElem.style.color = "#fff", 100);
+        }
+        
+        // Enhanced spike detection
+        if (isAbnormalSpike(safePrice, lastPrice) && !spikeDetected) {
+            spikeDetected = true;
+            lastSpikeTime = now;
+            console.warn('🚨 Abnormal price movement detected!');
+        }
+        
+        checkStopLossHit(safePrice);
+        checkTakeProfitHit(safePrice);
+        checkSwingBreakthrough(safePrice);
+        checkLevelsTouched(safePrice);
+        if (now - lastResetTime > RESET_COOLDOWN) checkMajorStructureChange(safePrice);
+        
+        calculateSMCLevels();
+        updateDirectionArrow(safePrice);
+        
+        const rsi = computeRSI(safePrice);
+        const rsiVal = document.getElementById('rsi-val');
+        const rsiBar = document.getElementById('rsi-bar');
+        if (rsiVal) rsiVal.innerText = rsi.toFixed(1);
+        if (rsiBar) {
+            rsiBar.style.width = rsi + "%";
+            rsiBar.style.background = rsi > 70 ? "var(--bloomberg-danger)" : (rsi < 30 ? "var(--bloomberg-accent)" : "var(--bloomberg-text)");
+        }
+        
+        updateSMA20UI(safePrice);
+        updateSMA50UI(safePrice);
+        updateFinalDecision();
+        
+        checkAndUpdateStructure(safePrice);
+        lastPrice = safePrice;
+    }
     
-    function throttledUpdateUI(price) { const now = Date.now(), safePrice = safeValue(price, 0); if (now - lastUIUpdateTime < UI_UPDATE_THROTTLE) { if (pendingUIUpdate) cancelAnimationFrame(pendingUIUpdate); pendingUIUpdate = requestAnimationFrame(() => { updateUI(safePrice); pendingUIUpdate = null; lastUIUpdateTime = Date.now(); }); return; } updateUI(safePrice); lastUIUpdateTime = now; }
+    function throttledUpdateUI(price) {
+        const now = Date.now();
+        const safePrice = safeValue(price, 0);
+        
+        if (now - lastUIUpdateTime < UI_UPDATE_THROTTLE) {
+            if (pendingUIUpdate) cancelAnimationFrame(pendingUIUpdate);
+            pendingUIUpdate = requestAnimationFrame(() => {
+                updateUI(safePrice);
+                pendingUIUpdate = null;
+                lastUIUpdateTime = Date.now();
+            });
+            return;
+        }
+        
+        updateUI(safePrice);
+        lastUIUpdateTime = now;
+    }
     
-    function checkMajorStructureChange(currentPrice) { if (!candleData.length || candleData.length < 30) return false; const now = Date.now(); let majorChange = false, changeReason = ""; const oldBias = engine.bias, safePrice = safeValue(currentPrice, 0), lastCandleClose = safeObject(candleData[candleData.length - 1], 'c', safePrice), midPoint = (engine.swingHigh + engine.swingLow) / 2, newBias = lastCandleClose > midPoint ? "BULLISH" : "BEARISH"; if (oldBias !== newBias && oldBias !== "NEUTRAL" && newBias !== "NEUTRAL" && !oldBias.includes("BOS")) { majorChange = true; changeReason = `BIAS CHANGE: ${oldBias} → ${newBias}`; } const oldRange = engine.lastSwingHigh - engine.lastSwingLow, newRange = engine.swingHigh - engine.swingLow; if (oldRange > 0 && newRange > 0) { const rangeChangePercent = Math.abs((newRange - oldRange) / oldRange) * 100; if (rangeChangePercent > 30) { majorChange = true; changeReason = `RANGE CHANGE: ${rangeChangePercent.toFixed(1)}%`; } } if (majorChange && (now - lastResetTime) > RESET_COOLDOWN) { setTimeout(() => fullStructureReset(changeReason), 300); return true; } return false; }
+    function checkMajorStructureChange(currentPrice) {
+        if (!candleData.length || candleData.length < 30) return false;
+        const now = Date.now();
+        let majorChange = false, changeReason = "";
+        const oldBias = engine.bias;
+        const safePrice = safeValue(currentPrice, 0);
+        const lastCandleClose = safeObject(candleData[candleData.length - 1], 'c', safePrice);
+        const midPoint = (engine.swingHigh + engine.swingLow) / 2;
+        const newBias = lastCandleClose > midPoint ? "BULLISH" : "BEARISH";
+        if (oldBias !== newBias && oldBias !== "NEUTRAL" && newBias !== "NEUTRAL" && !oldBias.includes("BOS")) {
+            majorChange = true; changeReason = `BIAS CHANGE: ${oldBias} → ${newBias}`;
+        }
+        const oldRange = engine.lastSwingHigh - engine.lastSwingLow;
+        const newRange = engine.swingHigh - engine.swingLow;
+        if (oldRange > 0 && newRange > 0) {
+            const rangeChangePercent = Math.abs((newRange - oldRange) / oldRange) * 100;
+            if (rangeChangePercent > 30) { majorChange = true; changeReason = `RANGE CHANGE: ${rangeChangePercent.toFixed(1)}%`; }
+        }
+        if (majorChange && (now - lastResetTime) > RESET_COOLDOWN) { 
+            setTimeout(() => fullStructureReset(changeReason), 300); 
+            return true; 
+        }
+        return false;
+    }
     
-    function checkAndUpdateStructure(currentPrice) { if (!candleData.length || candleData.length < 30) return; const now = Date.now(); let structureChanged = false; const safePrice = safeValue(currentPrice, 0); if (safePrice > engine.swingHigh && safePrice > engine.lastSwingHigh) structureChanged = true; if (safePrice < engine.swingLow && safePrice < engine.lastSwingLow) structureChanged = true; if (structureChanged && (now - lastStructureUpdateTime) > 3000) { lastStructureUpdateTime = now; forceRecalculateStructure(); } }
+    function checkAndUpdateStructure(currentPrice) {
+        if (!candleData.length || candleData.length < 30) return;
+        const now = Date.now();
+        let structureChanged = false;
+        const safePrice = safeValue(currentPrice, 0);
+        if (safePrice > engine.swingHigh && safePrice > engine.lastSwingHigh) structureChanged = true;
+        if (safePrice < engine.swingLow && safePrice < engine.lastSwingLow) structureChanged = true;
+        if (structureChanged && (now - lastStructureUpdateTime) > 3000) { 
+            lastStructureUpdateTime = now; 
+            forceRecalculateStructure(); 
+        }
+    }
     
-    function updateWSStatus(status, message) { const dot = document.getElementById('ws-status-dot'), text = document.getElementById('ws-status-text'); if (!dot || !text) return; dot.className = 'ws-status-dot'; if (status === 'live') { dot.classList.add('live'); text.innerText = message || 'LIVE'; reconnectDelay = 1000; isUsingFallback = false; isDataStale = false; } else if (status === 'connecting') { dot.classList.add('connecting'); text.innerText = message || 'CONNECTING'; } else if (status === 'reconnect') { dot.classList.add('reconnect'); text.innerText = message || 'RECONNECT'; } else if (status === 'fallback') { dot.classList.add('fallback'); text.innerText = message || 'FALLBACK'; isUsingFallback = true; } else if (status === 'stale') { dot.classList.add('stale'); text.innerText = message || 'DATA STALE'; isDataStale = true; } else { dot.classList.add('reconnect'); text.innerText = message || 'RECONNECT'; } const dp = document.getElementById('decision-panel'); if (dp) { if (isDataStale) dp.classList.add('stale-warning'); else dp.classList.remove('stale-warning'); } }
+    function updateWSStatus(status, message) {
+        const dot = document.getElementById('ws-status-dot');
+        const text = document.getElementById('ws-status-text');
+        if (!dot || !text) return;
+        
+        dot.className = 'ws-status-dot';
+        
+        if (status === 'live') {
+            dot.classList.add('live');
+            text.innerText = message || 'LIVE';
+            reconnectDelay = 1000;
+            isUsingFallback = false;
+            isDataStale = false;
+        } else if (status === 'connecting') {
+            dot.classList.add('connecting');
+            text.innerText = message || 'CONNECTING';
+        } else if (status === 'reconnect') {
+            dot.classList.add('reconnect');
+            text.innerText = message || 'RECONNECT';
+        } else if (status === 'fallback') {
+            dot.classList.add('fallback');
+            text.innerText = message || 'FALLBACK';
+            isUsingFallback = true;
+        } else if (status === 'stale') {
+            dot.classList.add('stale');
+            text.innerText = message || 'DATA STALE';
+            isDataStale = true;
+        } else {
+            dot.classList.add('reconnect');
+            text.innerText = message || 'RECONNECT';
+        }
+        
+        const decisionPanel = document.getElementById('decision-panel');
+        if (decisionPanel) {
+            if (isDataStale) {
+                decisionPanel.classList.add('stale-warning');
+            } else {
+                decisionPanel.classList.remove('stale-warning');
+            }
+        }
+    }
     
-    function initWebSocket() { cleanupWebSocket(); updateWSStatus('connecting', 'CONNECTING'); const wsUrl = `wss://fstream.binance.com/ws/${currentPair.toLowerCase()}@aggTrade`; wsConnection = new WebSocket(wsUrl); wsConnection.onopen = () => { reconnectDelay = 1000; lastWSMessageTime = Date.now(); lastPriceUpdateTime = Date.now(); if (isUsingFallback) isUsingFallback = false; if (isDataStale) isDataStale = false; updateWSStatus('live', 'LIVE'); }; wsConnection.onmessage = (event) => { try { const msg = JSON.parse(event.data); if (msg && typeof msg.p === 'string') { const tradePrice = safeValue(parseFloat(msg.p), 0); if (tradePrice > 0) { const previousPrice = lastPrice; lastWSMessageTime = Date.now(); lastPriceUpdateTime = Date.now(); if (isUsingFallback) { isUsingFallback = false; updateWSStatus('live', 'LIVE'); } if (isDataStale) { isDataStale = false; updateWSStatus('live', 'LIVE'); } const tradeTime = msg.T || Date.now(), currentCandleStart = getCandleStartTime(tradeTime); if (candleData.length === 0) currentCandleStartTime = currentCandleStart; if (candleData.length > 0 && currentCandleStart !== currentCandleStartTime) currentCandleStartTime = currentCandleStart; if (candleData.length > 0) { const lc = candleData[candleData.length - 1]; lc.c = tradePrice; if (tradePrice > lc.h) lc.h = tradePrice; if (tradePrice < lc.l) lc.l = tradePrice; } if (engine.bias && engine.bias !== "NEUTRAL") { updateOBRealtime(tradePrice, previousPrice, engine.bias); } if (currentPair === "XAUUSDT") { updateDivergenceRealtime(tradePrice); } calculateSMCLevels(); detectLiquiditySweep(tradePrice); confirmBOS(tradePrice); lastPrice = tradePrice; throttledUpdateUI(tradePrice); } } } catch(e) {} }; wsConnection.onclose = () => { if (!isReloading && !isManualDisconnect) { updateWSStatus('reconnect', 'RECONNECT'); if (reconnectTimer) clearTimeout(reconnectTimer); reconnectTimer = setTimeout(() => { if (!isReloading && !isManualDisconnect) { reconnectDelay = Math.min(reconnectDelay * 1.5, 30000); initWebSocket(); } }, reconnectDelay); } }; wsConnection.onerror = () => { if (!isReloading) updateWSStatus('reconnect', 'ERROR'); }; }
-    function cleanupWebSocket() { if (wsConnection) { isManualDisconnect = true; try { wsConnection.onopen = null; wsConnection.onmessage = null; wsConnection.onclose = null; wsConnection.onerror = null; if (wsConnection.readyState === WebSocket.OPEN || wsConnection.readyState === WebSocket.CONNECTING) wsConnection.close(); } catch(e) {} wsConnection = null; } setTimeout(() => { isManualDisconnect = false; }, 100); }
+    // ==================== WEBSOCKET ====================
+    function initWebSocket() {
+        cleanupWebSocket();
+        updateWSStatus('connecting', 'CONNECTING');
+        const wsUrl = `wss://fstream.binance.com/ws/${currentPair.toLowerCase()}@aggTrade`;
+        wsConnection = new WebSocket(wsUrl);
+        wsConnection.onopen = () => { 
+            reconnectDelay = 1000; 
+            lastWSMessageTime = Date.now(); 
+            lastPriceUpdateTime = Date.now();
+            if (isUsingFallback) isUsingFallback = false; 
+            if (isDataStale) isDataStale = false;
+            updateWSStatus('live', 'LIVE'); 
+        };
+        wsConnection.onmessage = (event) => {
+            try {
+                const msg = JSON.parse(event.data);
+                if (msg && typeof msg.p === 'string') {
+                    const tradePrice = safeValue(parseFloat(msg.p), 0);
+                    if (tradePrice > 0) {
+                        const previousPrice = lastPrice;
+                        lastWSMessageTime = Date.now();
+                        lastPriceUpdateTime = Date.now();
+                        
+                        if (isUsingFallback) { isUsingFallback = false; updateWSStatus('live', 'LIVE'); }
+                        if (isDataStale) { isDataStale = false; updateWSStatus('live', 'LIVE'); }
+                        
+                        const tradeTime = msg.T || Date.now();
+                        const currentCandleStart = getCandleStartTime(tradeTime);
+                        if (candleData.length === 0) currentCandleStartTime = currentCandleStart;
+                        if (candleData.length > 0 && currentCandleStart !== currentCandleStartTime) currentCandleStartTime = currentCandleStart;
+                        
+                        if (candleData.length > 0) {
+                            const lastCandle = candleData[candleData.length - 1];
+                            lastCandle.c = tradePrice;
+                            if (tradePrice > lastCandle.h) lastCandle.h = tradePrice;
+                            if (tradePrice < lastCandle.l) lastCandle.l = tradePrice;
+                        }
+                        
+                        if (engine.bias && engine.bias !== "NEUTRAL") {
+                            updateOBRealtime(tradePrice, previousPrice, engine.bias);
+                        }
+                        
+                        if (currentPair === "XAUUSDT") {
+                            updateDivergenceRealtime(tradePrice);
+                        }
+                        
+                        calculateSMCLevels();
+                        detectLiquiditySweep(tradePrice);
+                        confirmBOS(tradePrice);
+                        lastPrice = tradePrice;
+                        throttledUpdateUI(tradePrice);
+                    }
+                }
+            } catch(e) {}
+        };
+        wsConnection.onclose = () => {
+            if (!isReloading && !isManualDisconnect) {
+                updateWSStatus('reconnect', 'RECONNECT');
+                if (reconnectTimer) clearTimeout(reconnectTimer);
+                reconnectTimer = setTimeout(() => { 
+                    if (!isReloading && !isManualDisconnect) { 
+                        reconnectDelay = Math.min(reconnectDelay * 1.5, 30000); 
+                        initWebSocket(); 
+                    } 
+                }, reconnectDelay);
+            }
+        };
+        wsConnection.onerror = () => { 
+            if (!isReloading) updateWSStatus('reconnect', 'ERROR'); 
+        };
+    }
     
-    async function fetchKlines() { try { const url = `https://fapi.binance.com/fapi/v1/klines?symbol=${currentPair}&interval=${currentTF}&limit=150`; const resp = await fetch(url); const data = await resp.json(); if (Array.isArray(data)) { candleData = data.map(d => ({ t: d[0], o: safeValue(parseFloat(d[1]), 0), h: safeValue(parseFloat(d[2]), 0), l: safeValue(parseFloat(d[3]), 0), c: safeValue(parseFloat(d[4]), 0), v: safeValue(parseFloat(d[5]), 0) })); if (candleData.length > 0) { const lastCandleTime = candleData[candleData.length - 1].t; currentCandleStartTime = getCandleStartTime(lastCandleTime); } lastSMCUpdate = 0; calculateSMCLevels(); if (candleData.length) { lastPrice = safeObject(candleData[candleData.length-1], 'c', 0); lastPriceUpdateTime = Date.now(); throttledUpdateUI(lastPrice); } return true; } } catch(e) {} return false; }
+    function cleanupWebSocket() {
+        if (wsConnection) {
+            isManualDisconnect = true;
+            try {
+                wsConnection.onopen = null; wsConnection.onmessage = null;
+                wsConnection.onclose = null; wsConnection.onerror = null;
+                if (wsConnection.readyState === WebSocket.OPEN || wsConnection.readyState === WebSocket.CONNECTING) wsConnection.close();
+            } catch(e) {}
+            wsConnection = null;
+        }
+        setTimeout(() => { isManualDisconnect = false; }, 100);
+    }
     
-    async function fetchPriceFromREST() { try { const url = `https://fapi.binance.com/fapi/v1/ticker/price?symbol=${currentPair}`; const resp = await fetch(url); const data = await resp.json(); if (data && typeof data.price === 'string') { const newPrice = safeValue(parseFloat(data.price), 0); if (newPrice > 0) { lastRESTUpdateTime = Date.now(); lastPriceUpdateTime = Date.now(); const timeSinceLastWS = Date.now() - lastWSMessageTime; if (timeSinceLastWS > 3000 || isUsingFallback) { if (!isUsingFallback && timeSinceLastWS > 3000) { updateWSStatus('fallback', 'FALLBACK'); isUsingFallback = true; } if (candleData.length > 0) { const lc = candleData[candleData.length - 1]; lc.c = newPrice; lc.h = Math.max(lc.h, newPrice); lc.l = Math.min(lc.l, newPrice); } lastPrice = newPrice; throttledUpdateUI(newPrice); lastWSMessageTime = Date.now(); } return newPrice; } } } catch(e) {} return null; }
+    // ==================== DATA FETCHING ====================
+    async function fetchKlines() {
+        try {
+            const url = `https://fapi.binance.com/fapi/v1/klines?symbol=${currentPair}&interval=${currentTF}&limit=150`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (Array.isArray(data)) {
+                candleData = data.map(d => ({ 
+                    t: d[0], 
+                    o: safeValue(parseFloat(d[1]), 0), 
+                    h: safeValue(parseFloat(d[2]), 0), 
+                    l: safeValue(parseFloat(d[3]), 0), 
+                    c: safeValue(parseFloat(d[4]), 0), 
+                    v: safeValue(parseFloat(d[5]), 0) 
+                }));
+                
+                if (candleData.length > 0) { 
+                    const lastCandleTime = candleData[candleData.length - 1].t; 
+                    currentCandleStartTime = getCandleStartTime(lastCandleTime); 
+                }
+                lastSMCUpdate = 0;
+                calculateSMCLevels();
+                if (candleData.length) { 
+                    lastPrice = safeObject(candleData[candleData.length-1], 'c', 0); 
+                    lastPriceUpdateTime = Date.now();
+                    throttledUpdateUI(lastPrice); 
+                }
+                return true;
+            }
+        } catch(e) {}
+        return false;
+    }
     
-    function startHeartbeat() { if (heartbeatInterval) clearInterval(heartbeatInterval); heartbeatInterval = setInterval(() => { if (wsConnection && wsConnection.readyState === WebSocket.OPEN) { try { wsConnection.send(JSON.stringify({ method: "ping" })); } catch(e) {} } }, 30000); }
-    function startStuckChecker() { if (stuckCheckInterval) clearInterval(stuckCheckInterval); stuckCheckInterval = setInterval(() => { const now = Date.now(), timeSinceLastMsg = now - lastWSMessageTime, timeSinceLastPrice = now - lastPriceUpdateTime; if (timeSinceLastPrice > DATA_STALE_THRESHOLD && lastPrice > 0) { if (!isDataStale) updateWSStatus('stale', 'DATA STALE'); } else if (isDataStale && timeSinceLastPrice < 5000) { updateWSStatus(isUsingFallback ? 'fallback' : 'live', isUsingFallback ? 'FALLBACK' : 'LIVE'); } if (wsConnection && wsConnection.readyState === WebSocket.OPEN && timeSinceLastMsg > 10000 && !isUsingFallback && !isReloading) { updateWSStatus('fallback', 'STUCK'); isUsingFallback = true; fetchPriceFromREST(); } else if (wsConnection && wsConnection.readyState !== WebSocket.OPEN && !isReloading && !isManualDisconnect) { updateWSStatus('reconnect', 'RECONNECT'); } }, 5000); }
-    function startPeriodicUpdates() { if (periodicUpdateInterval) clearInterval(periodicUpdateInterval); periodicUpdateInterval = setInterval(periodicUpdate, 2000); }
-    function startRestFallback() { if (restFallbackInterval) clearInterval(restFallbackInterval); restFallbackInterval = setInterval(fetchPriceFromREST, 5000); }
-    function startVolumeFetcher() { if (volumeFetcherInterval) clearInterval(volumeFetcherInterval); volumeFetcherInterval = setInterval(fetchLatestVolume, 3000); }
-    function stopAllIntervals() { if (periodicUpdateInterval) { clearInterval(periodicUpdateInterval); periodicUpdateInterval = null; } if (restFallbackInterval) { clearInterval(restFallbackInterval); restFallbackInterval = null; } if (heartbeatInterval) { clearInterval(heartbeatInterval); heartbeatInterval = null; } if (stuckCheckInterval) { clearInterval(stuckCheckInterval); stuckCheckInterval = null; } if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; } if (volumeFetcherInterval) { clearInterval(volumeFetcherInterval); volumeFetcherInterval = null; } }
+    async function fetchPriceFromREST() {
+        try {
+            const url = `https://fapi.binance.com/fapi/v1/ticker/price?symbol=${currentPair}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (data && typeof data.price === 'string') {
+                const newPrice = safeValue(parseFloat(data.price), 0);
+                if (newPrice > 0) {
+                    lastRESTUpdateTime = Date.now();
+                    lastPriceUpdateTime = Date.now();
+                    
+                    const timeSinceLastWS = Date.now() - lastWSMessageTime;
+                    if (timeSinceLastWS > 3000 || isUsingFallback) {
+                        if (!isUsingFallback && timeSinceLastWS > 3000) { 
+                            updateWSStatus('fallback', 'FALLBACK'); 
+                            isUsingFallback = true; 
+                        }
+                        if (candleData.length > 0) {
+                            const lastCandle = candleData[candleData.length - 1];
+                            lastCandle.c = newPrice;
+                            lastCandle.h = Math.max(lastCandle.h, newPrice);
+                            lastCandle.l = Math.min(lastCandle.l, newPrice);
+                        }
+                        lastPrice = newPrice;
+                        throttledUpdateUI(newPrice);
+                        lastWSMessageTime = Date.now();
+                    }
+                    return newPrice;
+                }
+            }
+        } catch(e) {}
+        return null;
+    }
     
-    async function fullReload() { if (isReloading) return; isReloading = true; stopAllIntervals(); cleanupWebSocket(); await fetchDynamicPrecision(); swapCardDisplay(); document.querySelectorAll('[data-pair]').forEach(btn => btn.classList.toggle('active', btn.dataset.pair === currentPair)); document.querySelectorAll('[data-tf]').forEach(btn => btn.classList.toggle('active', btn.dataset.tf === currentTF)); document.querySelectorAll('[data-mode]').forEach(btn => btn.classList.toggle('mode-active', btn.dataset.mode === currentMode)); document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.add('disabled')); updateWSStatus('connecting', 'LOADING'); document.getElementById('live-price').innerHTML = '<span style="font-size: 1rem; color: var(--bloomberg-text-dim);">LOADING...</span>'; document.getElementById('decision-status').innerHTML = "SYNCING..."; engine.sweepDetected = false; engine.bosConfirmed = false; engine.liquiditySide = null; engine.fvgEntryActive = false; recentPrices = []; lastSignalExpiry = 0; lastSignalDecision = ""; lastDecisionPrice = 0; lastPriceUpdateTime = Date.now(); isDataStale = false; spikeDetected = false; abnormalPriceChangeCount = 0; currentOrderBlock = null; sniperLevels = []; lastSMCUpdate = 0; resetLevelStatus(); cachedADX = { value: ADX_DEFAULT_RANGING, timestamp: 0 }; priceActionBuffer = []; realtimePriceBuffer = []; realtimeRSIBuffer = []; lastOBDetectionTime = 0; lastDivergenceCheck = 0; pendingDivergence = null; realtimeOBActive = false; const klinesPromise = fetchKlines(); const mtfPromise = fetchMTFData(); await klinesPromise; initWebSocket(); startHeartbeat(); startStuckChecker(); startPeriodicUpdates(); startRestFallback(); startVolumeFetcher(); document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('disabled')); isReloading = false; await mtfPromise; loadSavedTrade(); }
+    // ==================== INTERVAL MANAGEMENT ====================
+    function startHeartbeat() {
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        heartbeatInterval = setInterval(() => { 
+            if (wsConnection && wsConnection.readyState === WebSocket.OPEN) { 
+                try { wsConnection.send(JSON.stringify({ method: "ping" })); } catch(e) {} 
+            }
+        }, 30000);
+    }
     
-    document.querySelectorAll('[data-pair]').forEach(btn => { btn.onclick = () => { if (currentPair === btn.dataset.pair || isReloading) return; currentPair = btn.dataset.pair; cachedPrecision = null; localStorage.setItem('lastPair', currentPair); fullReload(); }; });
-    document.querySelectorAll('[data-tf]').forEach(btn => { btn.onclick = () => { if (currentTF === btn.dataset.tf || isReloading) return; currentTF = btn.dataset.tf; localStorage.setItem('lastTF', currentTF); fullReload(); }; });
-    document.querySelectorAll('[data-mode]').forEach(btn => { btn.onclick = () => { if (currentMode === btn.dataset.mode || isReloading) return; currentMode = btn.dataset.mode; localStorage.setItem('decisionMode', currentMode); document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('mode-active')); btn.classList.add('mode-active'); updateFinalDecision(); }; });
+    function startStuckChecker() {
+        if (stuckCheckInterval) clearInterval(stuckCheckInterval);
+        stuckCheckInterval = setInterval(() => {
+            const now = Date.now();
+            const timeSinceLastMsg = now - lastWSMessageTime;
+            const timeSinceLastPrice = now - lastPriceUpdateTime;
+            
+            if (timeSinceLastPrice > DATA_STALE_THRESHOLD && lastPrice > 0) {
+                if (!isDataStale) updateWSStatus('stale', 'DATA STALE');
+            } else if (isDataStale && timeSinceLastPrice < 5000) {
+                updateWSStatus(isUsingFallback ? 'fallback' : 'live', isUsingFallback ? 'FALLBACK' : 'LIVE');
+            }
+            
+            if (wsConnection && wsConnection.readyState === WebSocket.OPEN && timeSinceLastMsg > 10000 && !isUsingFallback && !isReloading) {
+                updateWSStatus('fallback', 'STUCK'); 
+                isUsingFallback = true; 
+                fetchPriceFromREST();
+            } else if (wsConnection && wsConnection.readyState !== WebSocket.OPEN && !isReloading && !isManualDisconnect) { 
+                updateWSStatus('reconnect', 'RECONNECT'); 
+            }
+        }, 5000);
+    }
     
-    window.copySwingHL = function() { const sh = document.getElementById('swing-high-value')?.innerText || '--', sl = document.getElementById('swing-low-value')?.innerText || '--'; navigator.clipboard?.writeText(`Swing High: ${sh} | Swing Low: ${sl}`); const c = document.getElementById('swing-hl-container'); if (c) { c.classList.add('copied'); setTimeout(() => c.classList.remove('copied'), 300); } };
-    window.smartCopy = function(id) { const el = document.getElementById(id); if (el) { let text = el.innerText; if (id === 'live-price') text = el.innerText.replace(/<[^>]*>/g, ''); navigator.clipboard?.writeText(text); el.classList.add('copied'); setTimeout(() => el.classList.remove('copied'), 300); } };
+    function startPeriodicUpdates() { 
+        if (periodicUpdateInterval) clearInterval(periodicUpdateInterval); 
+        periodicUpdateInterval = setInterval(periodicUpdate, 2000); 
+    }
     
-    function updateClock() { const now = new Date(); const ce = document.getElementById('clock-display'); if (ce) ce.innerText = now.toLocaleTimeString('id-ID'); const de = document.getElementById('date-display'); if (de) de.innerText = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()}`; const se = document.getElementById('session-tag'); if (se) { const h = now.getHours(); se.innerText = h >= 7 && h < 14 ? "ASIA" : (h >= 14 && h < 20 ? "LONDON" : "NY"); } }
+    function startRestFallback() { 
+        if (restFallbackInterval) clearInterval(restFallbackInterval); 
+        restFallbackInterval = setInterval(fetchPriceFromREST, 5000); 
+    }
+    
+    function startVolumeFetcher() {
+        if (volumeFetcherInterval) clearInterval(volumeFetcherInterval);
+        volumeFetcherInterval = setInterval(fetchLatestVolume, 3000);
+    }
+    
+    function stopAllIntervals() {
+        if (periodicUpdateInterval) { clearInterval(periodicUpdateInterval); periodicUpdateInterval = null; }
+        if (restFallbackInterval) { clearInterval(restFallbackInterval); restFallbackInterval = null; }
+        if (heartbeatInterval) { clearInterval(heartbeatInterval); heartbeatInterval = null; }
+        if (stuckCheckInterval) { clearInterval(stuckCheckInterval); stuckCheckInterval = null; }
+        if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
+        if (newsCheckInterval) { clearInterval(newsCheckInterval); newsCheckInterval = null; }
+        if (volumeFetcherInterval) { clearInterval(volumeFetcherInterval); volumeFetcherInterval = null; }
+    }
+    
+    // ==================== FULL RELOAD ====================
+    async function fullReload() {
+        if (isReloading) return;
+        isReloading = true;
+        
+        stopAllIntervals();
+        cleanupWebSocket();
+        
+        await fetchDynamicPrecision();
+        swapCardDisplay();
+        
+        document.querySelectorAll('[data-pair]').forEach(btn => btn.classList.toggle('active', btn.dataset.pair === currentPair));
+        document.querySelectorAll('[data-tf]').forEach(btn => btn.classList.toggle('active', btn.dataset.tf === currentTF));
+        document.querySelectorAll('[data-mode]').forEach(btn => btn.classList.toggle('mode-active', btn.dataset.mode === currentMode));
+        document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.add('disabled'));
+        
+        updateWSStatus('connecting', 'LOADING');
+        document.getElementById('live-price').innerHTML = '<span style="font-size: 1rem; color: var(--bloomberg-text-dim);">LOADING...</span>';
+        document.getElementById('decision-status').innerHTML = "SYNCING...";
+        
+        engine.sweepDetected = false; engine.bosConfirmed = false; engine.liquiditySide = null; engine.fvgEntryActive = false;
+        recentPrices = []; lastSignalExpiry = 0; lastSignalDecision = "";
+        lastDecisionPrice = 0;
+        lastPriceUpdateTime = Date.now();
+        isDataStale = false;
+        spikeDetected = false;
+        abnormalPriceChangeCount = 0;
+        currentOrderBlock = null;
+        sniperLevels = [];
+        lastSMCUpdate = 0;
+        resetLevelStatus();
+        cachedADX = { value: ADX_DEFAULT_RANGING, timestamp: 0 };
+        
+        priceActionBuffer = [];
+        realtimePriceBuffer = [];
+        realtimeRSIBuffer = [];
+        lastOBDetectionTime = 0;
+        lastDivergenceCheck = 0;
+        pendingDivergence = null;
+        realtimeOBActive = false;
+        
+        const klinesPromise = fetchKlines();
+        const mtfPromise = fetchMTFData();
+        const newsPromise = fetchEconomicCalendar();
+        
+        await klinesPromise;
+        initWebSocket();
+        startHeartbeat();
+        startStuckChecker();
+        startPeriodicUpdates();
+        startRestFallback();
+        startVolumeFetcher();
+        
+        if (newsCheckInterval) clearInterval(newsCheckInterval);
+        newsCheckInterval = setInterval(fetchEconomicCalendar, 600000);
+        
+        document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('disabled'));
+        isReloading = false;
+        
+        await mtfPromise;
+        await newsPromise;
+        loadSavedTrade();
+    }
+    
+    // ==================== EVENT HANDLERS ====================
+    document.querySelectorAll('[data-pair]').forEach(btn => {
+        btn.onclick = () => { 
+            if (currentPair === btn.dataset.pair || isReloading) return; 
+            currentPair = btn.dataset.pair; 
+            cachedPrecision = null;
+            localStorage.setItem('lastPair', currentPair);
+            fullReload(); 
+        };
+    });
+    
+    document.querySelectorAll('[data-tf]').forEach(btn => {
+        btn.onclick = () => { 
+            if (currentTF === btn.dataset.tf || isReloading) return;
+            currentTF = btn.dataset.tf; 
+            localStorage.setItem('lastTF', currentTF);
+            fullReload(); 
+        };
+    });
+    
+    document.querySelectorAll('[data-mode]').forEach(btn => {
+        btn.onclick = () => {
+            if (currentMode === btn.dataset.mode || isReloading) return;
+            currentMode = btn.dataset.mode;
+            localStorage.setItem('decisionMode', currentMode);
+            
+            document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('mode-active'));
+            btn.classList.add('mode-active');
+            
+            updateFinalDecision();
+        };
+    });
+    
+    window.copySwingHL = function() {
+        const swingHigh = document.getElementById('swing-high-value')?.innerText || '--';
+        const swingLow = document.getElementById('swing-low-value')?.innerText || '--';
+        navigator.clipboard?.writeText(`Swing High: ${swingHigh} | Swing Low: ${swingLow}`);
+        const container = document.getElementById('swing-hl-container');
+        if (container) { container.classList.add('copied'); setTimeout(() => container.classList.remove('copied'), 300); }
+    };
+    
+    window.smartCopy = function(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            let text = el.innerText;
+            if (id === 'live-price') text = el.innerText.replace(/<[^>]*>/g, '');
+            navigator.clipboard?.writeText(text);
+            el.classList.add('copied');
+            setTimeout(() => el.classList.remove('copied'), 300);
+        }
+    };
+    
+    function updateClock() {
+        const now = new Date();
+        const clockElem = document.getElementById('clock-display');
+        const dateElem = document.getElementById('date-display');
+        const sessionElem = document.getElementById('session-tag');
+        if (clockElem) clockElem.innerText = now.toLocaleTimeString('id-ID');
+        if (dateElem) dateElem.innerText = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()}`;
+        const hour = now.getHours();
+        if (sessionElem) sessionElem.innerText = hour >= 7 && hour < 14 ? "ASIA" : (hour >= 14 && hour < 20 ? "LONDON" : "NY");
+        checkNewsBlackout();
+    }
+    
     setInterval(updateClock, 1000);
     setInterval(fetchMTFData, 120000);
+    
     fullReload();
+    
 })();
 </script>
 </body>
